@@ -1,214 +1,245 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title>Eclipse Combat Calculator</title>
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/analyzer.css">
-<script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.js"></script>
-<script src="js/battlestats.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
-<script src="js/ui.js"></script>
-<meta name="viewport" content="width=600, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Eclipse Calculator">
-<link rel="apple-touch-icon" href="images/appicons/ios.png">
-<link rel="shortcut icon" href="images/appicons/android.png">
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Eclipse Combat Calculator</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/analyzer.css">
+  <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.0/jquery.cookie.js"></script>
+  <script src="js/battlestats.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+  <script src="js/ui.js"></script>
+  <meta name="viewport" content="width=600, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Eclipse Calculator">
+  <link rel="apple-touch-icon" href="images/appicons/ios.png">
+  <link rel="shortcut icon" href="images/appicons/android.png">
 </head>
+
 <body>
-<div class="content">
-  <div class="intro">
-    <h1>
-      <div class="icon"></div>
-      <a style="display: none;" href="#" class="showdesc"><span class="underline">Read about</span><span>&nbsp;▿</span></a>
-      <div>Eclipse Combat Calculator</div>
-    </h1>
-    <div class="description">
-      <h2>About</h2>
-      <p>This web app is designed to allow <em>Eclipse: New Dawn for the Galaxy</em> players to calculate chances of victory in ship battles. It is 
-        optimized for use on a smartphone, so that you always have it at hand, 
-        even during a match. Feel free to add the app to your phone's home 
-        screen, it's fully optimized and has a nice icon.</p>
-      <p>Add the ships on
-        both sides, adjust their parameters (tap the squares until you have the
-        required number), hit the big green button, and you have the victory 
-        chances calculated. As a bonus, you can see what is the chance of your 
-        ships' survival in case of victory (if you lose, it's 0% chance unless 
-        you retreat).</p>
-      <p>You can save often used ship configurations (e.g. "Orion Cruiser", or "Upgraded Dreadnought") in <em>Presets</em> to quickly access them when adding new ships. They are saved for later 
-        use, so you'll have them next time you open the app to simulate another 
-        battle.</p>
-      <p>Hit distribution. The AI is using a simple rule to 
-        distribute hits: if the entire roll can kill at least one ship, it will 
-        hit (and kill) it first. Otherwise hits go to the highest class ship. 
-        Starbase is considered higher class than dreadnought.</p>
-      <h2>Legend</h2>
-      <p></p>
-      <table>
-        <tbody>
-          <tr>
-            <td class="icon"><div class="yellow">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Total
-              number of yellow dice the ship rolls because of ion cannons. Ion turret
-              adds two yellow dice. Ion missiles are not counted here.</td>
-          </tr>
-          <tr>
-            <td class="icon"><div class="orange">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Same for orange dice (plasma cannons).</td>
-          </tr>
-          <tr>
-            <td class="icon"><div class="red">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Same for red dice (antimatter cannons).</td>
-          </tr>
-          <tr>
-            <td class="icon"><div class="missiles_yellow">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Number of ion missiles the ship has equipped, <b>NOT</b> the number of yellow dice. Example: if you have 3&nbsp;ion missile modules equipped, enter&nbsp;3.</td>
-          </tr>
-          <tr>
-            <td class="icon"><div class="missiles_orange">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Same for plasma missiles.</td>
-          </tr>
-        </tbody>
-      </table>
-      <table>
-        <tbody>
-          <tr>
-            <td class="icon"><div class="number">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Number of ships of this type participating in the battle.</td>
-          </tr>
-          <tr>
-            <td class="icon"><div class="computers">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Number of computers the ship has.</td>
-          </tr>
-          <tr>
-            <td class="icon"><div class="shields">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Number of shields the ship has.</td>
-          </tr>
-          <tr>
-            <td class="icon"><div class="hull">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Number
-              of hull points (1&nbsp;from each normal hull or sentient hull, 
-              2&nbsp;from each improved hull, 3&nbsp;from shard hull) the ship has 
-              equipped. <b>NOT</b> the number of hit points (which is hull points + 1). If the ship has no hull equipped, enter&nbsp;0.</td>
-          </tr>
-          <tr>
-            <td class="icon"><div class="initiative">
-                <div class="icon"></div>
-              </div></td>
-            <td class="desc">Total number of initiative points the ship has.</td>
-          </tr>
-        </tbody>
-      </table>
-      <p></p>
+  <div class="content">
+    <div class="intro">
+      <h1>
+        <div class="icon"></div>
+        <a style="display: none;" href="#" class="showdesc"><span class="underline">Read
+            about</span><span>&nbsp;▿</span></a>
+        <div>Eclipse Combat Calculator</div>
+      </h1>
+      <div class="description">
+        <h2>About</h2>
+        <p>This web app is designed to allow <em>Eclipse: New Dawn for the Galaxy</em> players to calculate chances of
+          victory in ship battles. It is
+          optimized for use on a smartphone, so that you always have it at hand,
+          even during a match. Feel free to add the app to your phone's home
+          screen, it's fully optimized and has a nice icon.</p>
+        <p>Add the ships on
+          both sides, adjust their parameters (tap the squares until you have the
+          required number), hit the big green button, and you have the victory
+          chances calculated. As a bonus, you can see what is the chance of your
+          ships' survival in case of victory (if you lose, it's 0% chance unless
+          you retreat).</p>
+        <p>You can save often used ship configurations (e.g. "Orion Cruiser", or "Upgraded Dreadnought") in
+          <em>Presets</em> to quickly access them when adding new ships. They are saved for later
+          use, so you'll have them next time you open the app to simulate another
+          battle.</p>
+        <p>Hit distribution. The AI is using a simple rule to
+          distribute hits: if the entire roll can kill at least one ship, it will
+          hit (and kill) it first. Otherwise hits go to the highest class ship.
+          Starbase is considered higher class than dreadnought.</p>
+        <h2>Legend</h2>
+        <p></p>
+        <table>
+          <tbody>
+            <tr>
+              <td class="icon">
+                <div class="yellow">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Total
+                number of yellow dice the ship rolls because of ion cannons. Ion turret
+                adds two yellow dice. Ion missiles are not counted here.</td>
+            </tr>
+            <tr>
+              <td class="icon">
+                <div class="orange">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Same for orange dice (plasma cannons).</td>
+            </tr>
+            <tr>
+              <td class="icon">
+                <div class="red">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Same for red dice (antimatter cannons).</td>
+            </tr>
+            <tr>
+              <td class="icon">
+                <div class="missiles_yellow">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Number of ion missiles the ship has equipped, <b>NOT</b> the number of yellow dice.
+                Example: if you have 3&nbsp;ion missile modules equipped, enter&nbsp;3.</td>
+            </tr>
+            <tr>
+              <td class="icon">
+                <div class="missiles_orange">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Same for plasma missiles.</td>
+            </tr>
+          </tbody>
+        </table>
+        <table>
+          <tbody>
+            <tr>
+              <td class="icon">
+                <div class="number">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Number of ships of this type participating in the battle.</td>
+            </tr>
+            <tr>
+              <td class="icon">
+                <div class="computers">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Number of computers the ship has.</td>
+            </tr>
+            <tr>
+              <td class="icon">
+                <div class="shields">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Number of shields the ship has.</td>
+            </tr>
+            <tr>
+              <td class="icon">
+                <div class="hull">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Number
+                of hull points (1&nbsp;from each normal hull or sentient hull,
+                2&nbsp;from each improved hull, 3&nbsp;from shard hull) the ship has
+                equipped. <b>NOT</b> the number of hit points (which is hull points + 1). If the ship has no hull
+                equipped, enter&nbsp;0.</td>
+            </tr>
+            <tr>
+              <td class="icon">
+                <div class="initiative">
+                  <div class="icon"></div>
+                </div>
+              </td>
+              <td class="desc">Total number of initiative points the ship has.</td>
+            </tr>
+          </tbody>
+        </table>
+        <p></p>
+      </div>
     </div>
-  </div>
-  <div style="display: none;" class="results">
-    <h2>Results</h2>
-    <div class="victorychance">
-      <div class="header">Victory</div>
-      <div class="defender winner">
-        <div class="cont">
-          <div class="icon"></div>
-          <div class="label">Defender</div>
-          <div class="probability">0%</div>
+    <div style="display: none;" class="results">
+      <h2>Results</h2>
+      <div class="victorychance">
+        <div class="header">Victory</div>
+        <div class="defender winner">
+          <div class="cont">
+            <div class="icon"></div>
+            <div class="label">Defender</div>
+            <div class="probability">0%</div>
+          </div>
+        </div>
+        <div class="attacker">
+          <div class="cont">
+            <div class="icon"></div>
+            <div class="label">Attacker</div>
+            <div class="probability">0%</div>
+          </div>
         </div>
       </div>
-      <div class="attacker">
-        <div class="cont">
-          <div class="icon"></div>
-          <div class="label">Attacker</div>
-          <div class="probability">0%</div>
+      <div id="D" class="survival">
+        <div class="header">Defender survival
+          <div class="comment">in event of victory</div>
         </div>
+        <ul>
+        </ul>
+      </div>
+      <div id="A" class="survival">
+        <div class="header">Attacker survival
+          <div class="comment">in event of victory</div>
+        </div>
+        <ul>
+        </ul>
       </div>
     </div>
-    <div id="D" class="survival">
-      <div class="header">Defender survival
-        <div class="comment">in event of victory</div>
-      </div>
-      <ul>
+    <div id="shipsD" class="ships">
+      <h2 class="defender">
+        <div class="icon"></div>
+        <span>Defender</span><a href="#" class="addship">Add ship</a>
+      </h2>
+      <ul class="ships">
       </ul>
     </div>
-    <div id="A" class="survival">
-      <div class="header">Attacker survival
-        <div class="comment">in event of victory</div>
-      </div>
-      <ul>
+    <div class="simulate"><a href="#" class="simulate">Calculate chances</a></div>
+    <div id="shipsA" class="ships">
+      <h2 class="attacker">
+        <div class="icon"></div>
+        <span>Attacker</span><a href="#" class="addship">Add ship</a>
+      </h2>
+      <ul class="ships">
       </ul>
     </div>
+    <div class="copy">
+      <copyright>© 2014 Eclipse-Calculator.com</copyright>
+    </div>
   </div>
-  <div id="shipsD" class="ships">
-    <h2 class="defender">
-      <div class="icon"></div>
-      <span>Defender</span><a href="#" class="addship">Add ship</a></h2>
-    <ul class="ships">
-    </ul>
+  <div style="display: none;" id="presets" class="lightbox">
+    <div class="presets">
+      <ul>
+        <li rel="Generic ship" class="generic cruiser">
+          <div class="icon"><span>Generic ship</span></div>
+        </li>
+        <li rel="Galactic Center" class="npc gc">
+          <div class="icon"><span>Galactic Center</span></div>
+        </li>
+        <li rel="Ancient" class="npc ancient">
+          <div class="icon"><span>Ancient</span></div>
+        </li>
+        <li rel="Interceptor" class="player interceptor">
+          <div class="icon"><span>Interceptor</span></div>
+        </li>
+        <li rel="Cruiser" class="player cruiser">
+          <div class="icon"><span>Cruiser</span></div>
+        </li>
+        <li rel="Dreadnought" class="player dreadnought">
+          <div class="icon"><span>Dreadnought</span></div>
+        </li>
+        <li rel="Starbase" class="player starbase">
+          <div class="icon"><span>Starbase</span></div>
+        </li>
+        <li rel="Orbital" class="player orbital">
+          <div class="icon"><span>Exile Orbital</span></div>
+        </li>
+        <li rel="Deathmoon" class="player deathmoon">
+          <div class="icon"><span>Deathmoon</span></div>
+        </li>
+      </ul>
+      <a href="#" class="close">Close</a>
+    </div>
   </div>
-  <div class="simulate"><a href="#" class="simulate">Calculate chances</a></div>
-  <div id="shipsA" class="ships">
-    <h2 class="attacker">
-      <div class="icon"></div>
-      <span>Attacker</span><a href="#" class="addship">Add ship</a></h2>
-    <ul class="ships">
-    </ul>
+  <div style="display: none;" id="working" class="lightbox">
+    <div class="working"><span class="dice">⚀ ⚅ </span><span>Working…</span></div>
   </div>
-  <div class="copy">
-    <copyright>© 2014 Eclipse-Calculator.com</copyright>
-  </div>
-</div>
-<div style="display: none;" id="presets" class="lightbox">
-  <div class="presets">
-    <ul>
-      <li rel="Generic ship" class="generic cruiser">
-        <div class="icon"><span>Generic ship</span></div>
-      </li>
-      <li rel="Galactic Center" class="npc gc">
-        <div class="icon"><span>Galactic Center</span></div>
-      </li>
-      <li rel="Ancient" class="npc ancient">
-        <div class="icon"><span>Ancient</span></div>
-      </li>
-      <li rel="Interceptor" class="player interceptor">
-        <div class="icon"><span>Interceptor</span></div>
-      </li>
-      <li rel="Cruiser" class="player cruiser">
-        <div class="icon"><span>Cruiser</span></div>
-      </li>
-      <li rel="Dreadnought" class="player dreadnought">
-        <div class="icon"><span>Dreadnought</span></div>
-      </li>
-      <li rel="Starbase" class="player starbase">
-        <div class="icon"><span>Starbase</span></div>
-      </li>
-      <li rel="Orbital" class="player orbital">
-        <div class="icon"><span>Exile Orbital</span></div>
-      </li>
-      <li rel="Deathmoon" class="player deathmoon">
-        <div class="icon"><span>Deathmoon</span></div>
-      </li>
-    </ul>
-    <a href="#" class="close">Close</a></div>
-</div>
-<div style="display: none;" id="working" class="lightbox">
-  <div class="working"><span class="dice">⚀ ⚅ </span><span>Working…</span></div>
-</div>
 </body>
+
 </html>
