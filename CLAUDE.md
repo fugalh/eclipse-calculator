@@ -35,15 +35,15 @@ Then navigate to `http://localhost:8000`
 
 ### File Structure
 - `index.html` - Single-page application with embedded HTML structure
-- `js/battlestats-compiled.js` - Combat simulation engine (~270 lines)
-- `js/ui-compiled.js` - UI logic and ship management (~494 lines)
+- `js/battlestats.js` - Combat simulation engine (~270 lines)
+- `js/ui.js` - UI logic and ship management (~494 lines)
 - `css/style.css` - Main styles
 - `css/analyzer.css` - Combat analyzer specific styles
 - `images/` - Game assets (ship icons, backgrounds, app icons)
 
 ### Core Components
 
-**Combat Simulation (battlestats-compiled.js)**
+**Combat Simulation (battlestats.js)**
 
 The simulation engine implements Eclipse board game combat rules:
 1. **Dice Rolling**: `g()` function creates dice objects with damage values (yellow=1, orange=2, blue=3, red=4)
@@ -58,7 +58,7 @@ Each ship has attributes:
 - Defense: `shields`, `hull` (HP = hull + 1), `initiative`
 - Modifiers: `computers` (hit bonus), `splitter` (converts red dice to 4 yellow), `missile_shield` (+2 shields vs missiles)
 
-**UI Layer (ui-compiled.js)**
+**UI Layer (ui.js)**
 - `F()` - Ship object with data model (`D`) and UI elements (`F`)
 - `Q()` - Preset manager loading from cookies
 - Ship configuration through tap/click to cycle values (0 to max)
@@ -84,7 +84,7 @@ The AI distributes hits using `targetPriority`: "Orbital Ancient GC Interceptor 
 - All ships in a group fire simultaneously before next initiative group
 
 **Data Persistence**
-Presets stored in browser cookies as JSON (`$.cookie("presets")`). Default presets hardcoded in `m` array (ui-compiled.js:28-109).
+Presets stored in browser cookies as JSON (`$.cookie("presets")`). Default presets hardcoded in `m` array (ui.js:28-109).
 
 ## External Dependencies
 
