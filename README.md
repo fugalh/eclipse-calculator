@@ -51,7 +51,6 @@ The Eclipse Combat Calculator allows *Eclipse: New Dawn for the Galaxy* players 
 │   ├── icons/         # Game ship and component icons
 │   └── *.png          # Background textures
 ├── js/
-│   ├── analytics.js
 │   ├── battlestats-compiled.js
 │   └── ui-compiled.js
 └── index.html

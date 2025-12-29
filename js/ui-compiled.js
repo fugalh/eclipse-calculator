@@ -392,21 +392,18 @@ $(function() {
         q(b, !0);
         c(!0);
         L();
-        ga("send", "event", "button", "click", "ship add");
         return !1
     });
     $(document.body).on("click", "a.remove", function() {
         var D = $(this).parents("li.ship");
         a(D);
         c(!0);
-        ga("send", "event", "button", "click", "ship remove");
         return !1
     });
     $(document.body).on("click", "a.templates", 
     function() {
         var a = $(this).parents("li.ship").data();
         q(a, !1);
-        ga("send", "event", "button", "click", "ship presets");
         return !1
     });
     $(document.body).on("click", "a.save", function() {
@@ -423,7 +420,6 @@ $(function() {
         a.D.name = b;
         I(a);
         q(void 0, !1);
-        ga("send", "event", "button", "click", "preset save");
         return !1
     });
     $(document.body).on("click", "a.simulate", function() {
@@ -446,21 +442,18 @@ $(function() {
                 $(".lightbox#working").fadeOut("swing", function() {})
             })
         });
-        ga("send", "event", "button", "click", "simulate");
         return !1
     });
     $(document.body).on("click", "div.presets li", function(a) {
         var b = $(this).attr("rel");
         M(b);
         f();
-        ga("send", "event", "button", "click", "preset pick");
         a.stopPropagation()
     });
     $(document.body).on("click", "div.presets li div.remove", function(a) {
         var b = $(this).parents("li")
           , c = b.attr("rel");
         T(E, c, b);
-        ga("send", "event", "button", "click", "preset remove");
         a.stopPropagation()
     });
     $(document.body).on("click", ".lightbox#presets", function() {
@@ -470,8 +463,6 @@ $(function() {
     $(document.body).on("click", "a.showdesc", function() {
         $("div.intro div.description").slideDown();
         $("a.showdesc").fadeOut();
-        ga("send", "event", "button", "click", 
-        "show description");
         return !1
     });
     $(document.body).on("click", "div.presets a.close", function() {
