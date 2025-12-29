@@ -1842,6 +1842,7 @@ div.ships ul.ships li.ship ul.specs li {
   border-radius: 20px;
   float: left;
   color: black;
+  touch-action: manipulation;
 }
 
 div.ships ul.ships li.ship ul.specs li .icon {
@@ -2312,6 +2313,7 @@ div.ships ul.ships li.ship ul.toggles li div.toggle {
   width: 30px;
   height: 30px;
   padding: 5px;
+  touch-action: manipulation;
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;

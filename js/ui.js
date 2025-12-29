@@ -397,7 +397,8 @@ $(function() {
 
   var presetManager = new PresetManager;
   renderPresetList(presetManager);
-  $(document.body).on("click", "ul.specs li", function() {
+  $(document.body).on("touchend click", "ul.specs li", function(e) {
+    if (e.type === "touchend") e.preventDefault();
     var element = $(this);
     var shipUI = element.parents("li.ship").data();
     var attrName = element.data().name;
@@ -457,7 +458,8 @@ $(function() {
     return !1
   });
 
-  $(document.body).on("click", "ul.toggles li", function() {
+  $(document.body).on("touchend click", "ul.toggles li", function(e) {
+    if (e.type === "touchend") e.preventDefault();
     var element = $(this);
     var shipUI = element.parents("li.ship").data();
     var toggleName = element.data().name;
