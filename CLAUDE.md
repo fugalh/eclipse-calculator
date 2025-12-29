@@ -37,6 +37,7 @@ Then navigate to `http://localhost:8000`
 - `index.html` - Single-page application with embedded HTML structure
 - `js/battlestats.js` - Combat simulation engine (~270 lines)
 - `js/ui.js` - UI logic and ship management (~494 lines)
+- `js/vendor/` - Third-party libraries (jQuery, jquery-cookie, Underscore.js)
 - `css/style.css` - Main styles
 - `css/analyzer.css` - Combat analyzer specific styles
 - `images/` - Game assets (ship icons, backgrounds, app icons)
@@ -86,14 +87,14 @@ The AI distributes hits using `targetPriority`: "Orbital Ancient GC Interceptor 
 **Data Persistence**
 Presets stored in browser cookies as JSON (`$.cookie("presets")`). Default presets hardcoded in `m` array (ui.js:28-109).
 
-## External Dependencies
+## Dependencies
 
-Loaded via CDN (no local copies):
-- jQuery 2.1.0
-- jquery-cookie 1.4.0
-- Underscore.js 1.5.2
+All dependencies are stored locally in `js/vendor/`:
+- jQuery 2.1.0 - DOM manipulation and utilities
+- jquery-cookie 1.4.0 - Cookie management for preset storage
+- Underscore.js 1.5.2 - Functional programming utilities
 
-**Note**: Code is minified/compiled from original source. Variable names are obfuscated (single letters like `a`, `b`, `e`). Original source files are not available.
+**Note**: Application code (battlestats.js, ui.js) is minified/compiled from original source. Variable names are obfuscated (single letters like `a`, `b`, `e`). Original source files are not available.
 
 ## Modifications from Original
 
@@ -102,6 +103,8 @@ This is a preserved copy from eclipse-calculator.com (2014), retrieved from Wayb
 Changes made:
 - Converted external image URLs to local paths
 - Removed Wayback Machine artifacts
+- Downloaded dependencies (jQuery, jquery-cookie, Underscore.js) to `js/vendor/`
+- Updated script tags to reference local files instead of CDNs
 - Added git repository
 
 No functional changes to combat logic or UI behavior.
