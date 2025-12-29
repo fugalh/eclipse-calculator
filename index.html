@@ -23,8 +23,7 @@
     <div class="intro">
       <h1>
         <div class="icon"></div>
-        <a style="display: none;" href="#" class="showdesc"><span class="underline">Read
-            about</span><span>&nbsp;▿</span></a>
+        <a href="#" class="toggledesc"><span class="underline">About</span><span class="arrow">&nbsp;▵</span></a>
         <div>Eclipse Combat Calculator</div>
       </h1>
       <div class="description">
@@ -126,39 +125,13 @@
         <p></p>
       </div>
     </div>
-    <div style="display: none;" class="results">
-      <h2>Results</h2>
-      <div class="victorychance">
-        <div class="header">Victory</div>
-        <div class="defender winner">
-          <div class="cont">
-            <div class="icon"></div>
-            <div class="label">Defender</div>
-            <div class="probability">0%</div>
-          </div>
-        </div>
-        <div class="attacker">
-          <div class="cont">
-            <div class="icon"></div>
-            <div class="label">Attacker</div>
-            <div class="probability">0%</div>
-          </div>
-        </div>
-      </div>
-      <div id="D" class="survival">
-        <div class="header">Defender survival
-          <div class="comment">in event of victory</div>
-        </div>
-        <ul>
-        </ul>
-      </div>
-      <div id="A" class="survival">
-        <div class="header">Attacker survival
-          <div class="comment">in event of victory</div>
-        </div>
-        <ul>
-        </ul>
-      </div>
+    <div id="shipsA" class="ships">
+      <h2 class="attacker">
+        <div class="icon"></div>
+        <span>Attacker</span><a href="#" class="addship">Add ship class</a>
+      </h2>
+      <ul class="ships">
+      </ul>
     </div>
     <div id="shipsD" class="ships">
       <h2 class="defender">
@@ -169,13 +142,39 @@
       </ul>
     </div>
     <div class="simulate"><a href="#" class="simulate">Calculate chances</a></div>
-    <div id="shipsA" class="ships">
-      <h2 class="attacker">
-        <div class="icon"></div>
-        <span>Attacker</span><a href="#" class="addship">Add ship class</a>
-      </h2>
-      <ul class="ships">
-      </ul>
+    <div class="results">
+      <h2>Results</h2>
+      <div class="victorychance">
+        <div class="header">Victory</div>
+        <div class="attacker">
+          <div class="cont">
+            <div class="icon"></div>
+            <div class="label">Attacker</div>
+            <div class="probability">0%</div>
+          </div>
+        </div>
+        <div class="defender winner">
+          <div class="cont">
+            <div class="icon"></div>
+            <div class="label">Defender</div>
+            <div class="probability">0%</div>
+          </div>
+        </div>
+      </div>
+      <div id="A" class="survival">
+        <div class="header">Attacker survival
+          <div class="comment">in event of victory</div>
+        </div>
+        <ul>
+        </ul>
+      </div>
+      <div id="D" class="survival">
+        <div class="header">Defender survival
+          <div class="comment">in event of victory</div>
+        </div>
+        <ul>
+        </ul>
+      </div>
     </div>
     <div class="copy">
       <copyright>© 2014 Eclipse-Calculator.com<br />© 2025 Hans Fugal</copyright>

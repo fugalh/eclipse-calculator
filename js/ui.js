@@ -335,12 +335,13 @@ $(function() {
   }
 
   function hideResults(animated) {
-    animated ? $("div.results").slideUp() : $("div.results").hide()
+    // Clear results content but keep div visible to prevent layout shifts
+    $("div.results .victorychance div").removeClass("winner");
+    $("div.results .victorychance .probability").text("0%");
+    $("div.results div.survival ul").empty()
   }
 
   function displayResults(results) {
-    $("div.intro div.description").slideUp();
-    $("a.showdesc").fadeIn();
     $("div.results .victorychance div").removeClass("winner");
     $("div.results .victorychance .defender .probability")
         .text(Math.round(100 * results.defender) + "%");
@@ -366,8 +367,9 @@ $(function() {
           .text(Math.round(100 * survivalRate) + "%");
       $("div.results div.survival#D ul").append(listItem)
     });
-    $("div.results").slideDown();
-    document.body.scrollTop = document.documentElement.scrollTop = 0
+    $("div.results").show();
+    // Scroll results into view
+    $("div.results")[0].scrollIntoView({behavior: "smooth", block: "start"})
   }
 
   function showPresetLightbox(shipUI, removeMode) {
@@ -568,9 +570,18 @@ $(function() {
     hidePresetLightbox()
   });
 
-  $(document.body).on("click", "a.showdesc", function() {
-    $("div.intro div.description").slideDown();
-    $("a.showdesc").fadeOut();
+  $(document.body).on("click", "a.toggledesc", function() {
+    var $desc = $("div.intro div.description");
+    var $arrow = $(this).find(".arrow");
+    if ($desc.is(":visible")) {
+      $desc.slideUp();
+      $arrow.html("&nbsp;▿");
+      $.cookie("aboutCollapsed", "true", {expires: 365});
+    } else {
+      $desc.slideDown();
+      $arrow.html("&nbsp;▵");
+      $.cookie("aboutCollapsed", "false", {expires: 365});
+    }
     return !1
   });
 
@@ -582,7 +593,13 @@ $(function() {
 
   hideResults();
   $(".lightbox").hide();
-  $("a.showdesc").hide();
+
+  // Restore about section collapse state from cookie
+  if ($.cookie("aboutCollapsed") === "true") {
+    $("div.intro div.description").hide();
+    $("a.toggledesc .arrow").html("&nbsp;▿");
+  }
+
   var defenderList = $("div.ships#shipsD ul.ships");
   var defenderShip = new ShipUI(findPresetByName(presetManager, "Ancient"));
   defenderList.append(defenderShip.elements.container);
