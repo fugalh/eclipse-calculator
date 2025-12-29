@@ -144,12 +144,14 @@ function createShipElements(shipUI) {
     shipUI.elements.presetsLink =
         $('<a href="#">Presets</a>').addClass("templates");
     shipUI.elements.remove = $('<a href="#">Remove</a>').addClass("remove");
+    shipUI.elements.reset = $('<a href="#">Reset</a>').addClass("reset");
     shipUI.elements.save = $('<a href="#">Save&hellip;</a>').addClass("save");
     shipUI.elements.container.append(shipUI.elements.header);
     shipUI.elements.header.append(shipUI.elements.name);
     shipUI.elements.header.append(shipUI.elements.shipClass);
     shipUI.elements.header.append(shipUI.elements.remove);
     shipUI.elements.header.append(shipUI.elements.presetsLink);
+    shipUI.elements.header.append(shipUI.elements.reset);
     shipUI.elements.header.append(shipUI.elements.save);
     shipUI.elements.specs = {};
     shipUI.elements.specs.list = $("<ul></ul>").addClass("specs");
@@ -512,6 +514,18 @@ $(function() {
     shipUI.data.name = presetName;
     renderShip(shipUI);
     showPresetLightbox(void 0, !1);
+    return !1
+  });
+
+  $(document.body).on("click", "a.reset", function() {
+    var shipUI = $(this).parents("li.ship").data();
+    var presetName = shipUI.data.name;
+    var preset = findPresetByName(presetManager, presetName);
+    if (preset) {
+      setShipData(shipUI, preset);
+      renderShip(shipUI);
+      hideResults();
+    }
     return !1
   });
 
