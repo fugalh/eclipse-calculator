@@ -11,257 +11,257 @@
      ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
      SECTION 108(a)(3)).
 */
-function g(a, b, e) {
-    this.h = "red" == a ? 4 : "blue" == a ? 3 : "orange" == a ? 2 : 1;
-    this.type = a;
-    this.origin = b;
-    this.s = e;
+function Dice(diceType, originShip, isMissile) {
+    this.damageValue = "red" == diceType ? 4 : "blue" == diceType ? 3 : "orange" == diceType ? 2 : 1;
+    this.type = diceType;
+    this.origin = originShip;
+    this.isMissile = isMissile;
     this.value = Math.floor(6 * Math.random()) + 1
 }
-function h(a, b) {
-    var e = b.shields;
-    a.s && b.missile_shield && (e += 2);
-    return (6 <= a.value + a.origin.computers - e || 6 == a.value) && 1 != a.value
+function checkHit(dice, target) {
+    var shields = target.shields;
+    dice.isMissile && target.missile_shield && (shields += 2);
+    return (6 <= dice.value + dice.origin.computers - shields || 6 == dice.value) && 1 != dice.value
 }
-function k(a, b) {
-    if (0 == _.size(a))
+function DicePool(ships, missilePhase) {
+    if (0 == _.size(ships))
         return [];
-    var e = _.size(a)
-        , c = a[0];
-    this.b = [];
-    if (b) {
-        for (d = 0; d < c.missiles_yellow * e * 2; d++)
-            this.b.push(new g("yellow", c, !0));
-        for (d = 0; d < c.missiles_orange * e * 2; d++)
-            this.b.push(new g("orange", c, !0));
-        for (d = 0; d < c.missiles_red * e * 2; d++)
-            this.b.push(new g("red", c, !0))
+    var shipCount = _.size(ships)
+        , firstShip = ships[0];
+    this.dice = [];
+    if (missilePhase) {
+        for (i = 0; i < firstShip.missiles_yellow * shipCount * 2; i++)
+            this.dice.push(new Dice("yellow", firstShip, !0));
+        for (i = 0; i < firstShip.missiles_orange * shipCount * 2; i++)
+            this.dice.push(new Dice("orange", firstShip, !0));
+        for (i = 0; i < firstShip.missiles_red * shipCount * 2; i++)
+            this.dice.push(new Dice("red", firstShip, !0))
     } else {
-        for (var d = 0; d < c.yellow * e; d++)
-            this.b.push(new g("yellow", c, !0));
-        for (d = 0; d < c.orange * e; d++)
-            this.b.push(new g("orange", c, !0));
-        for (d = 0; d < c.blue * e; d++)
-            this.b.push(new g("blue", c, !0));
-        for (d = 0; d < c.red * e; d++)
-            this.b.push(new g("red", c, !0))
+        for (var i = 0; i < firstShip.yellow * shipCount; i++)
+            this.dice.push(new Dice("yellow", firstShip, !0));
+        for (i = 0; i < firstShip.orange * shipCount; i++)
+            this.dice.push(new Dice("orange", firstShip, !0));
+        for (i = 0; i < firstShip.blue * shipCount; i++)
+            this.dice.push(new Dice("blue", firstShip, !0));
+        for (i = 0; i < firstShip.red * shipCount; i++)
+            this.dice.push(new Dice("red", firstShip, !0))
     }
-    c.splitter && !b && splitAm(this)
+    firstShip.splitter && !missilePhase && splitAntimatter(this)
 }
-function splitAm(a) {
-    var b = _.filter(a.b, function (a) {
-        return "red" == a.type
+function splitAntimatter(dicePool) {
+    var redDice = _.filter(dicePool.dice, function (dice) {
+        return "red" == dice.type
     });
-    a.b = _.difference(a.b, b);
-    _.each(b, function (b) {
-        for (var c = 0; 4 > c; c++) {
-            var d = new g("yellow", b.origin, !1);
-            d.value = b.value;
-            a.b.push(d)
+    dicePool.dice = _.difference(dicePool.dice, redDice);
+    _.each(redDice, function (redDie) {
+        for (var i = 0; 4 > i; i++) {
+            var yellowDie = new Dice("yellow", redDie.origin, !1);
+            yellowDie.value = redDie.value;
+            dicePool.dice.push(yellowDie)
         }
     })
 }
-function n(a, b) {
-    function e() {
-        return _.find(c, function (a) {
-            return _.find(b, function (c) {
-                return c.isAlive() && h(a, c)
+function distributeHits(dicePool, targets) {
+    function hasHittingDice() {
+        return _.find(sortedDice, function (dice) {
+            return _.find(targets, function (target) {
+                return target.isAlive() && checkHit(dice, target)
             })
         })
     }
-    var c = _.sortBy(a.b, function (a) {
-        return 100 * a.value - a.h
+    var sortedDice = _.sortBy(dicePool.dice, function (dice) {
+        return 100 * dice.value - dice.damageValue
     })
-        , d = _.sortBy(b, function (a) {
-            return -a.targetPriority.indexOf(a.shipClass)
+        , prioritizedTargets = _.sortBy(targets, function (target) {
+            return -target.targetPriority.indexOf(target.shipClass)
         });
-    for (e(); e();) {
-        var f = c.shift()
-            , m = _.find(d, function (a) {
-                return a.isAlive() && h(f, a)
+    for (hasHittingDice(); hasHittingDice();) {
+        var currentDice = sortedDice.shift()
+            , primaryTarget = _.find(prioritizedTargets, function (target) {
+                return target.isAlive() && checkHit(currentDice, target)
             })
-            , q = _.find(d, function (a) {
-                return a.isAlive() && p(a, _.union(c, [f])) && h(f, a)
+            , killableTarget = _.find(prioritizedTargets, function (target) {
+                return target.isAlive() && canBeKilled(target, _.union(sortedDice, [currentDice])) && checkHit(currentDice, target)
             });
-        m && (q && (m = q),
-            r(m, f.h))
+        primaryTarget && (killableTarget && (primaryTarget = killableTarget),
+            applyDamage(primaryTarget, currentDice.damageValue))
     }
 }
-function combatant(a) {
-    this.shipClass = a.shipClass || "Unknown " + Math.round(100 * Math.random());
-    this.name = a.name || this.shipClass;
-    this.hull = a.hull || 0;
-    this.yellow = a.yellow || 0;
-    this.orange = a.orange || 0;
-    this.blue = a.blue || 0;
-    this.red = a.red || 0;
-    this.missiles_yellow = a.missiles_yellow || 0;
-    this.missiles_orange = a.missiles_orange || 0;
-    this.missiles_red = a.missiles_red || 0;
-    this.shields = a.shields || 0;
-    this.computers = a.computers || 0;
-    this.initiative = a.initiative || 0;
-    this.splitter = a.splitter || !1;
-    this.missile_shield = a.missile_shield || !1;
+function Combatant(config) {
+    this.shipClass = config.shipClass || "Unknown " + Math.round(100 * Math.random());
+    this.name = config.name || this.shipClass;
+    this.hull = config.hull || 0;
+    this.yellow = config.yellow || 0;
+    this.orange = config.orange || 0;
+    this.blue = config.blue || 0;
+    this.red = config.red || 0;
+    this.missiles_yellow = config.missiles_yellow || 0;
+    this.missiles_orange = config.missiles_orange || 0;
+    this.missiles_red = config.missiles_red || 0;
+    this.shields = config.shields || 0;
+    this.computers = config.computers || 0;
+    this.initiative = config.initiative || 0;
+    this.splitter = config.splitter || !1;
+    this.missile_shield = config.missile_shield || !1;
     this.hp = this.hull + 1
 }
-combatant.prototype.targetPriority = "Orbital Ancient GC Interceptor Starbase Cruiser Dreadnought Deathmoon".split(" ");
-function r(a, b) {
-    a.hp -= b;
-    0 > a.hp && (a.hp = 0)
+Combatant.prototype.targetPriority = "Orbital Ancient GC Interceptor Starbase Cruiser Dreadnought Deathmoon".split(" ");
+function applyDamage(ship, damageAmount) {
+    ship.hp -= damageAmount;
+    0 > ship.hp && (ship.hp = 0)
 }
-combatant.prototype.isAlive = function () {
+Combatant.prototype.isAlive = function () {
     return 0 < this.hp
 }
     ;
-function p(a, b) {
-    var e = _.filter(b, function (c) {
-        return h(c, a)
+function canBeKilled(target, incomingDice) {
+    var hittingDice = _.filter(incomingDice, function (dice) {
+        return checkHit(dice, target)
     });
-    return _.reduce(e, function (a, b) {
-        return a + b.h
-    }, 0) >= a.hp
+    return _.reduce(hittingDice, function (totalDamage, dice) {
+        return totalDamage + dice.damageValue
+    }, 0) >= target.hp
 }
-function t(ship, b) {
-    this.a = [];
-    for (var e = ship.number || 1, c = 0; c < e; c++) {
-        var d = new combatant(ship);
-        b ? (d.initiative += 0.1,
-            d.f = "D") : d.f = "A";
-        this.a.push(d)
+function ShipGroup(shipConfig, isDefender) {
+    this.ships = [];
+    for (var shipCount = shipConfig.number || 1, i = 0; i < shipCount; i++) {
+        var ship = new Combatant(shipConfig);
+        isDefender ? (ship.initiative += 0.1,
+            ship.side = "D") : ship.side = "A";
+        this.ships.push(ship)
     }
 }
-t.prototype.isEmpty = function () {
-    return !this.a || 0 == _.size(this.a)
+ShipGroup.prototype.isEmpty = function () {
+    return !this.ships || 0 == _.size(this.ships)
 }
     ;
-function u(a) {
-    return a.isEmpty() ? void 0 : a.a[0]
+function getFirstShip(shipGroup) {
+    return shipGroup.isEmpty() ? void 0 : shipGroup.ships[0]
 }
-function v(a) {
-    return _.filter(a.a, function (a) {
-        return a.isAlive()
+function getLivingShips(shipGroup) {
+    return _.filter(shipGroup.ships, function (ship) {
+        return ship.isAlive()
     })
 }
-t.prototype.c = function () {
-    return 0 < _.size(v(this))
+ShipGroup.prototype.hasLivingShips = function () {
+    return 0 < _.size(getLivingShips(this))
 }
     ;
-function initiative(a, b) {
-    var e = this;
-    e.combatants = [];
-    _.each(a.ships, function (a) {
-        a = new t(a, !0);
-        e.combatants.push(a)
+function Initiative(defenderFleet, attackerFleet) {
+    var self = this;
+    self.combatants = [];
+    _.each(defenderFleet.ships, function (shipConfig) {
+        shipConfig = new ShipGroup(shipConfig, !0);
+        self.combatants.push(shipConfig)
     });
-    _.each(b.ships, function (a) {
-        e.combatants.push(new t(a, !1))
+    _.each(attackerFleet.ships, function (shipConfig) {
+        self.combatants.push(new ShipGroup(shipConfig, !1))
     });
-    e.combatants = _.sortBy(e.combatants, function (a) {
-        return -u(a).initiative
+    self.combatants = _.sortBy(self.combatants, function (shipGroup) {
+        return -getFirstShip(shipGroup).initiative
     })
 }
-function x(a) {
-    var b = [];
-    _.each(a.combatants, function (a) {
-        b = _.union(b, a.a)
+function getAllCombatants(initiativeOrder) {
+    var allShips = [];
+    _.each(initiativeOrder.combatants, function (shipGroup) {
+        allShips = _.union(allShips, shipGroup.ships)
     });
-    return b
+    return allShips
 }
-function y(a, b) {
-    return _.filter(x(a), function (a) {
-        return a.isAlive() && (a.f == b || !b)
+function getLivingCombatantsBySide(initiativeOrder, side) {
+    return _.filter(getAllCombatants(initiativeOrder), function (ship) {
+        return ship.isAlive() && (ship.side == side || !side)
     })
 }
-initiative.prototype.status = function () {
-    var a = {
-        o: 0 < _.size(y(this, "A")),
-        k: 0 < _.size(y(this, "D")),
-        C: _.size(y(this)),
-        a: {}
+Initiative.prototype.status = function () {
+    var status = {
+        attackerAlive: 0 < _.size(getLivingCombatantsBySide(this, "A")),
+        defenderAlive: 0 < _.size(getLivingCombatantsBySide(this, "D")),
+        totalAlive: _.size(getLivingCombatantsBySide(this)),
+        shipSurvival: {}
     }
-        , b = _.find(y(this), function (a) {
-            return 0 < a.yellow || 0 < a.orange || 0 < a.red
+        , hasWeapons = _.find(getLivingCombatantsBySide(this), function (ship) {
+            return 0 < ship.yellow || 0 < ship.orange || 0 < ship.red
         });
-    a.j = !a.o || !a.k || !b;
-    a.j && (a.d = a.k ? "D" : "A");
-    if (a.j) {
-        var b = _.countBy(y(this), function (c) {
-            return c.f == a.d ? c.name : ""
+    status.battleOver = !status.attackerAlive || !status.defenderAlive || !hasWeapons;
+    status.battleOver && (status.winner = status.defenderAlive ? "D" : "A");
+    if (status.battleOver) {
+        var livingShips = _.countBy(getLivingCombatantsBySide(this), function (ship) {
+            return ship.side == status.winner ? ship.name : ""
         })
-            , e = _.countBy(x(this), function (c) {
-                return c.f == a.d ? c.name : ""
+            , totalShips = _.countBy(getAllCombatants(this), function (ship) {
+                return ship.side == status.winner ? ship.name : ""
             });
-        _.each(b, function (c, b) {
-            var f = e[b];
-            f && 0 != f || (f = 1);
-            "" != b && (a.a[b] = c / f)
+        _.each(livingShips, function (liveCount, shipName) {
+            var total = totalShips[shipName];
+            total && 0 != total || (total = 1);
+            "" != shipName && (status.shipSurvival[shipName] = liveCount / total)
         })
     }
-    return a
+    return status
 }
     ;
 function resolveBattle(defenseFleet, attackFleet) {
-    var e = {
-        d: "",
-        a: {}
+    var result = {
+        winner: "",
+        shipSurvival: {}
     }
-        , fireOrder = new initiative(defenseFleet, attackFleet);
+        , fireOrder = new Initiative(defenseFleet, attackFleet);
     combatRound(fireOrder, !0);
-    for (var d = fireOrder.status(); !d.j;)
+    for (var battleStatus = fireOrder.status(); !battleStatus.battleOver;)
         combatRound(fireOrder, !1),
-            d = fireOrder.status();
-    e.d = d.d;
-    e.a = d.a;
-    return e
+            battleStatus = fireOrder.status();
+    result.winner = battleStatus.winner;
+    result.shipSurvival = battleStatus.shipSurvival;
+    return result
 }
 function combatRound(fireOrder, missileOnly) {
-    var e = x(fireOrder);
-    _.each(fireOrder.combatants, function (combatant) {
-        if (combatant.c()) {
-            var d = u(combatant).f;
-            combatant = new k(v(combatant), missileOnly);
-            var f = _.filter(e, function (a) {
-                return a.f != d && a.isAlive()
+    var allShips = getAllCombatants(fireOrder);
+    _.each(fireOrder.combatants, function (shipGroup) {
+        if (shipGroup.hasLivingShips()) {
+            var attackerSide = getFirstShip(shipGroup).side;
+            shipGroup = new DicePool(getLivingShips(shipGroup), missileOnly);
+            var enemyShips = _.filter(allShips, function (ship) {
+                return ship.side != attackerSide && ship.isAlive()
             });
-            n(combatant, f)
+            distributeHits(shipGroup, enemyShips)
         }
     })
 }
-function B(a) {
-    var b = {};
-    _.each(a, function (a) {
-        _.each(a.a, function (a, c) {
-            b[c] = b[c] ? b[c] + a : a
+function aggregateSurvivalStats(battleResults) {
+    var totals = {};
+    _.each(battleResults, function (result) {
+        _.each(result.shipSurvival, function (survivalRate, shipName) {
+            totals[shipName] = totals[shipName] ? totals[shipName] + survivalRate : survivalRate
         })
     });
-    var e = {};
-    _.each(b, function (b, d) {
-        e[d] = b / _.size(a)
+    var averages = {};
+    _.each(totals, function (total, shipName) {
+        averages[shipName] = total / _.size(battleResults)
     });
-    return e
+    return averages
 }
 function calculate(defenseFleet, attackFleet, iterations) {
-    res = {
+    var res = {
         attacker: 0,
         defender: 0,
         shipsAttacker: {},
         shipsDefender: {}
     };
-    for (var results = [], d = 0; d < iterations; d++) {
+    for (var results = [], i = 0; i < iterations; i++) {
         var battle = resolveBattle(defenseFleet, attackFleet);
         results.push(battle)
     }
-    defenseFleet = _.filter(results, function (defenseFleet) {
-        return "D" == defenseFleet.d
+    var defenderWins = _.filter(results, function (result) {
+        return "D" == result.winner
     });
-    attackFleet = _.filter(results, function (defenseFleet) {
-        return "A" == defenseFleet.d
+    var attackerWins = _.filter(results, function (result) {
+        return "A" == result.winner
     });
-    res.attacker = _.size(attackFleet) / _.size(results);
-    res.defender = _.size(defenseFleet) / _.size(results);
-    res.shipsAttacker = B(attackFleet);
-    res.shipsDefender = B(defenseFleet);
+    res.attacker = _.size(attackerWins) / _.size(results);
+    res.defender = _.size(defenderWins) / _.size(results);
+    res.shipsAttacker = aggregateSurvivalStats(attackerWins);
+    res.shipsDefender = aggregateSurvivalStats(defenderWins);
     return res
 }
 window.AnalyzeBattle = function (defenseFleet, attackFleet, iterations) {

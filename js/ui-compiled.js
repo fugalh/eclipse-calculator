@@ -11,7 +11,7 @@
      ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
      SECTION 108(a)(3)).
 */
-var e = {
+var ATTRIBUTE_LIMITS = {
     yellow: [0, 6],
     orange: [0, 6],
     blue: [0, 6],
@@ -25,7 +25,7 @@ var e = {
     initiative: [0, 8],
     number: [1, 6]
 }
-    , m = [{
+    , DEFAULT_PRESETS = [{
         yellow: 0,
         computers: 0,
         shields: 0,
@@ -107,178 +107,180 @@ var e = {
         name: "Deathmoon",
         type: "player"
     }];
-function F(a) {
-    this.D = {};
-    H(this, a || {});
-    I(this)
+function ShipUI(config) {
+    this.data = {};
+    setShipData(this, config || {});
+    renderShip(this)
 }
-function H(a, c) {
-    a.D.yellow = c.yellow || 0;
-    a.D.orange = c.orange || 0;
-    a.D.blue = c.blue || 0;
-    a.D.red = c.red || 0;
-    a.D.missiles_yellow = c.missiles_yellow || 0;
-    a.D.missiles_orange = c.missiles_orange || 0;
-    a.D.missiles_red = c.missiles_red || 0;
-    a.D.computers = c.computers || 0;
-    a.D.shields = c.shields || 0;
-    a.D.hull = c.hull || 0;
-    a.D.initiative = c.initiative || 0;
-    a.D.number = c.number || 1;
-    a.D.splitter = c.splitter ? !0 : !1;
-    a.D.missile_shield = c.missile_shield ? !0 : !1;
-    a.D.L = c.point_defense ? !0 : !1;
-    a.D.shipClass = c.shipClass || "Unknown";
-    a.D.name = c.name || a.D.shipClass
+function setShipData(shipUI, config) {
+    shipUI.data.yellow = config.yellow || 0;
+    shipUI.data.orange = config.orange || 0;
+    shipUI.data.blue = config.blue || 0;
+    shipUI.data.red = config.red || 0;
+    shipUI.data.missiles_yellow = config.missiles_yellow || 0;
+    shipUI.data.missiles_orange = config.missiles_orange || 0;
+    shipUI.data.missiles_red = config.missiles_red || 0;
+    shipUI.data.computers = config.computers || 0;
+    shipUI.data.shields = config.shields || 0;
+    shipUI.data.hull = config.hull || 0;
+    shipUI.data.initiative = config.initiative || 0;
+    shipUI.data.number = config.number || 1;
+    shipUI.data.splitter = config.splitter ? !0 : !1;
+    shipUI.data.missile_shield = config.missile_shield ? !0 : !1;
+    shipUI.data.pointDefense = config.point_defense ? !0 : !1;
+    shipUI.data.shipClass = config.shipClass || "Unknown";
+    shipUI.data.name = config.name || shipUI.data.shipClass
 }
-function J(a) {
-    if (!a.F) {
-        a.F = {};
-        a.F.H = $("<li></li>").addClass("ship").data(a);
-        a.F.header = $("<div></div>").addClass("header");
-        a.F.shipClass = $("<div></div>").addClass("shipClass");
-        a.F.name = $("<div></div>").addClass("name");
-        a.F.P = $('<a href="#">Presets</a>').addClass("templates");
-        a.F.remove = $('<a href="#">Remove</a>').addClass("remove");
-        a.F.save = $('<a href="#">Save&hellip;</a>').addClass("save");
-        a.F.H.append(a.F.header);
-        a.F.header.append(a.F.name);
-        a.F.header.append(a.F.shipClass);
-        a.F.header.append(a.F.remove);
-        a.F.header.append(a.F.P);
-        a.F.header.append(a.F.save);
-        a.F.D = {};
-        a.F.D.J = $("<ul></ul>").addClass("specs");
-        a.F.H.append(a.F.D.J);
-        _.each("yellow orange blue red missiles_yellow missiles_orange number computers shields hull initiative".split(" "), function (c) {
-            var q = a.F.D, f;
-            f = $("<li></li>").addClass(c).data({
-                name: c
+function createShipElements(shipUI) {
+    if (!shipUI.elements) {
+        shipUI.elements = {};
+        shipUI.elements.container = $("<li></li>").addClass("ship").data(shipUI);
+        shipUI.elements.header = $("<div></div>").addClass("header");
+        shipUI.elements.shipClass = $("<div></div>").addClass("shipClass");
+        shipUI.elements.name = $("<div></div>").addClass("name");
+        shipUI.elements.presetsLink = $('<a href="#">Presets</a>').addClass("templates");
+        shipUI.elements.remove = $('<a href="#">Remove</a>').addClass("remove");
+        shipUI.elements.save = $('<a href="#">Save&hellip;</a>').addClass("save");
+        shipUI.elements.container.append(shipUI.elements.header);
+        shipUI.elements.header.append(shipUI.elements.name);
+        shipUI.elements.header.append(shipUI.elements.shipClass);
+        shipUI.elements.header.append(shipUI.elements.remove);
+        shipUI.elements.header.append(shipUI.elements.presetsLink);
+        shipUI.elements.header.append(shipUI.elements.save);
+        shipUI.elements.specs = {};
+        shipUI.elements.specs.list = $("<ul></ul>").addClass("specs");
+        shipUI.elements.container.append(shipUI.elements.specs.list);
+        _.each("yellow orange blue red missiles_yellow missiles_orange number computers shields hull initiative".split(" "), function (attrName) {
+            var specsObj = shipUI.elements.specs, element;
+            element = $("<li></li>").addClass(attrName).data({
+                name: attrName
             }).append($("<div></div>").addClass("icon").append($("<span></span>")));
-            q[c] = f;
-            a.F.D.J.append(a.F.D[c])
+            specsObj[attrName] = element;
+            shipUI.elements.specs.list.append(shipUI.elements.specs[attrName])
         });
-        a.F.I = {};
-        a.F.I.J = $("<ul></ul>").addClass("toggles");
-        a.F.H.append(a.F.I.J);
-        var c = {
+        shipUI.elements.toggles = {};
+        shipUI.elements.toggles.list = $("<ul></ul>").addClass("toggles");
+        shipUI.elements.container.append(shipUI.elements.toggles.list);
+        var toggleLabels = {
             splitter: "Antimatter Splitter",
             missile_shield: "Distortion Field"
         };
-        _.each(_.keys(c), function (d) {
-            var q = a.F.I, f;
-            f = c[d];
-            f = $("<li></li>").addClass(d).data({
-                name: d
-            }).append($("<div></div>").addClass("toggle").append($("<div></div>"))).append($("<div></div>").addClass("title").text(f));
-            q[d] = f;
-            a.F.I.J.append(a.F.I[d])
+        _.each(_.keys(toggleLabels), function (toggleName) {
+            var togglesObj = shipUI.elements.toggles, element;
+            element = toggleLabels[toggleName];
+            element = $("<li></li>").addClass(toggleName).data({
+                name: toggleName
+            }).append($("<div></div>").addClass("toggle").append($("<div></div>"))).append($("<div></div>").addClass("title").text(element));
+            togglesObj[toggleName] = element;
+            shipUI.elements.toggles.list.append(shipUI.elements.toggles[toggleName])
         })
     }
 }
-function K(a, c, d) {
-    (a = a.F.D[c]) && a.find("span").text(d)
+function updateSpecDisplay(shipUI, attrName, value) {
+    var specElement;
+    (specElement = shipUI.elements.specs[attrName]) && specElement.find("span").text(value)
 }
-function O(a, c, d) {
-    (a = a.F.I[c]) && (d ? a.find("div.toggle").addClass("on") : a.find("div.toggle").removeClass("on"))
+function updateToggleDisplay(shipUI, toggleName, isOn) {
+    var toggleElement;
+    (toggleElement = shipUI.elements.toggles[toggleName]) && (isOn ? toggleElement.find("div.toggle").addClass("on") : toggleElement.find("div.toggle").removeClass("on"))
 }
-function I(a) {
-    a.F || J(a);
-    a.F.name.text(a.D.name);
-    a.F.shipClass.text(a.D.shipClass);
-    K(a, "yellow", a.D.yellow);
-    K(a, "orange", a.D.orange);
-    K(a, "blue", a.D.blue);
-    K(a, "red", a.D.red);
-    K(a, "missiles_yellow", a.D.missiles_yellow);
-    K(a, "missiles_orange", a.D.missiles_orange);
-    K(a, "missiles_red", a.D.missiles_red);
-    K(a, "computers", a.D.computers);
-    K(a, "shields", a.D.shields);
-    K(a, "hull", a.D.hull);
-    K(a, "initiative", a.D.initiative);
-    K(a, "number", a.D.number);
-    O(a, "missile_shield", a.D.missile_shield);
-    O(a, "splitter", a.D.splitter);
-    O(a, "point_defense",
-        a.D.L)
+function renderShip(shipUI) {
+    shipUI.elements || createShipElements(shipUI);
+    shipUI.elements.name.text(shipUI.data.name);
+    shipUI.elements.shipClass.text(shipUI.data.shipClass);
+    updateSpecDisplay(shipUI, "yellow", shipUI.data.yellow);
+    updateSpecDisplay(shipUI, "orange", shipUI.data.orange);
+    updateSpecDisplay(shipUI, "blue", shipUI.data.blue);
+    updateSpecDisplay(shipUI, "red", shipUI.data.red);
+    updateSpecDisplay(shipUI, "missiles_yellow", shipUI.data.missiles_yellow);
+    updateSpecDisplay(shipUI, "missiles_orange", shipUI.data.missiles_orange);
+    updateSpecDisplay(shipUI, "missiles_red", shipUI.data.missiles_red);
+    updateSpecDisplay(shipUI, "computers", shipUI.data.computers);
+    updateSpecDisplay(shipUI, "shields", shipUI.data.shields);
+    updateSpecDisplay(shipUI, "hull", shipUI.data.hull);
+    updateSpecDisplay(shipUI, "initiative", shipUI.data.initiative);
+    updateSpecDisplay(shipUI, "number", shipUI.data.number);
+    updateToggleDisplay(shipUI, "missile_shield", shipUI.data.missile_shield);
+    updateToggleDisplay(shipUI, "splitter", shipUI.data.splitter);
+    updateToggleDisplay(shipUI, "point_defense",
+        shipUI.data.pointDefense)
 }
-function P(a) {
+function getShipData(shipUI) {
     return {
-        name: a.D.name,
-        shipClass: a.D.shipClass,
-        number: a.D.number,
-        hull: a.D.hull,
-        yellow: a.D.yellow,
-        orange: a.D.orange,
-        blue: a.D.blue,
-        red: a.D.red,
-        missiles_yellow: a.D.missiles_yellow,
-        missiles_orange: a.D.missiles_orange,
-        missiles_red: a.D.missiles_red,
-        computers: a.D.computers,
-        shields: a.D.shields,
-        initiative: a.D.initiative,
-        splitter: a.D.splitter,
-        missile_shield: a.D.missile_shield,
-        point_defense: a.D.L
+        name: shipUI.data.name,
+        shipClass: shipUI.data.shipClass,
+        number: shipUI.data.number,
+        hull: shipUI.data.hull,
+        yellow: shipUI.data.yellow,
+        orange: shipUI.data.orange,
+        blue: shipUI.data.blue,
+        red: shipUI.data.red,
+        missiles_yellow: shipUI.data.missiles_yellow,
+        missiles_orange: shipUI.data.missiles_orange,
+        missiles_red: shipUI.data.missiles_red,
+        computers: shipUI.data.computers,
+        shields: shipUI.data.shields,
+        initiative: shipUI.data.initiative,
+        splitter: shipUI.data.splitter,
+        missile_shield: shipUI.data.missile_shield,
+        point_defense: shipUI.data.pointDefense
     }
 }
-function Q() {
-    this.K = [];
-    this.G = [];
-    this.K = _.clone(m);
-    R(this)
+function PresetManager() {
+    this.defaultPresets = [];
+    this.customPresets = [];
+    this.defaultPresets = _.clone(DEFAULT_PRESETS);
+    loadPresetsFromCookie(this)
 }
-function R(a) {
-    var c = $.cookie("presets");
-    if (c)
+function loadPresetsFromCookie(manager) {
+    var cookieData = $.cookie("presets");
+    if (cookieData)
         try {
-            a.G = JSON.parse(c),
-                a.G = _.filter(a.G, function (a) {
-                    return a.name
+            manager.customPresets = JSON.parse(cookieData),
+                manager.customPresets = _.filter(manager.customPresets, function (preset) {
+                    return preset.name
                 })
-        } catch (d) {
-            a.G = []
+        } catch (error) {
+            manager.customPresets = []
         }
 }
-function S(a) {
-    a = JSON.stringify(a.G);
-    $.cookie("presets", a, {
+function savePresetsToCookie(manager) {
+    var cookieData = JSON.stringify(manager.customPresets);
+    $.cookie("presets", cookieData, {
         expires: 365
     })
 }
-function T(a, c, d) {
-    var q = _.find(a.G, function (a) {
-        return a.name.toLowerCase() == c.toLowerCase()
+function removePreset(manager, presetName, element) {
+    var preset = _.find(manager.customPresets, function (preset) {
+        return preset.name.toLowerCase() == presetName.toLowerCase()
     });
-    q && (a.G = _.without(a.G, q),
-        S(a),
-        d.O())
+    preset && (manager.customPresets = _.without(manager.customPresets, preset),
+        savePresetsToCookie(manager),
+        element.hideAnimated())
 }
-function U(a) {
-    var c = $("div.presets ul").empty();
-    _.union(a.K, a.G);
-    _.each(a.K, function (a) {
-        a = $("<li></li>").addClass(a.type).addClass(a.shipClass.toLowerCase()).attr("rel", a.name).append($('<div class="icon"></div>').append($("<span></span>").text(a.name)));
-        c.append(a)
+function renderPresetList(manager) {
+    var list = $("div.presets ul").empty();
+    _.union(manager.defaultPresets, manager.customPresets);
+    _.each(manager.defaultPresets, function (preset) {
+        preset = $("<li></li>").addClass(preset.type).addClass(preset.shipClass.toLowerCase()).attr("rel", preset.name).append($('<div class="icon"></div>').append($("<span></span>").text(preset.name)));
+        list.append(preset)
     });
-    _.each(a.G, function (a) {
-        a = $("<li></li>").addClass("custom").addClass(a.shipClass.toLowerCase()).attr("rel", a.name).append($('<div class="icon"></div>').append($("<span></span>").text(a.name))).append($("<div>&ndash;</div>").addClass("remove"));
-        c.append(a)
+    _.each(manager.customPresets, function (preset) {
+        preset = $("<li></li>").addClass("custom").addClass(preset.shipClass.toLowerCase()).attr("rel", preset.name).append($('<div class="icon"></div>').append($("<span></span>").text(preset.name))).append($("<div>&ndash;</div>").addClass("remove"));
+        list.append(preset)
     })
 }
-function V(a, c) {
-    if (c) {
-        var d = _.find(a.G, function (a) {
-            return a.name.toLowerCase() == c.toLowerCase()
+function findPresetByName(manager, presetName) {
+    if (presetName) {
+        var customPreset = _.find(manager.customPresets, function (preset) {
+            return preset.name.toLowerCase() == presetName.toLowerCase()
         });
-        return d ? d : _.find(a.K, function (a) {
-            return a.name.toLowerCase() == c.toLowerCase()
+        return customPreset ? customPreset : _.find(manager.defaultPresets, function (preset) {
+            return preset.name.toLowerCase() == presetName.toLowerCase()
         })
     }
 }
-jQuery.fn.O = function () {
+jQuery.fn.hideAnimated = function () {
     this.animate({
         width: "hide",
         paddingLeft: "hide",
@@ -290,136 +292,136 @@ jQuery.fn.O = function () {
 }
     ;
 $(function () {
-    function a(a) {
-        a.slideUp("swing", function () {
-            a.remove();
-            L()
+    function removeShip(shipElement) {
+        shipElement.slideUp("swing", function () {
+            shipElement.remove();
+            updateSimulateButton()
         })
     }
-    function c(a) {
-        a ? $("div.results").slideUp() : $("div.results").hide()
+    function hideResults(animated) {
+        animated ? $("div.results").slideUp() : $("div.results").hide()
     }
-    function d(a) {
+    function displayResults(results) {
         $("div.intro div.description").slideUp();
         $("a.showdesc").fadeIn();
         $("div.results .victorychance div").removeClass("winner");
-        $("div.results .victorychance .defender .probability").text(Math.round(100 * a.defender) + "%");
-        $("div.results .victorychance .attacker .probability").text(Math.round(100 * a.attacker) + "%");
-        a.attacker > a.defender ? $("div.results .victorychance div.attacker").addClass("winner") :
+        $("div.results .victorychance .defender .probability").text(Math.round(100 * results.defender) + "%");
+        $("div.results .victorychance .attacker .probability").text(Math.round(100 * results.attacker) + "%");
+        results.attacker > results.defender ? $("div.results .victorychance div.attacker").addClass("winner") :
             $("div.results .victorychance div.defender").addClass("winner");
         $("div.results div.survival ul").empty();
-        _.each(a.shipsAttacker, function (a, c) {
-            var D = $('<li><div class="class"></div><div class="name"></div><div class="probabilities"><span class="chance1"></span></div></li>');
-            D.find(".name").text(c);
-            D.find(".probabilities .chance1").text(Math.round(100 * a) + "%");
-            $("div.results div.survival#A ul").append(D)
+        _.each(results.shipsAttacker, function (survivalRate, shipName) {
+            var listItem = $('<li><div class="class"></div><div class="name"></div><div class="probabilities"><span class="chance1"></span></div></li>');
+            listItem.find(".name").text(shipName);
+            listItem.find(".probabilities .chance1").text(Math.round(100 * survivalRate) + "%");
+            $("div.results div.survival#A ul").append(listItem)
         });
-        _.each(a.shipsDefender, function (a, D) {
-            var c = $('<li><div class="class"></div><div class="name"></div><div class="probabilities"><span class="chance1"></span></div></li>');
-            c.find(".name").text(D);
-            c.find(".probabilities .chance1").text(Math.round(100 * a) + "%");
-            $("div.results div.survival#D ul").append(c)
+        _.each(results.shipsDefender, function (survivalRate, shipName) {
+            var listItem = $('<li><div class="class"></div><div class="name"></div><div class="probabilities"><span class="chance1"></span></div></li>');
+            listItem.find(".name").text(shipName);
+            listItem.find(".probabilities .chance1").text(Math.round(100 * survivalRate) + "%");
+            $("div.results div.survival#D ul").append(listItem)
         });
         $("div.results").slideDown();
         document.body.scrollTop = document.documentElement.scrollTop = 0
     }
-    function q(a, b) {
+    function showPresetLightbox(shipUI, removeMode) {
         $("div.presets").data({
-            N: a,
-            M: b
+            targetShip: shipUI,
+            removeMode: removeMode
         });
         $(".lightbox#presets").fadeIn()
     }
-    function f() {
+    function hidePresetLightbox() {
         $(".lightbox#presets").fadeOut()
     }
-    function M(D) {
-        var b = $("div.presets")
-            , d = b.data().N
-            , b = b.data().M
-            , f = V(E, D);
-        d && D && f ? (H(d, f),
-            I(d),
-            c()) : b && a(d.F.H)
+    function applyPreset(presetName) {
+        var presetsDialog = $("div.presets")
+            , targetShip = presetsDialog.data().targetShip
+            , removeMode = presetsDialog.data().removeMode
+            , preset = findPresetByName(presetManager, presetName);
+        targetShip && presetName && preset ? (setShipData(targetShip, preset),
+            renderShip(targetShip),
+            hideResults()) : removeMode && removeShip(targetShip.elements.container)
     }
-    function W(a) {
-        setTimeout(a, 0.2)
+    function deferExecution(fn) {
+        setTimeout(fn, 0.2)
     }
-    function L() {
+    function updateSimulateButton() {
         0 <
             $("div#shipsD ul.ships li.ship").length && 0 < $("div#shipsA ul.ships li.ship").length ? $("a.simulate").removeClass("disabled") : $("a.simulate").addClass("disabled")
     }
-    var E = new Q;
-    U(E);
+    var presetManager = new PresetManager;
+    renderPresetList(presetManager);
     $(document.body).on("click", "ul.specs li", function () {
-        var a = $(this)
-            , b = a.parents("li.ship").data()
-            , a = a.data().name;
-        "yellow" == a ? (b.D.yellow++,
-            b.D.yellow > e.yellow[1] && (b.D.yellow = e.yellow[0])) : "orange" == a ? (b.D.orange++,
-                b.D.orange > e.orange[1] && (b.D.orange = e.orange[0])) : "blue" == a ? (b.D.blue++,
-                    b.D.blue > e.blue[1] && (b.D.blue = e.blue[0])) : "red" == a ? (b.D.red++,
-                        b.D.red > e.red[1] && (b.D.red = e.red[0])) : "missiles_yellow" ==
-                            a ? (b.D.missiles_yellow++,
-                                b.D.missiles_yellow > e.missiles_yellow[1] && (b.D.missiles_yellow = e.missiles_yellow[0])) : "missiles_orange" == a ? (b.D.missiles_orange++,
-                                    b.D.missiles_orange > e.missiles_orange[1] && (b.D.missiles_orange = e.missiles_orange[0])) : "missiles_red" == a ? (b.D.missiles_red++,
-                                        b.D.missiles_red > e.missiles_red[1] && (b.D.missiles_red = e.missiles_red[0])) : "computers" == a ? (b.D.computers++,
-                                            b.D.computers > e.computers[1] && (b.D.computers = e.computers[0])) : "shields" == a ? (b.D.shields++,
-                                                b.D.shields > e.shields[1] &&
-                                                (b.D.shields = e.shields[0])) : "hull" == a ? (b.D.hull++,
-                                                    b.D.hull > e.hull[1] && (b.D.hull = e.hull[0])) : "initiative" == a ? (b.D.initiative++,
-                                                        b.D.initiative > e.initiative[1] && (b.D.initiative = e.initiative[0])) : "number" == a && (b.D.number++,
-                                                            b.D.number > e.number[1] && (b.D.number = e.number[0]));
-        I(b);
-        c(!0);
+        var element = $(this)
+            , shipUI = element.parents("li.ship").data()
+            , attrName = element.data().name;
+        "yellow" == attrName ? (shipUI.data.yellow++,
+            shipUI.data.yellow > ATTRIBUTE_LIMITS.yellow[1] && (shipUI.data.yellow = ATTRIBUTE_LIMITS.yellow[0])) : "orange" == attrName ? (shipUI.data.orange++,
+                shipUI.data.orange > ATTRIBUTE_LIMITS.orange[1] && (shipUI.data.orange = ATTRIBUTE_LIMITS.orange[0])) : "blue" == attrName ? (shipUI.data.blue++,
+                    shipUI.data.blue > ATTRIBUTE_LIMITS.blue[1] && (shipUI.data.blue = ATTRIBUTE_LIMITS.blue[0])) : "red" == attrName ? (shipUI.data.red++,
+                        shipUI.data.red > ATTRIBUTE_LIMITS.red[1] && (shipUI.data.red = ATTRIBUTE_LIMITS.red[0])) : "missiles_yellow" ==
+                            attrName ? (shipUI.data.missiles_yellow++,
+                                shipUI.data.missiles_yellow > ATTRIBUTE_LIMITS.missiles_yellow[1] && (shipUI.data.missiles_yellow = ATTRIBUTE_LIMITS.missiles_yellow[0])) : "missiles_orange" == attrName ? (shipUI.data.missiles_orange++,
+                                    shipUI.data.missiles_orange > ATTRIBUTE_LIMITS.missiles_orange[1] && (shipUI.data.missiles_orange = ATTRIBUTE_LIMITS.missiles_orange[0])) : "missiles_red" == attrName ? (shipUI.data.missiles_red++,
+                                        shipUI.data.missiles_red > ATTRIBUTE_LIMITS.missiles_red[1] && (shipUI.data.missiles_red = ATTRIBUTE_LIMITS.missiles_red[0])) : "computers" == attrName ? (shipUI.data.computers++,
+                                            shipUI.data.computers > ATTRIBUTE_LIMITS.computers[1] && (shipUI.data.computers = ATTRIBUTE_LIMITS.computers[0])) : "shields" == attrName ? (shipUI.data.shields++,
+                                                shipUI.data.shields > ATTRIBUTE_LIMITS.shields[1] &&
+                                                (shipUI.data.shields = ATTRIBUTE_LIMITS.shields[0])) : "hull" == attrName ? (shipUI.data.hull++,
+                                                    shipUI.data.hull > ATTRIBUTE_LIMITS.hull[1] && (shipUI.data.hull = ATTRIBUTE_LIMITS.hull[0])) : "initiative" == attrName ? (shipUI.data.initiative++,
+                                                        shipUI.data.initiative > ATTRIBUTE_LIMITS.initiative[1] && (shipUI.data.initiative = ATTRIBUTE_LIMITS.initiative[0])) : "number" == attrName && (shipUI.data.number++,
+                                                            shipUI.data.number > ATTRIBUTE_LIMITS.number[1] && (shipUI.data.number = ATTRIBUTE_LIMITS.number[0]));
+        renderShip(shipUI);
+        hideResults(!0);
         return !1
     });
     $(document.body).on("click", "ul.toggles li", function () {
-        var a = $(this)
-            , b = a.parents("li.ship").data()
-            , a = a.data().name;
-        "splitter" == a ? b.D.splitter = !b.D.splitter : "missile_shield" == a ? b.D.missile_shield = !b.D.missile_shield :
-            "point_defense" == a && (b.D.L = !b.D.L);
-        I(b);
-        c(!0);
+        var element = $(this)
+            , shipUI = element.parents("li.ship").data()
+            , toggleName = element.data().name;
+        "splitter" == toggleName ? shipUI.data.splitter = !shipUI.data.splitter : "missile_shield" == toggleName ? shipUI.data.missile_shield = !shipUI.data.missile_shield :
+            "point_defense" == toggleName && (shipUI.data.pointDefense = !shipUI.data.pointDefense);
+        renderShip(shipUI);
+        hideResults(!0);
         return !1
     });
     $(document.body).on("click", "a.addship", function () {
-        var a = $(this).parents("div.ships").find("ul.ships")
-            , b = new F(V(E, "Generic ship"));
-        a.append(b.F.H);
-        b.F.H.hide().slideDown("swing");
-        q(b, !0);
-        c(!0);
-        L();
+        var shipList = $(this).parents("div.ships").find("ul.ships")
+            , newShip = new ShipUI(findPresetByName(presetManager, "Generic ship"));
+        shipList.append(newShip.elements.container);
+        newShip.elements.container.hide().slideDown("swing");
+        showPresetLightbox(newShip, !0);
+        hideResults(!0);
+        updateSimulateButton();
         return !1
     });
     $(document.body).on("click", "a.remove", function () {
-        var D = $(this).parents("li.ship");
-        a(D);
-        c(!0);
+        var shipElement = $(this).parents("li.ship");
+        removeShip(shipElement);
+        hideResults(!0);
         return !1
     });
     $(document.body).on("click", "a.templates",
         function () {
-            var a = $(this).parents("li.ship").data();
-            q(a, !1);
+            var shipUI = $(this).parents("li.ship").data();
+            showPresetLightbox(shipUI, !1);
             return !1
         });
     $(document.body).on("click", "a.save", function () {
-        var a = $(this).parents("li.ship").data()
-            , b = window.prompt("Name the preset", "Ship " + Math.ceil(1E3 * Math.random()));
-        if (!b)
+        var shipUI = $(this).parents("li.ship").data()
+            , presetName = window.prompt("Name the preset", "Ship " + Math.ceil(1E3 * Math.random()));
+        if (!presetName)
             return !1;
-        var c = E
-            , d = P(a);
-        d.name = b;
-        c.G.push(d);
-        S(c);
-        U(E);
-        a.D.name = b;
-        I(a);
-        q(void 0, !1);
+        var manager = presetManager
+            , shipData = getShipData(shipUI);
+        shipData.name = presetName;
+        manager.customPresets.push(shipData);
+        savePresetsToCookie(manager);
+        renderPresetList(presetManager);
+        shipUI.data.name = presetName;
+        renderShip(shipUI);
+        showPresetLightbox(void 0, !1);
         return !1
     });
     $(document.body).on("click", "a.simulate", function () {
@@ -429,36 +431,36 @@ $(function () {
         var defenseFleet = {
             ships: []
         };
-        $("div#shipsA ul.ships li.ship").each(function (defenseFleet, ship) {
-            attackFleet.ships.push(P($(ship).data()))
+        $("div#shipsA ul.ships li.ship").each(function (index, shipElement) {
+            attackFleet.ships.push(getShipData($(shipElement).data()))
         });
-        $("div#shipsD ul.ships li.ship").each(function (attackFleet, ship) {
-            defenseFleet.ships.push(P($(ship).data()))
+        $("div#shipsD ul.ships li.ship").each(function (index, shipElement) {
+            defenseFleet.ships.push(getShipData($(shipElement).data()))
         });
         _.size(defenseFleet.ships) && _.size(attackFleet.ships) && $(".lightbox#working").fadeIn("swing", function () {
-            W(function () {
-                var c = window.AnalyzeBattle(defenseFleet, attackFleet, 1000);
-                d(c);
+            deferExecution(function () {
+                var results = window.AnalyzeBattle(defenseFleet, attackFleet, 1000);
+                displayResults(results);
                 $(".lightbox#working").fadeOut("swing", function () { })
             })
         });
         return !1
     });
-    $(document.body).on("click", "div.presets li", function (a) {
-        var b = $(this).attr("rel");
-        M(b);
-        f();
-        a.stopPropagation()
+    $(document.body).on("click", "div.presets li", function (event) {
+        var presetName = $(this).attr("rel");
+        applyPreset(presetName);
+        hidePresetLightbox();
+        event.stopPropagation()
     });
-    $(document.body).on("click", "div.presets li div.remove", function (a) {
-        var b = $(this).parents("li")
-            , c = b.attr("rel");
-        T(E, c, b);
-        a.stopPropagation()
+    $(document.body).on("click", "div.presets li div.remove", function (event) {
+        var listItem = $(this).parents("li")
+            , presetName = listItem.attr("rel");
+        removePreset(presetManager, presetName, listItem);
+        event.stopPropagation()
     });
     $(document.body).on("click", ".lightbox#presets", function () {
-        M("none");
-        f()
+        applyPreset("none");
+        hidePresetLightbox()
     });
     $(document.body).on("click", "a.showdesc", function () {
         $("div.intro div.description").slideDown();
@@ -466,20 +468,20 @@ $(function () {
         return !1
     });
     $(document.body).on("click", "div.presets a.close", function () {
-        M("none");
-        f();
+        applyPreset("none");
+        hidePresetLightbox();
         return !1
     });
-    c();
+    hideResults();
     $(".lightbox").hide();
     $("a.showdesc").hide();
-    var N = $("div.ships#shipsD ul.ships")
-        , G = new F(V(E, "Ancient"));
-    N.append(G.F.H);
-    G.F.H.hide().slideDown("swing");
-    N = $("div.ships#shipsA ul.ships");
-    G = new F(V(E, "Cruiser"));
-    N.append(G.F.H);
-    G.F.H.hide().slideDown("swing");
-    L()
+    var defenderList = $("div.ships#shipsD ul.ships")
+        , defenderShip = new ShipUI(findPresetByName(presetManager, "Ancient"));
+    defenderList.append(defenderShip.elements.container);
+    defenderShip.elements.container.hide().slideDown("swing");
+    var attackerList = $("div.ships#shipsA ul.ships")
+        , attackerShip = new ShipUI(findPresetByName(presetManager, "Cruiser"));
+    attackerList.append(attackerShip.elements.container);
+    attackerShip.elements.container.hide().slideDown("swing");
+    updateSimulateButton()
 });
