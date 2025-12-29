@@ -24,8 +24,8 @@ var ATTRIBUTE_LIMITS = {
     hull: [0, 8],
     initiative: [0, 8],
     number: [1, 6]
-}
-    , DEFAULT_PRESETS = [{
+};
+var DEFAULT_PRESETS = [{
         yellow: 0,
         computers: 0,
         shields: 0,
@@ -336,10 +336,10 @@ $(function () {
         $(".lightbox#presets").fadeOut()
     }
     function applyPreset(presetName) {
-        var presetsDialog = $("div.presets")
-            , targetShip = presetsDialog.data().targetShip
-            , removeMode = presetsDialog.data().removeMode
-            , preset = findPresetByName(presetManager, presetName);
+        var presetsDialog = $("div.presets");
+        var targetShip = presetsDialog.data().targetShip;
+        var removeMode = presetsDialog.data().removeMode;
+        var preset = findPresetByName(presetManager, presetName);
         targetShip && presetName && preset ? (setShipData(targetShip, preset),
             renderShip(targetShip),
             hideResults()) : removeMode && removeShip(targetShip.elements.container)
@@ -354,9 +354,9 @@ $(function () {
     var presetManager = new PresetManager;
     renderPresetList(presetManager);
     $(document.body).on("click", "ul.specs li", function () {
-        var element = $(this)
-            , shipUI = element.parents("li.ship").data()
-            , attrName = element.data().name;
+        var element = $(this);
+        var shipUI = element.parents("li.ship").data();
+        var attrName = element.data().name;
         "yellow" == attrName ? (shipUI.data.yellow++,
             shipUI.data.yellow > ATTRIBUTE_LIMITS.yellow[1] && (shipUI.data.yellow = ATTRIBUTE_LIMITS.yellow[0])) : "orange" == attrName ? (shipUI.data.orange++,
                 shipUI.data.orange > ATTRIBUTE_LIMITS.orange[1] && (shipUI.data.orange = ATTRIBUTE_LIMITS.orange[0])) : "blue" == attrName ? (shipUI.data.blue++,
@@ -377,9 +377,9 @@ $(function () {
         return !1
     });
     $(document.body).on("click", "ul.toggles li", function () {
-        var element = $(this)
-            , shipUI = element.parents("li.ship").data()
-            , toggleName = element.data().name;
+        var element = $(this);
+        var shipUI = element.parents("li.ship").data();
+        var toggleName = element.data().name;
         "splitter" == toggleName ? shipUI.data.splitter = !shipUI.data.splitter : "missile_shield" == toggleName ? shipUI.data.missile_shield = !shipUI.data.missile_shield :
             "point_defense" == toggleName && (shipUI.data.pointDefense = !shipUI.data.pointDefense);
         renderShip(shipUI);
@@ -387,8 +387,8 @@ $(function () {
         return !1
     });
     $(document.body).on("click", "a.addship", function () {
-        var shipList = $(this).parents("div.ships").find("ul.ships")
-            , newShip = new ShipUI(findPresetByName(presetManager, "Generic ship"));
+        var shipList = $(this).parents("div.ships").find("ul.ships");
+        var newShip = new ShipUI(findPresetByName(presetManager, "Generic ship"));
         shipList.append(newShip.elements.container);
         newShip.elements.container.hide().slideDown("swing");
         showPresetLightbox(newShip, !0);
@@ -409,12 +409,12 @@ $(function () {
             return !1
         });
     $(document.body).on("click", "a.save", function () {
-        var shipUI = $(this).parents("li.ship").data()
-            , presetName = window.prompt("Name the preset", "Ship " + Math.ceil(1E3 * Math.random()));
+        var shipUI = $(this).parents("li.ship").data();
+        var presetName = window.prompt("Name the preset", "Ship " + Math.ceil(1E3 * Math.random()));
         if (!presetName)
             return !1;
-        var manager = presetManager
-            , shipData = getShipData(shipUI);
+        var manager = presetManager;
+        var shipData = getShipData(shipUI);
         shipData.name = presetName;
         manager.customPresets.push(shipData);
         savePresetsToCookie(manager);
@@ -453,8 +453,8 @@ $(function () {
         event.stopPropagation()
     });
     $(document.body).on("click", "div.presets li div.remove", function (event) {
-        var listItem = $(this).parents("li")
-            , presetName = listItem.attr("rel");
+        var listItem = $(this).parents("li");
+        var presetName = listItem.attr("rel");
         removePreset(presetManager, presetName, listItem);
         event.stopPropagation()
     });
@@ -475,12 +475,12 @@ $(function () {
     hideResults();
     $(".lightbox").hide();
     $("a.showdesc").hide();
-    var defenderList = $("div.ships#shipsD ul.ships")
-        , defenderShip = new ShipUI(findPresetByName(presetManager, "Ancient"));
+    var defenderList = $("div.ships#shipsD ul.ships");
+    var defenderShip = new ShipUI(findPresetByName(presetManager, "Ancient"));
     defenderList.append(defenderShip.elements.container);
     defenderShip.elements.container.hide().slideDown("swing");
-    var attackerList = $("div.ships#shipsA ul.ships")
-        , attackerShip = new ShipUI(findPresetByName(presetManager, "Cruiser"));
+    var attackerList = $("div.ships#shipsA ul.ships");
+    var attackerShip = new ShipUI(findPresetByName(presetManager, "Cruiser"));
     attackerList.append(attackerShip.elements.container);
     attackerShip.elements.container.hide().slideDown("swing");
     updateSimulateButton()

@@ -1,16 +1,3 @@
-
-
-
-
-
-/*
-     FILE ARCHIVED ON 10:40:14 Mar 16, 2016 AND RETRIEVED FROM THE
-     INTERNET ARCHIVE ON 3:53:33 May 26, 2016.
-     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
-
-     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
-     SECTION 108(a)(3)).
-*/
 function Dice(diceType, originShip, isMissile) {
     this.damageValue = "red" == diceType ? 4 : "blue" == diceType ? 3 : "orange" == diceType ? 2 : 1;
     this.type = diceType;
@@ -18,16 +5,18 @@ function Dice(diceType, originShip, isMissile) {
     this.isMissile = isMissile;
     this.value = Math.floor(6 * Math.random()) + 1
 }
+
 function checkHit(dice, target) {
     var shields = target.shields;
     dice.isMissile && target.missile_shield && (shields += 2);
     return (6 <= dice.value + dice.origin.computers - shields || 6 == dice.value) && 1 != dice.value
 }
+
 function DicePool(ships, missilePhase) {
     if (0 == _.size(ships))
         return [];
-    var shipCount = _.size(ships)
-        , firstShip = ships[0];
+    var shipCount = _.size(ships);
+    var firstShip = ships[0];
     this.dice = [];
     if (missilePhase) {
         for (i = 0; i < firstShip.missiles_yellow * shipCount * 2; i++)
@@ -48,6 +37,7 @@ function DicePool(ships, missilePhase) {
     }
     firstShip.splitter && !missilePhase && splitAntimatter(this)
 }
+
 function splitAntimatter(dicePool) {
     var redDice = _.filter(dicePool.dice, function (dice) {
         return "red" == dice.type
@@ -71,18 +61,18 @@ function distributeHits(dicePool, targets) {
     }
     var sortedDice = _.sortBy(dicePool.dice, function (dice) {
         return 100 * dice.value - dice.damageValue
-    })
-        , prioritizedTargets = _.sortBy(targets, function (target) {
-            return -target.targetPriority.indexOf(target.shipClass)
-        });
+    });
+    var prioritizedTargets = _.sortBy(targets, function (target) {
+        return -target.targetPriority.indexOf(target.shipClass)
+    });
     for (hasHittingDice(); hasHittingDice();) {
-        var currentDice = sortedDice.shift()
-            , primaryTarget = _.find(prioritizedTargets, function (target) {
-                return target.isAlive() && checkHit(currentDice, target)
-            })
-            , killableTarget = _.find(prioritizedTargets, function (target) {
-                return target.isAlive() && canBeKilled(target, _.union(sortedDice, [currentDice])) && checkHit(currentDice, target)
-            });
+        var currentDice = sortedDice.shift();
+        var primaryTarget = _.find(prioritizedTargets, function (target) {
+            return target.isAlive() && checkHit(currentDice, target)
+        });
+        var killableTarget = _.find(prioritizedTargets, function (target) {
+            return target.isAlive() && canBeKilled(target, _.union(sortedDice, [currentDice])) && checkHit(currentDice, target)
+        });
         primaryTarget && (killableTarget && (primaryTarget = killableTarget),
             applyDamage(primaryTarget, currentDice.damageValue))
     }
@@ -179,19 +169,19 @@ Initiative.prototype.status = function () {
         defenderAlive: 0 < _.size(getLivingCombatantsBySide(this, "D")),
         totalAlive: _.size(getLivingCombatantsBySide(this)),
         shipSurvival: {}
-    }
-        , hasWeapons = _.find(getLivingCombatantsBySide(this), function (ship) {
-            return 0 < ship.yellow || 0 < ship.orange || 0 < ship.red
-        });
+    };
+    var hasWeapons = _.find(getLivingCombatantsBySide(this), function (ship) {
+        return 0 < ship.yellow || 0 < ship.orange || 0 < ship.red
+    });
     status.battleOver = !status.attackerAlive || !status.defenderAlive || !hasWeapons;
     status.battleOver && (status.winner = status.defenderAlive ? "D" : "A");
     if (status.battleOver) {
         var livingShips = _.countBy(getLivingCombatantsBySide(this), function (ship) {
             return ship.side == status.winner ? ship.name : ""
-        })
-            , totalShips = _.countBy(getAllCombatants(this), function (ship) {
-                return ship.side == status.winner ? ship.name : ""
-            });
+        });
+        var totalShips = _.countBy(getAllCombatants(this), function (ship) {
+            return ship.side == status.winner ? ship.name : ""
+        });
         _.each(livingShips, function (liveCount, shipName) {
             var total = totalShips[shipName];
             total && 0 != total || (total = 1);
@@ -205,8 +195,8 @@ function resolveBattle(defenseFleet, attackFleet) {
     var result = {
         winner: "",
         shipSurvival: {}
-    }
-        , fireOrder = new Initiative(defenseFleet, attackFleet);
+    };
+    var fireOrder = new Initiative(defenseFleet, attackFleet);
     combatRound(fireOrder, !0);
     for (var battleStatus = fireOrder.status(); !battleStatus.battleOver;)
         combatRound(fireOrder, !1),
@@ -267,4 +257,3 @@ function calculate(defenseFleet, attackFleet, iterations) {
 window.AnalyzeBattle = function (defenseFleet, attackFleet, iterations) {
     return calculate(defenseFleet, attackFleet, iterations)
 }
-    ;
