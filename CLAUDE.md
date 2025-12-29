@@ -37,7 +37,6 @@ Then navigate to `http://localhost:8000`
 - `index.html` - Single-page application with embedded HTML structure
 - `js/battlestats-compiled.js` - Combat simulation engine (~270 lines)
 - `js/ui-compiled.js` - UI logic and ship management (~494 lines)
-- `js/analytics.js` - Google Analytics wrapper (~1600 lines)
 - `css/style.css` - Main styles
 - `css/analyzer.css` - Combat analyzer specific styles
 - `images/` - Game assets (ship icons, backgrounds, app icons)
