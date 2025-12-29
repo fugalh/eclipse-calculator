@@ -1,6 +1,6 @@
 # Eclipse Combat Calculator
 
-A web application for calculating combat outcomes in the board game *Eclipse: New Dawn for the Galaxy*.
+A web application for calculating combat outcomes in the board game *Eclipse: Second Dawn for the Galaxy*.
 
 ## Provenance
 
@@ -14,7 +14,7 @@ The current version was retrieved from the Wayback Machine archive on December 2
 
 ## What This App Does
 
-The Eclipse Combat Calculator allows *Eclipse: New Dawn for the Galaxy* players to:
+The Eclipse Combat Calculator allows *Eclipse: Second Dawn for the Galaxy* players to:
 
 - Calculate victory chances in ship battles
 - Simulate combat between attacker and defender forces
@@ -44,6 +44,29 @@ The Eclipse Combat Calculator allows *Eclipse: New Dawn for the Galaxy* players 
 - Fully functional local copy with no external dependencies
 - All assets and libraries stored locally
 - No functional changes to the application logic
+
+### Second Dawn Compatibility Update (2025-12-29)
+
+**Updated combat mechanics for Second Dawn rules:**
+- Changed missiles from 2 dice per module to 1 die per missile (matching cannon behavior)
+- Added blue missiles support (all 4 colors now available: yellow, orange, blue, red)
+- Downloaded `missiles_blue.png` icon from S3
+- Updated missile damage values to match cannons (yellow=1, orange=2, blue=3, red=4)
+
+**UI improvements:**
+- Reorganized ship attributes into three logical rows:
+  - Row 1: Initiative, Hull, Computers, Shields, Number
+  - Row 2: Missiles (all 4 colors)
+  - Row 3: Cannons (all 4 colors)
+- Updated legend to be less redundant and reflect new missile mechanics
+- Added CSS styling for blue missiles
+
+**Files modified:**
+- `js/battlestats.js` - Core combat simulation engine
+- `js/ui.js` - Ship configuration UI
+- `css/analyzer.css` - Styling for missile icons and layout
+- `index.html` - Updated legend and game reference
+- `images/icons/missiles_blue.png` - Added icon
 
 ## File Structure
 

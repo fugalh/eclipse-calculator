@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a web-based combat calculator for the board game *Eclipse: New Dawn for the Galaxy*. The application runs entirely in the browser with no build step required. It simulates ship battles using Monte Carlo methods (1000 iterations per calculation) to compute victory probabilities and ship survival rates.
+This is a web-based combat calculator for the board game *Eclipse: Second Dawn for the Galaxy*. The application runs entirely in the browser with no build step required. It simulates ship battles using Monte Carlo methods (1000 iterations per calculation) to compute victory probabilities and ship survival rates.
 
 **Key functionality:**
 - Configure attacker and defender fleets with customizable ship attributes
@@ -55,7 +55,7 @@ The simulation engine implements Eclipse board game combat rules:
 
 **Ship Model (combatant)**
 Each ship has attributes:
-- Weapons: `yellow`, `orange`, `blue`, `red` (dice counts), `missiles_yellow/orange/red` (missile counts)
+- Weapons: `yellow`, `orange`, `blue`, `red` (cannon dice counts), `missiles_yellow/orange/blue/red` (missile dice counts)
 - Defense: `shields`, `hull` (HP = hull + 1), `initiative`
 - Modifiers: `computers` (hit bonus), `splitter` (converts red dice to 4 yellow), `missile_shield` (+2 shields vs missiles)
 
@@ -74,7 +74,8 @@ The AI distributes hits using `targetPriority`: "Orbital Ancient GC Interceptor 
 - Starbase ranks higher than Dreadnought despite being weaker
 
 **Dice Mechanics**
-- Missiles fire only in first round and roll 2 dice each (e.g., 3 ion missiles = 6 yellow dice)
+- Missiles fire only in first round and roll 1 die each (e.g., 3 ion missiles = 3 yellow dice)
+- Missile colors indicate damage: yellow=1, orange=2, blue=3, red=4 (same as cannons)
 - Natural 6 always hits, natural 1 always misses
 - Computer modules add to hit roll: `roll + computers - shields >= 6`
 - Antimatter Splitter converts each red die roll into 4 yellow dice with same value
@@ -100,11 +101,17 @@ All dependencies are stored locally in `js/vendor/`:
 
 This is a preserved copy from eclipse-calculator.com (2014), retrieved from Wayback Machine/S3 in 2025. See README.md for detailed provenance.
 
-Changes made:
+**Initial Setup (2025-12-29):**
 - Converted external image URLs to local paths
 - Removed Wayback Machine artifacts
 - Downloaded dependencies (jQuery, jquery-cookie, Underscore.js) to `js/vendor/`
 - Updated script tags to reference local files instead of CDNs
 - Added git repository
 
-No functional changes to combat logic or UI behavior.
+**Second Dawn Compatibility (2025-12-29):**
+- Updated missile mechanics: 1 die per missile (was 2 dice in original New Dawn version)
+- Added blue missiles support (all 4 colors: yellow, orange, blue, red)
+- Updated game reference from "New Dawn" to "Second Dawn"
+- Reorganized UI into three rows: (1) Initiative/Hull/Computers/Shields/Number, (2) Missiles, (3) Cannons
+- Simplified legend to reduce redundancy
+- Added `missiles_blue` icon and CSS styling

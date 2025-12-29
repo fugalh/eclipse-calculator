@@ -24,11 +24,13 @@ function DicePool(ships, missilePhase) {
   var firstShip = ships[0];
   this.dice = [];
   if (missilePhase) {
-    for (i = 0; i < firstShip.missiles_yellow * shipCount * 2; i++)
+    for (i = 0; i < firstShip.missiles_yellow * shipCount; i++)
       this.dice.push(new Dice("yellow", firstShip, !0));
-    for (i = 0; i < firstShip.missiles_orange * shipCount * 2; i++)
+    for (i = 0; i < firstShip.missiles_orange * shipCount; i++)
       this.dice.push(new Dice("orange", firstShip, !0));
-    for (i = 0; i < firstShip.missiles_red * shipCount * 2; i++)
+    for (i = 0; i < firstShip.missiles_blue * shipCount; i++)
+      this.dice.push(new Dice("blue", firstShip, !0));
+    for (i = 0; i < firstShip.missiles_red * shipCount; i++)
       this.dice.push(new Dice("red", firstShip, !0))
   } else {
     for (var i = 0; i < firstShip.yellow * shipCount; i++)
@@ -98,6 +100,7 @@ function Combatant(config) {
   this.red = config.red || 0;
   this.missiles_yellow = config.missiles_yellow || 0;
   this.missiles_orange = config.missiles_orange || 0;
+  this.missiles_blue = config.missiles_blue || 0;
   this.missiles_red = config.missiles_red || 0;
   this.shields = config.shields || 0;
   this.computers = config.computers || 0;

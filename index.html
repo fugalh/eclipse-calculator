@@ -29,7 +29,8 @@
       </h1>
       <div class="description">
         <h2>About</h2>
-        <p>This web app is designed to allow <em>Eclipse: New Dawn for the Galaxy</em> players to calculate chances of
+        <p>This web app is designed to allow <em>Eclipse: Second Dawn for the Galaxy</em> players to calculate chances
+          of
           victory in ship battles. It is
           optimized for use on a smartphone, so that you always have it at hand,
           even during a match. Feel free to add the app to your phone's home
@@ -43,7 +44,8 @@
         <p>You can save often used ship configurations (e.g. "Orion Cruiser", or "Upgraded Dreadnought") in
           <em>Presets</em> to quickly access them when adding new ships. They are saved for later
           use, so you'll have them next time you open the app to simulate another
-          battle.</p>
+          battle.
+        </p>
         <p>Hit distribution. The AI is using a simple rule to
           distribute hits: if the entire roll can kill at least one ship, it will
           hit (and kill) it first. Otherwise hits go to the highest class ship.
@@ -54,46 +56,22 @@
           <tbody>
             <tr>
               <td class="icon">
-                <div class="yellow">
-                  <div class="icon"></div>
-                </div>
-              </td>
-              <td class="desc">Total
-                number of yellow dice the ship rolls because of ion cannons. Ion turret
-                adds two yellow dice. Ion missiles are not counted here.</td>
-            </tr>
-            <tr>
-              <td class="icon">
-                <div class="orange">
-                  <div class="icon"></div>
-                </div>
-              </td>
-              <td class="desc">Same for orange dice (plasma cannons).</td>
-            </tr>
-            <tr>
-              <td class="icon">
-                <div class="red">
-                  <div class="icon"></div>
-                </div>
-              </td>
-              <td class="desc">Same for red dice (antimatter cannons).</td>
-            </tr>
-            <tr>
-              <td class="icon">
                 <div class="missiles_yellow">
                   <div class="icon"></div>
                 </div>
               </td>
-              <td class="desc">Number of ion missiles the ship has equipped, <b>NOT</b> the number of yellow dice.
-                Example: if you have 3&nbsp;ion missile modules equipped, enter&nbsp;3.</td>
+              <td class="desc">Missiles: Number of dice rolled from equipped missile modules (fire once in first round
+                only).
+                Colors indicate damage value (yellow=1, orange=2, blue=3, red=4).</td>
             </tr>
             <tr>
               <td class="icon">
-                <div class="missiles_orange">
+                <div class="yellow">
                   <div class="icon"></div>
                 </div>
               </td>
-              <td class="desc">Same for plasma missiles.</td>
+              <td class="desc">Cannons: Number of dice rolled from equipped cannon modules. Colors indicate damage value
+                (yellow=1, orange=2, blue=3, red=4). For turrets add multiple dice.</td>
             </tr>
           </tbody>
         </table>
@@ -200,7 +178,7 @@
       </ul>
     </div>
     <div class="copy">
-      <copyright>© 2014 Eclipse-Calculator.com</copyright>
+      <copyright>© 2014 Eclipse-Calculator.com<br />© 2025 Hans Fugal</copyright>
     </div>
   </div>
   <div style="display: none;" id="presets" class="lightbox">

@@ -5,6 +5,7 @@ var ATTRIBUTE_LIMITS = {
   red : [ 0, 6 ],
   missiles_yellow : [ 0, 6 ],
   missiles_orange : [ 0, 6 ],
+  missiles_blue : [ 0, 6 ],
   missiles_red : [ 0, 6 ],
   computers : [ 0, 8 ],
   shields : [ 0, 8 ],
@@ -119,6 +120,7 @@ function setShipData(shipUI, config) {
   shipUI.data.red = config.red || 0;
   shipUI.data.missiles_yellow = config.missiles_yellow || 0;
   shipUI.data.missiles_orange = config.missiles_orange || 0;
+  shipUI.data.missiles_blue = config.missiles_blue || 0;
   shipUI.data.missiles_red = config.missiles_red || 0;
   shipUI.data.computers = config.computers || 0;
   shipUI.data.shields = config.shields || 0;
@@ -153,7 +155,7 @@ function createShipElements(shipUI) {
     shipUI.elements.specs.list = $("<ul></ul>").addClass("specs");
     shipUI.elements.container.append(shipUI.elements.specs.list);
     _.each(
-        "yellow orange blue red missiles_yellow missiles_orange number computers shields hull initiative"
+        "initiative hull computers shields number missiles_yellow missiles_orange missiles_blue missiles_red yellow orange blue red"
             .split(" "),
         function(attrName) {
           var specsObj = shipUI.elements.specs, element;
@@ -212,6 +214,7 @@ function renderShip(shipUI) {
   updateSpecDisplay(shipUI, "red", shipUI.data.red);
   updateSpecDisplay(shipUI, "missiles_yellow", shipUI.data.missiles_yellow);
   updateSpecDisplay(shipUI, "missiles_orange", shipUI.data.missiles_orange);
+  updateSpecDisplay(shipUI, "missiles_blue", shipUI.data.missiles_blue);
   updateSpecDisplay(shipUI, "missiles_red", shipUI.data.missiles_red);
   updateSpecDisplay(shipUI, "computers", shipUI.data.computers);
   updateSpecDisplay(shipUI, "shields", shipUI.data.shields);
@@ -231,6 +234,7 @@ function getShipData(shipUI) {
         blue: shipUI.data.blue, red: shipUI.data.red,
         missiles_yellow: shipUI.data.missiles_yellow,
         missiles_orange: shipUI.data.missiles_orange,
+        missiles_blue: shipUI.data.missiles_blue,
         missiles_red: shipUI.data.missiles_red,
         computers: shipUI.data.computers, shields: shipUI.data.shields,
         initiative: shipUI.data.initiative, splitter: shipUI.data.splitter,
@@ -421,6 +425,10 @@ $(function() {
            shipUI.data.missiles_orange > ATTRIBUTE_LIMITS.missiles_orange[1] &&
                (shipUI.data.missiles_orange =
                     ATTRIBUTE_LIMITS.missiles_orange[0]))
+    : "missiles_blue" == attrName
+        ? (shipUI.data.missiles_blue++,
+           shipUI.data.missiles_blue > ATTRIBUTE_LIMITS.missiles_blue[1] &&
+               (shipUI.data.missiles_blue = ATTRIBUTE_LIMITS.missiles_blue[0]))
     : "missiles_red" == attrName
         ? (shipUI.data.missiles_red++,
            shipUI.data.missiles_red > ATTRIBUTE_LIMITS.missiles_red[1] &&
