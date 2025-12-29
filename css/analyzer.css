@@ -2069,7 +2069,7 @@ div.ships ul.ships li.ship ul.specs li.missiles_blue {
   /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#4d4dff', endColorstr='#0000ff', GradientType=0);
   /* IE6-9 */
-  border-color: #0000a0;
+  border-color: #0000b3;
 }
 
 div.ships ul.ships li.ship ul.specs li.missiles_blue .icon {
@@ -2079,11 +2079,34 @@ div.ships ul.ships li.ship ul.specs li.missiles_blue .icon {
 }
 
 div.ships ul.ships li.ship ul.specs li.missiles_red {
+  border-style: solid;
+  border-width: 2px;
+  -webkit-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.25);
+  -moz-box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.25);
+  box-shadow: 0px 2px 7px 0px rgba(0, 0, 0, 0.25);
+  background: #ff3d11;
+  /* Old browsers */
+  background: -moz-linear-gradient(top, #ff3d11 0%, #df210d 100%);
+  /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ff3d11), color-stop(100%, #df210d));
+  /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #ff3d11 0%, #df210d 100%);
+  /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #ff3d11 0%, #df210d 100%);
+  /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #ff3d11 0%, #df210d 100%);
+  /* IE10+ */
+  background: linear-gradient(to bottom, #ff3d11 0%, #df210d 100%);
+  /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff3d11', endColorstr='#df210d', GradientType=0);
+  /* IE6-9 */
+  border-color: #a21f01;
+}
+
+div.ships ul.ships li.ship ul.specs li.missiles_red .icon {
   background-image: url('../images/icons/missiles_red.png');
   background-size: cover;
   background-repeat: no-repeat;
-  background-color: #ff3030;
-  border-color: #a00000;
 }
 
 div.ships ul.ships li.ship ul.specs .largertext {
