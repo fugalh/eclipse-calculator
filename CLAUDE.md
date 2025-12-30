@@ -4,114 +4,97 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a web-based combat calculator for the board game *Eclipse: Second Dawn for the Galaxy*. The application runs entirely in the browser with no build step required. It simulates ship battles using Monte Carlo methods (1000 iterations per calculation) to compute victory probabilities and ship survival rates.
+A web-based combat calculator for the board game _Eclipse: Second Dawn for the Galaxy_. Built with Next.js and TypeScript, it simulates ship battles using Monte Carlo methods (1000 iterations) to compute victory probabilities and ship survival rates.
 
-**Key functionality:**
-- Configure attacker and defender fleets with customizable ship attributes
-- Calculate victory chances through combat simulation
-- Display survival probabilities for ships in the winning fleet
-- Save/load ship presets using browser cookies
-- Mobile-optimized progressive web app
-
-## Running the Application
+## Commands
 
 ```bash
-# No build step required - just open in a browser
-open index.html
+bun dev              # Start development server (localhost:3000)
+bun check            # Run ESLint + TypeScript type checking
+bun format           # Prettier formatting
+bun build            # Production build
+npx convex dev       # Convex database development (Phase 4+)
 ```
-
-For local development with a server:
-```bash
-# Python 3
-python3 -m http.server 8000
-
-# Python 2
-python -m SimpleHTTPServer 8000
-```
-
-Then navigate to `http://localhost:8000`
 
 ## Architecture
 
-### File Structure
-- `index.html` - Single-page application with embedded HTML structure
-- `js/battlestats.js` - Combat simulation engine (~270 lines)
-- `js/ui.js` - UI logic and ship management (~494 lines)
-- `js/vendor/` - Third-party libraries (jQuery, jquery-cookie, Underscore.js)
-- `css/style.css` - Main styles
-- `css/analyzer.css` - Combat analyzer specific styles
-- `images/` - Game assets (ship icons, backgrounds, app icons)
+### Combat Simulation Engine (`src/lib/combat/simulation.ts`)
 
-### Core Components
+The core Monte Carlo simulator implements Eclipse combat rules:
 
-**Combat Simulation (battlestats.js)**
+- **Dice System**: 4 colors with damage values (yellow=1, orange=2, blue=3, red=4)
+- **Hit Detection**: `roll + computers - shields >= 6` (natural 6 always hits, natural 1 always misses)
+- **Initiative Order**: Ships fire highest initiative first; defender gets +0.1 tie-breaker bonus
+- **Missile Phase**: Only fires first combat round (1 die per missile)
+- **Antimatter Splitter**: Converts each red die to 4 yellow dice with same roll value
+- **Hit Distribution**: Prioritizes killing ships; otherwise targets by priority order:
+  `Orbital > Ancient > GC > Interceptor > Starbase > Cruiser > Dreadnought > Deathmoon`
 
-The simulation engine implements Eclipse board game combat rules:
-1. **Dice Rolling**: `g()` function creates dice objects with damage values (yellow=1, orange=2, blue=3, red=4)
-2. **Hit Detection**: `h()` checks if dice hit based on: `value + computer - shields >= 6` or natural 6
-3. **Combat Rounds**: `combatRound()` resolves missile phase (first round) then regular combat
-4. **Hit Distribution**: `n()` prioritizes killing ships if possible, otherwise targets highest class ships
-5. **Victory Calculation**: `calculate()` runs 1000 iterations and aggregates results
+### Ship Model (`ShipConfig`)
 
-**Ship Model (combatant)**
-Each ship has attributes:
-- Weapons: `yellow`, `orange`, `blue`, `red` (cannon dice counts), `missiles_yellow/orange/blue/red` (missile dice counts)
-- Defense: `shields`, `hull` (HP = hull + 1), `initiative`
-- Modifiers: `computers` (hit bonus), `splitter` (converts red dice to 4 yellow), `missile_shield` (+2 shields vs missiles)
+```typescript
+{
+  name: string;
+  shipClass: string;           // Cruiser, Dreadnought, etc.
+  number: number;              // Count (1-6)
+  yellow, orange, blue, red: number;           // Cannon dice (0-6)
+  missiles_yellow/orange/blue/red: number;     // Missile dice (0-6)
+  hull: number;                // HP = hull + 1
+  shields: number;             // Defense (0-8)
+  missile_shield: boolean;     // +2 shields vs missiles
+  computers: number;           // Hit bonus (0-8)
+  splitter: boolean;           // Antimatter splitter
+  initiative: number;          // Combat order (0-8)
+}
+```
 
-**UI Layer (ui.js)**
-- `F()` - Ship object with data model (`D`) and UI elements (`F`)
-- `Q()` - Preset manager loading from cookies
-- Ship configuration through tap/click to cycle values (0 to max)
-- Event delegation for all user interactions
+### Component Structure
 
-### Important Implementation Details
+```
+src/
+├── app/
+│   ├── layout.tsx              # Root layout with PWA config
+│   ├── page.tsx                # Combat calculator (client component)
+│   └── globals.css             # Tailwind + theme variables
+├── components/
+│   ├── calculator/             # Calculator UI
+│   │   ├── ship-configurator.tsx   # Ship attribute editor (tap-to-cycle)
+│   │   ├── fleet-builder.tsx       # Fleet management
+│   │   ├── battle-results.tsx      # Results display
+│   │   └── preset-manager.tsx      # Preset selection dialog
+│   └── ui/                     # shadcn/ui components
+└── lib/
+    ├── combat/simulation.ts    # Combat engine
+    ├── types/                  # Centralized TypeScript types
+    └── presets.ts              # localStorage preset storage
+```
 
-**Hit Priority Algorithm**
-The AI distributes hits using `targetPriority`: "Orbital Ancient GC Interceptor Starbase Cruiser Dreadnought Deathmoon"
-- If total damage can kill a ship, it concentrates fire to eliminate it
-- Otherwise hits go to highest priority (leftmost) target
-- Starbase ranks higher than Dreadnought despite being weaker
+### Key Patterns
 
-**Dice Mechanics**
-- Missiles fire only in first round and roll 1 die each (e.g., 3 ion missiles = 3 yellow dice)
-- Missile colors indicate damage: yellow=1, orange=2, blue=3, red=4 (same as cannons)
-- Natural 6 always hits, natural 1 always misses
-- Computer modules add to hit roll: `roll + computers - shields >= 6`
-- Antimatter Splitter converts each red die roll into 4 yellow dice with same value
+- **Types First**: All types in `src/lib/types/` with barrel export from `index.ts`
+- **Client Components**: Interactive components use `"use client"` directive
+- **Tap-to-Cycle UI**: Buttons cycle values 0→max for mobile optimization
+- **React Compiler**: Enabled in `next.config.ts` for automatic memoization
+- **Path Alias**: `@/*` maps to `./src/*`
 
-**Initiative System**
-- Ships fire in initiative order (higher = earlier)
-- Defender gets +0.1 initiative bonus for tie-breaking
-- All ships in a group fire simultaneously before next initiative group
+## Convex Integration
 
-**Data Persistence**
-Presets stored in browser cookies as JSON (`$.cookie("presets")`). Default presets hardcoded in `m` array (ui.js:28-109).
+For reactive Convex in future phases:
 
-## Dependencies
+- Server actions: `import { fetchMutation, fetchQuery } from "convex/nextjs"`
+- Client components: `import { useMutation, useQuery } from "convex/react"`
 
-All dependencies are stored locally in `js/vendor/`:
-- jQuery 2.1.0 - DOM manipulation and utilities
-- jquery-cookie 1.4.0 - Cookie management for preset storage
-- Underscore.js 1.5.2 - Functional programming utilities
+## Workflow Instructions
 
-**Note**: Application code (battlestats.js, ui.js) is minified/compiled from original source. Variable names are obfuscated (single letters like `a`, `b`, `e`). Original source files are not available.
+- After completing a plan, use an agent to find and address any issues with `bun check`; when that agent completes successfully, run `bun format`
+- When a plan is completed, copy the markdown file to `./plans/` and append the completion summary to the local `{plan}.md` file
 
-## Modifications from Original
+## Roadmap
 
-This is a preserved copy from eclipse-calculator.com (2014), retrieved from Wayback Machine/S3 in 2025. See README.md for detailed provenance.
+- **Phase 1**: NextJS Foundation ✅ (Complete)
+- **Phase 2**: Quick Reference Guides (`/reference/*` pages)
+- **Phase 3**: Rule Search (Server Actions + ECLIPSE_RULES.md parsing)
+- **Phase 4**: Gameplay Photo Upload (uploadthing + Convex)
+- **Phase 5**: Polish & Integration
 
-**Initial Setup (2025-12-29):**
-- Converted external image URLs to local paths
-- Removed Wayback Machine artifacts
-- Downloaded dependencies (jQuery, jquery-cookie, Underscore.js) to `js/vendor/`
-- Updated script tags to reference local files instead of CDNs
-- Added git repository
-
-**Second Dawn Compatibility (2025-12-29):**
-- Updated missile mechanics: 1 die per missile (was 2 dice in original New Dawn version)
-- Added blue missiles support (all 4 colors: yellow, orange, blue, red)
-- Updated game reference from "New Dawn" to "Second Dawn"
-- Reorganized UI into three rows: (1) Initiative/Hull/Computers/Shields/Number, (2) Missiles, (3) Cannons
-- Simplified legend to reduce redundancy
-- Added `missiles_blue` icon and CSS styling
+See `ROADMAP.md` for full details. Game rules reference in `rules/ECLIPSE_RULES.md`.

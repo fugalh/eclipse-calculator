@@ -12,6 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Ignore uploadthing source repo
+    "uploadthing/**",
+    // Ignore Convex generated files
+    "convex/_generated/**",
+    // Ignore legacy JavaScript files from original calculator
+    "js/**",
   ]),
 ]);
 

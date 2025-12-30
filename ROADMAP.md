@@ -5,6 +5,7 @@
 Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app into a NextJS application with expanded features for game reference and photo sharing.
 
 **Architecture Principles:**
+
 - Server renders mostly static pages
 - All calculations remain client-side (combat simulation)
 - Server actions for rule search and photo upload handling
@@ -17,6 +18,7 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
 **Goal:** Migrate existing functionality to NextJS while preserving all current features.
 
 ### Tasks
+
 1. Set up NextJS project with App Router
 2. Convert combat calculator to React components:
    - `ShipConfigurator` - Ship attribute editor (tap-to-cycle interface)
@@ -28,6 +30,7 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
 5. Preserve PWA capabilities (manifest, icons)
 
 ### Key Files to Migrate
+
 - `js/battlestats.js` → `lib/combat/simulation.ts`
 - `js/ui.js` → React components in `components/calculator/`
 - `css/analyzer.css` → Tailwind + CSS modules
@@ -40,15 +43,16 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
 
 ### Pages to Create
 
-| Page | Content Source | Description |
-|------|---------------|-------------|
-| `/reference/techs` | Techs.html | Tech tree with costs, categories, effects |
-| `/reference/ship-parts` | ECLIPSE_RULES.md | Ship part stats (weapons, shields, drives, etc.) |
-| `/reference/species` | ECLIPSE_RULES.md | Species abilities and starting conditions |
-| `/reference/combat` | ECLIPSE_RULES.md | Combat rules quick reference |
-| `/reference/differences` | Differences.html | New Dawn vs Second Dawn changes |
+| Page                     | Content Source   | Description                                      |
+| ------------------------ | ---------------- | ------------------------------------------------ |
+| `/reference/techs`       | Techs.html       | Tech tree with costs, categories, effects        |
+| `/reference/ship-parts`  | ECLIPSE_RULES.md | Ship part stats (weapons, shields, drives, etc.) |
+| `/reference/species`     | ECLIPSE_RULES.md | Species abilities and starting conditions        |
+| `/reference/combat`      | ECLIPSE_RULES.md | Combat rules quick reference                     |
+| `/reference/differences` | Differences.html | New Dawn vs Second Dawn changes                  |
 
 ### Features
+
 - Color-coded tech categories (Military, Grid, Nano, Rare)
 - Symbolic notation for ship parts (as in Techs.html)
 - Mobile-optimized tables
@@ -61,6 +65,7 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
 **Goal:** Server-powered search returning relevant rule excerpts with context.
 
 ### Implementation
+
 - **Server Actions** for search queries
 - Parse `ECLIPSE_RULES.md` into indexed sections
 - Return matching sections with surrounding context (not full rulebook)
@@ -69,6 +74,7 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
   - Category filters (Combat, Movement, Technologies, Species, etc.)
 
 ### Search Result Format
+
 ```
 {heading}
 {matched text with highlights}
@@ -76,6 +82,7 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
 ```
 
 ### Categories to Index
+
 - Game Concepts (Resources, Influence, Control)
 - Actions (Explore, Research, Upgrade, Build, Move, Influence)
 - Combat (Initiative, Missiles, Engagement, Retreat, Reputation)
@@ -90,22 +97,26 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
 **Goal:** Upload and share photos of current game state (especially tech availability).
 
 ### Primary Use Cases
+
 1. **Personal tracking** - Save snapshots of game state for analysis
 2. **Share with friends** - Generate shareable links for current game
 
 ### Implementation with uploadthing
+
 - Image upload component for tech tray photos
 - Generate shareable links
 - Optional: Add annotations/notes to photos
 - Storage: uploadthing handles hosting
 
 ### Suggested Flow
+
 1. User takes photo of tech tray during game
 2. Uploads via app
 3. Gets shareable link to send to other players
 4. Optional: Add game metadata (round number, player count)
 
 ### Future Consideration
+
 - OCR to auto-detect available techs from photo (stretch goal)
 
 ---
@@ -115,6 +126,7 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
 **Goal:** Unified navigation and enhanced UX.
 
 ### Tasks
+
 - Global navigation between Calculator, Reference, Search, Photos
 - Consistent styling across all sections
 - Dark mode support
@@ -125,15 +137,15 @@ Transform the Eclipse: Second Dawn combat calculator from a static HTML/JS app i
 
 ## Technical Stack
 
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js (App Router) |
-| Styling | Tailwind CSS and shadcn/ui |
-| State | React useState/useReducer (no external state library needed) |
-| Gameplay | Convex React library for sharing gameplay photos as unified game dashboard |
-| Persistence | localStorage (presets), uploadthing (photos) |
-| Search | Server Actions with parsed markdown index |
-| Deployment | Vercel (recommended for uploadthing integration) |
+| Layer       | Technology                                                                 |
+| ----------- | -------------------------------------------------------------------------- |
+| Framework   | Next.js (App Router)                                                       |
+| Styling     | Tailwind CSS and shadcn/ui                                                 |
+| State       | React useState/useReducer (no external state library needed)               |
+| Gameplay    | Convex React library for sharing gameplay photos as unified game dashboard |
+| Persistence | localStorage (presets), uploadthing (photos)                               |
+| Search      | Server Actions with parsed markdown index                                  |
+| Deployment  | Vercel (recommended for uploadthing integration)                           |
 
 ---
 
