@@ -268,7 +268,7 @@ function IOSShareSheetInitialMockup() {
       {/* App info header */}
       <div className="mx-3 mb-3 flex items-center gap-3 rounded-xl bg-zinc-800/50 p-3">
         <Image
-          src="/icons/ios.png"
+          src="/icons/android.png"
           alt="App icon"
           width={48}
           height={48}
@@ -414,7 +414,7 @@ function IOSAddScreenMockup() {
         <div className="flex items-start gap-3">
           {/* App icon */}
           <Image
-            src="/icons/ios.png"
+            src="/icons/android.png"
             alt="App icon"
             width={56}
             height={56}
