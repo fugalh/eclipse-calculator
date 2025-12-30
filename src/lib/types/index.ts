@@ -21,6 +21,9 @@ export * from "./reference";
 // Search system types (Phase 3)
 export * from "./search";
 
+// Filter system types (Phase 3)
+export * from "./filters";
+
 // UI/navigation types (Phase 5)
 export * from "./ui";
 

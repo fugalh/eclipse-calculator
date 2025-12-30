@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
+import { GlobalNav } from "@/components/layout/global-nav";
 import "./globals.css";
 
 const notoSans = Noto_Sans({ variable: "--font-sans", subsets: ["latin"] });
@@ -47,6 +48,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <GlobalNav />
         {children}
       </body>
     </html>

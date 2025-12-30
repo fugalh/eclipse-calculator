@@ -162,20 +162,21 @@ export default function CalculatorPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border sticky top-0 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-40">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-6 space-y-6">
+        {/* Page Header with Settings */}
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-lg font-semibold">Eclipse Combat Calculator</h1>
-            <p className="text-xs text-muted-foreground">
-              Second Dawn for the Galaxy
+            <h1 className="text-xl font-bold">Combat Calculator</h1>
+            <p className="text-sm text-muted-foreground">
+              Simulate ship battles and calculate victory probabilities
             </p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Settings className="size-4" />
-                <span className="sr-only">Settings</span>
+              <Button variant="outline" size="sm">
+                <Settings className="mr-2 size-4" />
+                Settings
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -206,10 +207,6 @@ export default function CalculatorPage() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-      </header>
-
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Fleet Builders */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <FleetBuilder
