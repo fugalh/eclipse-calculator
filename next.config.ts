@@ -11,6 +11,14 @@ const withSerwist = withSerwistInit({
 const nextConfig: NextConfig = {
   reactCompiler: true,
   turbopack: {},
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.convex.cloud",
+      },
+    ],
+  },
 };
 
 export default withSerwist(nextConfig);
