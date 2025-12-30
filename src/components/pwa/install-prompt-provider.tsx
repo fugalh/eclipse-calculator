@@ -23,6 +23,8 @@ interface InstallPromptContextValue {
   showCard: boolean;
   platform: PWAInstallState["platform"];
   canPromptNative: boolean;
+  isMobile: boolean;
+  isInstalled: boolean;
   onInstall: () => Promise<void>;
   onLearnHow: () => void;
   onDismissCard: () => void;
@@ -138,6 +140,8 @@ export function InstallPromptProvider({
     showCard,
     platform: pwa.platform,
     canPromptNative: pwa.canPromptNative,
+    isMobile: pwa.isMobile,
+    isInstalled: pwa.isInstalled,
     onInstall: pwa.triggerNativePrompt,
     onLearnHow: pwa.openTutorial,
     onDismissCard: handleDismissCard,

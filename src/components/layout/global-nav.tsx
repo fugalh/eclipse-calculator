@@ -23,7 +23,7 @@ import {
   SheetTitle,
   SheetClose,
 } from "@/components/ui/sheet";
-import { usePWAInstall } from "@/lib/hooks/use-pwa-install";
+import { useInstallPrompt } from "@/components/pwa";
 
 const NAV_ITEMS = [
   { label: "Calculator", href: "/", icon: Calculator },
@@ -35,7 +35,7 @@ const NAV_ITEMS = [
 
 export function GlobalNav() {
   const pathname = usePathname();
-  const { isMobile, isInstalled, openTutorial } = usePWAInstall();
+  const { isMobile, isInstalled, onLearnHow } = useInstallPrompt();
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -81,7 +81,7 @@ export function GlobalNav() {
             {isMobile && !isInstalled && (
               <SheetClose asChild>
                 <button
-                  onClick={openTutorial}
+                  onClick={onLearnHow}
                   className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground mt-2"
                 >
                   <Download className="h-5 w-5" />
