@@ -7,7 +7,8 @@ import type {
   DiceColor,
   ShipConfig,
   Fleet,
-  BattleResults,
+  BattleResultsExtended,
+  SurvivalDistribution,
   Dice,
   DicePool,
   Combatant,
@@ -34,7 +35,12 @@ const NPC_TARGET_PRIORITY: readonly string[] = [
 ];
 
 // Re-export types for backward compatibility
-export type { DiceColor, ShipConfig, Fleet, BattleResults } from "@/lib/types";
+export type {
+  DiceColor,
+  ShipConfig,
+  Fleet,
+  BattleResultsExtended,
+} from "@/lib/types";
 
 // ============================================================================
 // Dice Functions
@@ -179,6 +185,7 @@ function createCombatant(config: ShipConfig, isDefender: boolean): Combatant {
     missile_shield: config.missile_shield || false,
     hp: (config.hull || 0) + 1,
     side: isDefender ? "D" : "A",
+    priorityTarget: config.priorityTarget || "normal",
   };
 }
 
@@ -296,6 +303,7 @@ function getBattleStatus(initiativeOrder: InitiativeOrder): BattleStatus {
   const winner = battleOver ? (defenderAlive ? "D" : "A") : undefined;
 
   const shipSurvival: Record<string, number> = {};
+  const survivingCounts: Record<string, number> = {};
 
   if (battleOver && winner) {
     // Count living ships by name for the winner
@@ -311,9 +319,12 @@ function getBattleStatus(initiativeOrder: InitiativeOrder): BattleStatus {
       }
     }
 
-    for (const shipName of Object.keys(livingShips)) {
+    // Calculate survival rates and exact counts
+    for (const shipName of Object.keys(totalShips)) {
+      const living = livingShips[shipName] || 0;
       const total = totalShips[shipName] || 1;
-      shipSurvival[shipName] = livingShips[shipName] / total;
+      shipSurvival[shipName] = living / total;
+      survivingCounts[shipName] = living;
     }
   }
 
@@ -322,6 +333,7 @@ function getBattleStatus(initiativeOrder: InitiativeOrder): BattleStatus {
     defenderAlive,
     totalAlive: allLiving.length,
     shipSurvival,
+    survivingCounts,
     battleOver,
     winner,
   };
@@ -330,6 +342,9 @@ function getBattleStatus(initiativeOrder: InitiativeOrder): BattleStatus {
 // ============================================================================
 // Combat Functions
 // ============================================================================
+
+// Priority order for user-specified target priority
+const PRIORITY_ORDER = { high: 0, normal: 1, low: 2 } as const;
 
 function distributeHits(
   dicePool: DicePool,
@@ -342,16 +357,26 @@ function distributeHits(
   );
 
   // Use NPC priority (largest first) or player priority based on attacker type
-  const priority = isNpcAttacker ? NPC_TARGET_PRIORITY : TARGET_PRIORITY;
+  const classPriority = isNpcAttacker ? NPC_TARGET_PRIORITY : TARGET_PRIORITY;
 
-  // Sort targets by priority (leftmost in priority list = highest priority)
+  // Sort targets by:
+  // 1. User-specified priority (high > normal > low)
+  // 2. Ship class priority (from TARGET_PRIORITY array)
   const prioritizedTargets = [...targets].sort((a, b) => {
-    const aIndex = priority.indexOf(a.shipClass);
-    const bIndex = priority.indexOf(b.shipClass);
+    // First compare user-specified priority
+    const aPriority = PRIORITY_ORDER[a.priorityTarget];
+    const bPriority = PRIORITY_ORDER[b.priorityTarget];
+    if (aPriority !== bPriority) {
+      return aPriority - bPriority;
+    }
+
+    // Fall back to ship class priority
+    const aIndex = classPriority.indexOf(a.shipClass);
+    const bIndex = classPriority.indexOf(b.shipClass);
     // If not in priority list, put at end
     return (
-      (aIndex === -1 ? priority.length : aIndex) -
-      (bIndex === -1 ? priority.length : bIndex)
+      (aIndex === -1 ? classPriority.length : aIndex) -
+      (bIndex === -1 ? classPriority.length : bIndex)
     );
   });
 
@@ -435,6 +460,7 @@ function resolveBattle(
   return {
     winner: battleStatus.winner || "D",
     shipSurvival: battleStatus.shipSurvival,
+    survivingCounts: battleStatus.survivingCounts,
   };
 }
 
@@ -464,17 +490,99 @@ function aggregateSurvivalStats(
 }
 
 /**
+ * Aggregate survival distributions from battle results
+ * For Feature 5: Discretized survival statistics
+ */
+function aggregateSurvivalDistributions(
+  battleResults: SingleBattleResult[],
+  fleet: Fleet,
+): Record<string, SurvivalDistribution> {
+  const distributions: Record<string, SurvivalDistribution> = {};
+
+  if (battleResults.length === 0) {
+    return distributions;
+  }
+
+  // Initialize distributions for each ship type in the fleet
+  for (const ship of fleet.ships) {
+    const name = ship.name;
+    if (!distributions[name]) {
+      const totalCount = ship.number;
+      distributions[name] = {
+        totalCount,
+        distribution: {},
+        averageRate: 0,
+      };
+      // Initialize all possible counts to 0
+      for (let i = 0; i <= totalCount; i++) {
+        distributions[name].distribution[i] = 0;
+      }
+    }
+  }
+
+  // Count occurrences of each survival count from results
+  for (const result of battleResults) {
+    for (const [name, count] of Object.entries(result.survivingCounts)) {
+      if (distributions[name]) {
+        distributions[name].distribution[count] =
+          (distributions[name].distribution[count] || 0) + 1;
+      }
+    }
+  }
+
+  // Convert counts to probabilities and compute buckets
+  const total = battleResults.length;
+  for (const [, dist] of Object.entries(distributions)) {
+    let weightedSum = 0;
+
+    // Convert occurrence counts to probabilities
+    for (const countStr of Object.keys(dist.distribution)) {
+      const count = parseInt(countStr, 10);
+      const occurrences = dist.distribution[count];
+      const probability = occurrences / total;
+      dist.distribution[count] = probability;
+      weightedSum += count * probability;
+    }
+
+    // Calculate average survival rate
+    dist.averageRate = dist.totalCount > 0 ? weightedSum / dist.totalCount : 0;
+
+    // Compute buckets for larger fleets (5+ ships)
+    if (dist.totalCount > 4) {
+      const halfCount = dist.totalCount / 2;
+      dist.buckets = { all: 0, most: 0, some: 0, none: 0 };
+
+      for (const countStr of Object.keys(dist.distribution)) {
+        const count = parseInt(countStr, 10);
+        const prob = dist.distribution[count];
+        if (count === dist.totalCount) {
+          dist.buckets.all += prob;
+        } else if (count > halfCount) {
+          dist.buckets.most += prob;
+        } else if (count > 0) {
+          dist.buckets.some += prob;
+        } else {
+          dist.buckets.none += prob;
+        }
+      }
+    }
+  }
+
+  return distributions;
+}
+
+/**
  * Run Monte Carlo combat simulation
  * @param defenseFleet - The defending fleet configuration
  * @param attackFleet - The attacking fleet configuration
  * @param iterations - Number of simulation iterations (default: 1000)
- * @returns Battle results with win probabilities and survival rates
+ * @returns Battle results with win probabilities, survival rates, and distributions
  */
 export function calculate(
   defenseFleet: Fleet,
   attackFleet: Fleet,
   iterations: number = 1000,
-): BattleResults {
+): BattleResultsExtended {
   const results: SingleBattleResult[] = [];
 
   for (let i = 0; i < iterations; i++) {
@@ -490,6 +598,10 @@ export function calculate(
     defender: defenderWins.length / results.length,
     shipsAttacker: aggregateSurvivalStats(attackerWins),
     shipsDefender: aggregateSurvivalStats(defenderWins),
+    survivalDistributions: {
+      attacker: aggregateSurvivalDistributions(attackerWins, attackFleet),
+      defender: aggregateSurvivalDistributions(defenderWins, defenseFleet),
+    },
   };
 }
 
@@ -525,6 +637,7 @@ export function createDefaultShipConfig(
     initiative: 0,
     splitter: false,
     missile_shield: false,
+    priorityTarget: "normal",
     ...overrides,
   };
 }

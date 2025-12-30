@@ -1,6 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
+import { ThemeProvider } from "next-themes";
+import { Toaster } from "sonner";
 import { GlobalNav } from "@/components/layout/global-nav";
+import { InstallPromptProvider } from "@/components/pwa";
+import { ConvexClientProvider } from "./ConvexClientProvider";
 import "./globals.css";
 
 const notoSans = Noto_Sans({ variable: "--font-sans", subsets: ["latin"] });
@@ -15,11 +19,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const APP_NAME = "Eclipse Calculator";
+const APP_DESCRIPTION =
+  "Combat calculator for Eclipse: Second Dawn for the Galaxy board game. Simulate ship battles and calculate victory probabilities.";
+
 export const metadata: Metadata = {
-  title: "Eclipse Combat Calculator",
-  description:
-    "Combat calculator for Eclipse: Second Dawn for the Galaxy board game. Simulate ship battles and calculate victory probabilities.",
-  manifest: "/manifest.json",
+  applicationName: APP_NAME,
+  title: APP_NAME,
+  description: APP_DESCRIPTION,
+  manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -41,15 +49,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${notoSans.variable} dark`}>
+    <html lang="en" className={notoSans.variable} suppressHydrationWarning>
       <head>
         <link rel="apple-touch-icon" href="/icons/ios.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <GlobalNav />
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+          <ConvexClientProvider>
+            <InstallPromptProvider>
+              <GlobalNav />
+              {children}
+              <Toaster position="bottom-center" />
+            </InstallPromptProvider>
+          </ConvexClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

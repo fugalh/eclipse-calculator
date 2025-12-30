@@ -6,6 +6,7 @@ import type {
   ShipConfiguratorProps,
   NumericAttributeName,
   DiceColor,
+  TargetPriority,
 } from "@/lib/types";
 import { cycleAttribute } from "@/lib/presets";
 import { cn } from "@/lib/utils";
@@ -50,6 +51,19 @@ const STAT_FALLBACKS: Record<string, string> = {
   computers: "+",
   shields: "-",
   number: "×",
+};
+
+// Priority target button styles
+const PRIORITY_STYLES: Record<TargetPriority, string> = {
+  high: "bg-amber-500/20 border-amber-500 text-amber-600 dark:text-amber-400",
+  normal: "bg-muted border-border text-muted-foreground",
+  low: "bg-slate-500/20 border-slate-500 text-slate-600 dark:text-slate-400",
+};
+
+const PRIORITY_LABELS: Record<TargetPriority, string> = {
+  high: "High",
+  normal: "Normal",
+  low: "Low",
 };
 
 // ============================================================================
@@ -173,6 +187,12 @@ export function ShipConfigurator({
   const handleToggle = (field: "splitter" | "missile_shield") => {
     onChange({ ...ship, [field]: !ship[field] });
   };
+
+  const handlePriorityChange = (priority: TargetPriority) => {
+    onChange({ ...ship, priorityTarget: priority });
+  };
+
+  const currentPriority = ship.priorityTarget || "normal";
 
   return (
     <AccordionItem
@@ -368,6 +388,36 @@ export function ShipConfigurator({
               />
               <span className="text-xs">Distortion Field</span>
             </label>
+          </div>
+
+          {/* Priority Target Selector */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              Target Priority:
+            </span>
+            <div className="flex gap-1">
+              {(["high", "normal", "low"] as const).map((priority) => (
+                <button
+                  key={priority}
+                  type="button"
+                  onClick={() => handlePriorityChange(priority)}
+                  className={cn(
+                    "px-2 py-1 text-xs rounded border transition-all",
+                    currentPriority === priority
+                      ? PRIORITY_STYLES[priority]
+                      : "bg-muted/30 border-transparent text-muted-foreground/50 hover:bg-muted/50",
+                  )}
+                >
+                  {PRIORITY_LABELS[priority]}
+                </button>
+              ))}
+            </div>
+            <span
+              className="text-xs text-muted-foreground/60 ml-1"
+              title="Priority Target affects how your opponent targets this ship. High priority ships are attacked first; low priority ships are attacked last."
+            >
+              ?
+            </span>
           </div>
         </div>
       </AccordionContent>

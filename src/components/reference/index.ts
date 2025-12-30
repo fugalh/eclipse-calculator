@@ -44,11 +44,3 @@ export {
   Breadcrumb,
   PageHeader,
 } from "./reference-nav";
-
-// Filters
-export {
-  TechCategoryFilter,
-  PartTypeFilter,
-  PartSourceFilter,
-  SearchFilter,
-} from "./category-filter";

@@ -1,60 +1,90 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { Suspense, useMemo, useCallback, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   PageHeader,
   NotationToggle,
   NotationLegend,
   PartGrid,
   PartTable,
-  PartTypeFilter,
-  PartSourceFilter,
-  SearchFilter,
 } from "@/components/reference";
+import {
+  SearchInput,
+  SingleToggleFilter,
+  ActiveFilters,
+} from "@/components/filters";
+import {
+  getPartTypeOptions,
+  getPartSourceOptions,
+  PART_TYPE_LABELS,
+  PART_SOURCE_LABELS,
+  PART_SOURCE_BADGE_COLORS,
+} from "@/lib/filters/reference-options";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ALL_PARTS, getPartsByType, getPartsBySource } from "@/lib/data";
-import type { PartSlotType } from "@/lib/types";
+import type { PartSlotType, ActiveFilter } from "@/lib/types";
 import type { PartSource } from "@/lib/data";
 import { LayoutGrid, List } from "lucide-react";
 
 type ViewMode = "grid" | "table";
-type SourceFilter = PartSource | "all";
 
-export default function ShipPartsPage() {
-  const [partType, setPartType] = useState<PartSlotType | "all">("all");
-  const [source, setSource] = useState<SourceFilter>("all");
-  const [search, setSearch] = useState("");
-  const [viewMode, setViewMode] = useState<ViewMode>("table");
+function ShipPartsPageSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-4 w-96" />
+      </div>
+      <div className="space-y-4">
+        <div className="flex gap-2">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <Skeleton key={i} className="h-9 w-20" />
+          ))}
+        </div>
+        <div className="flex gap-2">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-9 w-20" />
+          ))}
+        </div>
+      </div>
+      <Skeleton className="h-64 w-full" />
+    </div>
+  );
+}
+
+function ShipPartsPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [showLegend, setShowLegend] = useState(false);
 
-  // Filter parts
-  const filteredParts = useMemo(() => {
-    let result = ALL_PARTS;
+  // Parse URL state
+  const query = searchParams.get("q") ?? "";
+  const partType = searchParams.get("type") as PartSlotType | null;
+  const source = searchParams.get("source") as PartSource | null;
+  const viewMode = (searchParams.get("view") as ViewMode) ?? "table";
 
-    if (partType !== "all") {
-      result = result.filter((part) => part.type === partType);
-    }
-
-    if (source !== "all") {
-      result = result.filter((part) => part.source === source);
-    }
-
-    if (search) {
-      const searchLower = search.toLowerCase();
-      result = result.filter(
-        (part) =>
-          part.name.toLowerCase().includes(searchLower) ||
-          part.effect.toLowerCase().includes(searchLower),
-      );
-    }
-
-    return result;
-  }, [partType, source, search]);
+  // URL update helper
+  const updateUrl = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === null || value === "") {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      }
+      const qs = params.toString();
+      router.push(qs ? `/reference/ship-parts?${qs}` : "/reference/ship-parts");
+    },
+    [router, searchParams],
+  );
 
   // Calculate type counts
   const typeCounts = useMemo(() => {
-    const types: (PartSlotType | "all")[] = [
-      "all",
+    const types: PartSlotType[] = [
       "cannon",
       "missile",
       "computer",
@@ -64,31 +94,132 @@ export default function ShipPartsPage() {
       "source",
     ];
     return Object.fromEntries(
-      types.map((type) => [
-        type,
-        type === "all" ? ALL_PARTS.length : getPartsByType(type).length,
-      ]),
-    ) as Record<PartSlotType | "all", number>;
+      types.map((type) => [type, getPartsByType(type).length]),
+    ) as Record<PartSlotType, number>;
   }, []);
 
   // Calculate source counts
   const sourceCounts = useMemo(() => {
-    const sources: SourceFilter[] = [
-      "all",
+    const sources: PartSource[] = [
       "starting",
       "technology",
       "ancient",
       "discovery",
     ];
     return Object.fromEntries(
-      sources.map((s) => [
-        s,
-        s === "all"
-          ? ALL_PARTS.length
-          : getPartsBySource(s as PartSource).length,
-      ]),
-    ) as Record<SourceFilter, number>;
+      sources.map((s) => [s, getPartsBySource(s).length]),
+    ) as Record<PartSource, number>;
   }, []);
+
+  // Filter options with counts
+  const typeOptions = useMemo(
+    () => getPartTypeOptions(typeCounts),
+    [typeCounts],
+  );
+  const sourceOptions = useMemo(
+    () => getPartSourceOptions(sourceCounts),
+    [sourceCounts],
+  );
+
+  // Filter parts
+  const filteredParts = useMemo(() => {
+    let result = ALL_PARTS;
+
+    if (partType !== null) {
+      result = result.filter((part) => part.type === partType);
+    }
+
+    if (source !== null) {
+      result = result.filter((part) => part.source === source);
+    }
+
+    if (query) {
+      const searchLower = query.toLowerCase();
+      result = result.filter(
+        (part) =>
+          part.name.toLowerCase().includes(searchLower) ||
+          part.effect.toLowerCase().includes(searchLower),
+      );
+    }
+
+    return result;
+  }, [partType, source, query]);
+
+  // Build active filters for display
+  const activeFilters = useMemo(() => {
+    const filters: ActiveFilter[] = [];
+
+    if (query) {
+      filters.push({
+        type: "search",
+        value: query,
+        label: `"${query}"`,
+        color: "bg-blue-100 text-blue-800",
+      });
+    }
+
+    if (partType) {
+      filters.push({
+        type: "Type",
+        value: partType,
+        label: PART_TYPE_LABELS[partType],
+      });
+    }
+
+    if (source) {
+      filters.push({
+        type: "Source",
+        value: source,
+        label: PART_SOURCE_LABELS[source],
+        color: PART_SOURCE_BADGE_COLORS[source],
+      });
+    }
+
+    return filters;
+  }, [query, partType, source]);
+
+  // Handlers
+  const handleQueryChange = useCallback(
+    (newQuery: string) => {
+      updateUrl({ q: newQuery || null });
+    },
+    [updateUrl],
+  );
+
+  const handleTypeChange = useCallback(
+    (newType: PartSlotType | null) => {
+      updateUrl({ type: newType });
+    },
+    [updateUrl],
+  );
+
+  const handleSourceChange = useCallback(
+    (newSource: PartSource | null) => {
+      updateUrl({ source: newSource });
+    },
+    [updateUrl],
+  );
+
+  const handleViewModeToggle = useCallback(() => {
+    updateUrl({ view: viewMode === "grid" ? "table" : "grid" });
+  }, [updateUrl, viewMode]);
+
+  const handleRemoveFilter = useCallback(
+    (type: string) => {
+      if (type === "search") {
+        updateUrl({ q: null });
+      } else if (type === "Type") {
+        updateUrl({ type: null });
+      } else if (type === "Source") {
+        updateUrl({ source: null });
+      }
+    },
+    [updateUrl],
+  );
+
+  const handleClearAll = useCallback(() => {
+    router.push("/reference/ship-parts");
+  }, [router]);
 
   return (
     <div className="space-y-6">
@@ -104,10 +235,12 @@ export default function ShipPartsPage() {
           <label className="mb-2 block text-sm font-medium text-muted-foreground">
             Part Type
           </label>
-          <PartTypeFilter
+          <SingleToggleFilter
+            options={typeOptions}
             selected={partType}
-            onChange={setPartType}
-            counts={typeCounts}
+            onChange={handleTypeChange}
+            includeAllOption
+            allCount={ALL_PARTS.length}
           />
         </div>
 
@@ -116,13 +249,22 @@ export default function ShipPartsPage() {
           <label className="mb-2 block text-sm font-medium text-muted-foreground">
             Source
           </label>
-          <PartSourceFilter
+          <SingleToggleFilter
+            options={sourceOptions}
             selected={source}
-            onChange={(s) => setSource(s as SourceFilter)}
-            counts={sourceCounts}
+            onChange={handleSourceChange}
+            includeAllOption
+            allCount={ALL_PARTS.length}
           />
         </div>
       </div>
+
+      {/* Active Filters */}
+      <ActiveFilters
+        filters={activeFilters}
+        onRemove={handleRemoveFilter}
+        onClearAll={handleClearAll}
+      />
 
       {/* Search and View Toggle */}
       <div className="flex items-center justify-between gap-4">
@@ -139,16 +281,17 @@ export default function ShipPartsPage() {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <SearchFilter
-            value={search}
-            onChange={setSearch}
+          <SearchInput
+            value={query}
+            onChange={handleQueryChange}
             placeholder="Search parts..."
+            debounceMs={200}
             className="w-48"
           />
           <Button
             variant="outline"
             size="icon"
-            onClick={() => setViewMode(viewMode === "grid" ? "table" : "grid")}
+            onClick={handleViewModeToggle}
             title={
               viewMode === "grid"
                 ? "Switch to table view"
@@ -179,5 +322,13 @@ export default function ShipPartsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ShipPartsPage() {
+  return (
+    <Suspense fallback={<ShipPartsPageSkeleton />}>
+      <ShipPartsPageContent />
+    </Suspense>
   );
 }

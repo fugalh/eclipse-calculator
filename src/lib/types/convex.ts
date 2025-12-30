@@ -4,7 +4,8 @@
  */
 
 export type {
-  PhotoAnnotation,
-  GamePhotoMetadata,
-  GameSession,
+  PhotoType,
+  GamePhotoData,
+  GameSessionData,
+  GameSessionWithPhotos,
 } from "../../../convex/types";

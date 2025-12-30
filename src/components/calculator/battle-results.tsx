@@ -4,9 +4,11 @@ import type {
   BattleResultsProps,
   VictoryChanceProps,
   SurvivalListProps,
+  SurvivalDistribution,
 } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { ShareResults } from "./share-results";
 
 function VictoryChance({ side, probability, isWinner }: VictoryChanceProps) {
   const isAttacker = side === "attacker";
@@ -42,7 +44,77 @@ function VictoryChance({ side, probability, isWinner }: VictoryChanceProps) {
   );
 }
 
-function SurvivalList({ title, shipSurvival, color }: SurvivalListProps) {
+/** Display survival distribution for a single ship type */
+function SurvivalDistributionDisplay({
+  name,
+  distribution,
+}: {
+  name: string;
+  distribution: SurvivalDistribution;
+}) {
+  const { totalCount, distribution: dist, buckets, averageRate } = distribution;
+
+  // Small fleet (1-4 ships): show exact count distribution
+  if (totalCount <= 4) {
+    // Sort by count descending for display
+    const sortedCounts = Object.entries(dist)
+      .map(([count, prob]) => ({ count: parseInt(count, 10), prob }))
+      .filter(({ prob }) => prob > 0)
+      .sort((a, b) => b.count - a.count);
+
+    return (
+      <div className="bg-muted/50 px-3 py-2 rounded space-y-1">
+        <div className="flex justify-between text-sm font-medium">
+          <span>{name}</span>
+          <span className="text-muted-foreground">
+            {Math.round(averageRate * 100)}% avg
+          </span>
+        </div>
+        <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+          {sortedCounts.map(({ count, prob }) => (
+            <span key={count}>
+              {count}: {Math.round(prob * 100)}%
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Large fleet (5+ ships): show buckets
+  if (!buckets) {
+    return (
+      <div className="bg-muted/50 px-3 py-1.5 rounded flex items-center justify-between text-sm">
+        <span>{name}</span>
+        <span className="font-medium">{Math.round(averageRate * 100)}%</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-muted/50 px-3 py-2 rounded space-y-1">
+      <div className="flex justify-between text-sm font-medium">
+        <span>{name}</span>
+        <span className="text-muted-foreground">
+          {Math.round(averageRate * 100)}% avg
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+        <span>All: {Math.round(buckets.all * 100)}%</span>
+        <span>Most: {Math.round(buckets.most * 100)}%</span>
+        <span>Some: {Math.round(buckets.some * 100)}%</span>
+        <span>None: {Math.round(buckets.none * 100)}%</span>
+      </div>
+    </div>
+  );
+}
+
+function SurvivalList({
+  title,
+  shipSurvival,
+  survivalDistributions,
+  color,
+}: SurvivalListProps) {
   const entries = Object.entries(shipSurvival);
 
   if (entries.length === 0) {
@@ -60,15 +132,32 @@ function SurvivalList({ title, shipSurvival, color }: SurvivalListProps) {
         {title}
       </h3>
       <div className="space-y-1">
-        {entries.map(([name, rate]) => (
-          <div
-            key={name}
-            className="flex items-center justify-between text-sm bg-muted/50 px-3 py-1.5 rounded"
-          >
-            <span>{name}</span>
-            <span className="font-medium">{Math.round(rate * 100)}%</span>
-          </div>
-        ))}
+        {entries.map(([name]) => {
+          const distribution = survivalDistributions?.[name];
+
+          // If we have distribution data, show the detailed view
+          if (distribution) {
+            return (
+              <SurvivalDistributionDisplay
+                key={name}
+                name={name}
+                distribution={distribution}
+              />
+            );
+          }
+
+          // Fallback to simple rate display
+          const rate = shipSurvival[name];
+          return (
+            <div
+              key={name}
+              className="flex items-center justify-between text-sm bg-muted/50 px-3 py-1.5 rounded"
+            >
+              <span>{name}</span>
+              <span className="font-medium">{Math.round(rate * 100)}%</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -78,7 +167,12 @@ function SurvivalList({ title, shipSurvival, color }: SurvivalListProps) {
 // Main Component
 // ============================================================================
 
-export function BattleResults({ results, isCalculating }: BattleResultsProps) {
+export function BattleResults({
+  results,
+  isCalculating,
+  defenders = [],
+  attackers = [],
+}: BattleResultsProps) {
   if (isCalculating) {
     return (
       <div className="flex items-center justify-center py-12 gap-3 text-muted-foreground">
@@ -99,9 +193,21 @@ export function BattleResults({ results, isCalculating }: BattleResultsProps) {
   const attackerWins = results.attacker > results.defender;
   const defenderWins = results.defender > results.attacker;
   const tie = results.attacker === results.defender;
+  const canShare = defenders.length > 0 && attackers.length > 0;
 
   return (
     <div className="space-y-4">
+      {/* Header with Share Button */}
+      {canShare && (
+        <div className="flex justify-end">
+          <ShareResults
+            results={results}
+            defenders={defenders}
+            attackers={attackers}
+          />
+        </div>
+      )}
+
       {/* Victory Chances */}
       <div className="flex gap-4">
         <VictoryChance
@@ -122,6 +228,7 @@ export function BattleResults({ results, isCalculating }: BattleResultsProps) {
           <SurvivalList
             title="Defender Survival (when winning)"
             shipSurvival={results.shipsDefender}
+            survivalDistributions={results.survivalDistributions?.defender}
             color="blue"
           />
         )}
@@ -129,6 +236,7 @@ export function BattleResults({ results, isCalculating }: BattleResultsProps) {
           <SurvivalList
             title="Attacker Survival (when winning)"
             shipSurvival={results.shipsAttacker}
+            survivalDistributions={results.survivalDistributions?.attacker}
             color="red"
           />
         )}

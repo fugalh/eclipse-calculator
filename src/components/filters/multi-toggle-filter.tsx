@@ -68,18 +68,28 @@ interface SingleToggleFilterProps<T extends string> {
   selected: T | null;
   onChange: (selected: T | null) => void;
   allowDeselect?: boolean;
+  /** Include an "All" option at the start that clears selection */
+  includeAllOption?: boolean;
+  /** Label for the "All" option (default: "All") */
+  allLabel?: string;
+  /** Count to display on the "All" option */
+  allCount?: number;
   className?: string;
 }
 
 /**
  * Single-select toggle filter (radio-button style)
  * Only one option can be selected at a time
+ * When includeAllOption is true, adds an "All" button that sets selected to null
  */
 export function SingleToggleFilter<T extends string>({
   options,
   selected,
   onChange,
   allowDeselect = true,
+  includeAllOption = false,
+  allLabel = "All",
+  allCount,
   className,
 }: SingleToggleFilterProps<T>) {
   const handleSelect = (value: T) => {
@@ -90,8 +100,32 @@ export function SingleToggleFilter<T extends string>({
     }
   };
 
+  const handleAllClick = () => {
+    onChange(null);
+  };
+
+  const isAllSelected = selected === null;
+
   return (
     <div className={cn("flex flex-wrap gap-2", className)}>
+      {includeAllOption && (
+        <Button
+          variant={isAllSelected ? "default" : "outline"}
+          size="sm"
+          onClick={handleAllClick}
+          className="transition-colors"
+        >
+          {allLabel}
+          {allCount !== undefined && (
+            <Badge
+              variant={isAllSelected ? "secondary" : "outline"}
+              className="ml-2"
+            >
+              {allCount}
+            </Badge>
+          )}
+        </Button>
+      )}
       {options.map((option) => {
         const isSelected = selected === option.value;
 

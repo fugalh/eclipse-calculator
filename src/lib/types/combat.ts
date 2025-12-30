@@ -11,6 +11,8 @@ export type DiceColor = "yellow" | "orange" | "blue" | "red";
 
 export type BattleSide = "A" | "D";
 
+export type TargetPriority = "high" | "normal" | "low";
+
 // ============================================================================
 // Ship Configuration Types
 // ============================================================================
@@ -34,6 +36,8 @@ export interface ShipConfig {
   initiative: number;
   splitter: boolean;
   missile_shield: boolean;
+  /** Priority target setting - affects how opponent targets this ship */
+  priorityTarget?: TargetPriority;
 }
 
 export interface Fleet {
@@ -86,6 +90,8 @@ export interface Combatant {
   missile_shield: boolean;
   hp: number;
   side: BattleSide;
+  /** Priority target setting - affects how opponent targets this ship */
+  priorityTarget: TargetPriority;
 }
 
 export interface ShipGroup {
@@ -101,6 +107,8 @@ export interface BattleStatus {
   defenderAlive: boolean;
   totalAlive: number;
   shipSurvival: Record<string, number>;
+  /** Exact count of surviving ships per name (for discretized stats) */
+  survivingCounts: Record<string, number>;
   battleOver: boolean;
   winner?: BattleSide;
 }
@@ -108,6 +116,37 @@ export interface BattleStatus {
 export interface SingleBattleResult {
   winner: BattleSide;
   shipSurvival: Record<string, number>;
+  /** Exact count of surviving ships per name (for discretized stats) */
+  survivingCounts: Record<string, number>;
+}
+
+// ============================================================================
+// Survival Distribution Types (Feature 5)
+// ============================================================================
+
+/** Discretized survival statistics for a single ship type */
+export interface SurvivalDistribution {
+  /** Total ships of this type in the fleet */
+  totalCount: number;
+  /** Map of surviving count -> probability (0-1) */
+  distribution: Record<number, number>;
+  /** Bucketed view for large fleets (5+ ships) */
+  buckets?: {
+    all: number; // 100% survived
+    most: number; // >50% survived (but not all)
+    some: number; // 1-50% survived
+    none: number; // 0% survived
+  };
+  /** Average survival rate for backward compatibility */
+  averageRate: number;
+}
+
+/** Extended battle results with discretized survival distributions */
+export interface BattleResultsExtended extends BattleResults {
+  survivalDistributions?: {
+    attacker: Record<string, SurvivalDistribution>;
+    defender: Record<string, SurvivalDistribution>;
+  };
 }
 
 // ============================================================================

@@ -3,35 +3,38 @@
  * Types used by both Convex functions and NextJS client
  */
 
-// ============================================================================
-// Photo Annotation Types
-// ============================================================================
-
-export interface PhotoAnnotation {
-  x: number;
-  y: number;
-  text: string;
-}
+import type { Id } from "./_generated/dataModel";
 
 // ============================================================================
-// Game Photo Types
+// Photo Types
 // ============================================================================
 
-export interface GamePhotoMetadata {
-  uploadedAt: number; // timestamp
+export type PhotoType = "tech_tray" | "sector_map" | "other";
+
+export interface GamePhotoData {
+  _id: Id<"gamePhotos">;
+  userId: Id<"users">;
+  sessionId: Id<"gameSessions">;
+  photoType: PhotoType;
+  uploadedAt: number;
   gameRound?: number;
-  playerCount?: number;
   notes?: string;
-  annotations?: PhotoAnnotation[];
+  url: string; // Resolved from storage
 }
 
 // ============================================================================
 // Game Session Types
 // ============================================================================
 
-export interface GameSession {
+export interface GameSessionData {
+  _id: Id<"gameSessions">;
+  ownerId: Id<"users">;
+  shareCode: string;
   name?: string;
   createdAt: number;
-  photoIds: string[];
   playerCount?: number;
+}
+
+export interface GameSessionWithPhotos extends GameSessionData {
+  photos: GamePhotoData[];
 }

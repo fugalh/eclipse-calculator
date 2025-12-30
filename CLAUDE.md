@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A web-based combat calculator for the board game _Eclipse: Second Dawn for the Galaxy_. Built with Next.js and TypeScript, it simulates ship battles using Monte Carlo methods (1000 iterations) to compute victory probabilities and ship survival rates.
+A web-based companion app for the board game _Eclipse: Second Dawn for the Galaxy_. Built with Next.js, TypeScript, and Convex. Features include a Monte Carlo combat simulator, quick reference guides, rule search, and collaborative game photo sharing.
 
 ## Commands
 
@@ -13,14 +13,14 @@ bun dev              # Start development server (localhost:3000)
 bun check            # Run ESLint + TypeScript type checking
 bun format           # Prettier formatting
 bun build            # Production build
-npx convex dev       # Convex database development (Phase 4+)
+npx convex dev       # Convex database development (required for photos feature)
 ```
 
 ## Architecture
 
 ### Combat Simulation Engine (`src/lib/combat/simulation.ts`)
 
-The core Monte Carlo simulator implements Eclipse combat rules:
+Monte Carlo simulator (1000 iterations) implementing Eclipse combat rules:
 
 - **Dice System**: 4 colors with damage values (yellow=1, orange=2, blue=3, red=4)
 - **Hit Detection**: `roll + computers - shields >= 6` (natural 6 always hits, natural 1 always misses)
@@ -30,71 +30,80 @@ The core Monte Carlo simulator implements Eclipse combat rules:
 - **Hit Distribution**: Prioritizes killing ships; otherwise targets by priority order:
   `Orbital > Ancient > GC > Interceptor > Starbase > Cruiser > Dreadnought > Deathmoon`
 
-### Ship Model (`ShipConfig`)
+### Convex Backend (`convex/`)
 
-```typescript
-{
-  name: string;
-  shipClass: string;           // Cruiser, Dreadnought, etc.
-  number: number;              // Count (1-6)
-  yellow, orange, blue, red: number;           // Cannon dice (0-6)
-  missiles_yellow/orange/blue/red: number;     // Missile dice (0-6)
-  hull: number;                // HP = hull + 1
-  shields: number;             // Defense (0-8)
-  missile_shield: boolean;     // +2 shields vs missiles
-  computers: number;           // Hit bonus (0-8)
-  splitter: boolean;           // Antimatter splitter
-  initiative: number;          // Combat order (0-8)
-}
-```
+| File          | Purpose                                              |
+| ------------- | ---------------------------------------------------- |
+| `auth.ts`     | Password-based authentication via `@convex-dev/auth` |
+| `sessions.ts` | Game session CRUD with share codes and user blocking |
+| `photos.ts`   | Photo upload/storage tied to sessions                |
+| `storage.ts`  | Abstraction layer for Convex Storage                 |
+| `crons.ts`    | Stale session cleanup (5-day inactivity threshold)   |
+| `schema.ts`   | Database schema: `gameSessions`, `gamePhotos`        |
 
-### Component Structure
+### Key Component Directories
 
-```
-src/
-├── app/
-│   ├── layout.tsx              # Root layout with PWA config
-│   ├── page.tsx                # Combat calculator (client component)
-│   └── globals.css             # Tailwind + theme variables
-├── components/
-│   ├── calculator/             # Calculator UI
-│   │   ├── ship-configurator.tsx   # Ship attribute editor (tap-to-cycle)
-│   │   ├── fleet-builder.tsx       # Fleet management
-│   │   ├── battle-results.tsx      # Results display
-│   │   └── preset-manager.tsx      # Preset selection dialog
-│   └── ui/                     # shadcn/ui components
-└── lib/
-    ├── combat/simulation.ts    # Combat engine
-    ├── types/                  # Centralized TypeScript types
-    └── presets.ts              # localStorage preset storage
-```
+| Directory                    | Purpose                                     |
+| ---------------------------- | ------------------------------------------- |
+| `src/components/calculator/` | Combat calculator UI (ship config, results) |
+| `src/components/reference/`  | Tech cards, species cards, part cards       |
+| `src/components/filters/`    | URL-synced filtering with accordion UI      |
+| `src/components/photos/`     | Session management and photo upload         |
+| `src/components/auth/`       | Sign-in/sign-up forms, logout button        |
+
+### Reference Data (`src/lib/data/`)
+
+Static game data exported from barrel file `index.ts`:
+
+- `techs.ts` - Technology tree with costs, categories, effects
+- `ship-parts.ts` - Ship part stats (weapons, shields, drives)
+- `species.ts` - Species abilities and starting conditions
+- `combat-rules.ts` - Combat rules quick reference
+- `differences.ts` - First Dawn vs Second Dawn changes
+
+### Type System (`src/lib/types/`)
+
+Centralized types with barrel export from `index.ts`:
+
+- `combat.ts` - `ShipConfig`, `BattleResult`, `SimulationResult`
+- `game.ts` - `Tech`, `ShipPart`, `Species`
+- `filters.ts` - `FilterState`, `FilterOption`
+- `convex.ts` - Re-exports from Convex generated types
 
 ### Key Patterns
 
-- **Types First**: All types in `src/lib/types/` with barrel export from `index.ts`
+- **Types First**: All types in `src/lib/types/` with barrel export
 - **Client Components**: Interactive components use `"use client"` directive
 - **Tap-to-Cycle UI**: Buttons cycle values 0→max for mobile optimization
+- **URL-synced Filters**: `/reference/*` pages sync filter state to URL params
 - **React Compiler**: Enabled in `next.config.ts` for automatic memoization
 - **Path Alias**: `@/*` maps to `./src/*`
 
-## Convex Integration
+## Convex Patterns
 
-For reactive Convex in future phases:
+```typescript
+// Server-side (RSC or Server Actions)
+import { fetchMutation, fetchQuery } from "convex/nextjs";
 
-- Server actions: `import { fetchMutation, fetchQuery } from "convex/nextjs"`
-- Client components: `import { useMutation, useQuery } from "convex/react"`
+// Client components
+import { useMutation, useQuery } from "convex/react";
+
+// Auth context in Convex functions
+const userId = await auth.getUserId(ctx);
+if (!userId) throw new Error("Not authenticated");
+```
 
 ## Workflow Instructions
 
 - After completing a plan, use an agent to find and address any issues with `bun check`; when that agent completes successfully, run `bun format`
 - When a plan is completed, copy the markdown file to `./plans/` and append the completion summary to the local `{plan}.md` file
 
-## Roadmap
+## Roadmap Status
 
-- **Phase 1**: NextJS Foundation ✅ (Complete)
-- **Phase 2**: Quick Reference Guides (`/reference/*` pages)
-- **Phase 3**: Rule Search (Server Actions + ECLIPSE_RULES.md parsing)
-- **Phase 4**: Gameplay Photo Upload (uploadthing + Convex)
-- **Phase 5**: Polish & Integration
+- **Phase 1**: NextJS Foundation ✅
+- **Phase 2**: Quick Reference Guides ✅ (`/reference/*` pages)
+- **Phase 3**: Rule Search ✅ (`/search` with category filtering)
+- **Phase 4**: Photo Upload ✅ (Convex Storage with session sharing)
+- **Phase 5**: Polish & Integration (in progress)
 
 See `ROADMAP.md` for full details. Game rules reference in `rules/ECLIPSE_RULES.md`.

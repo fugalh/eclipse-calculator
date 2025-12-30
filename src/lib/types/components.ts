@@ -3,7 +3,12 @@
  * Centralized prop types for calculator components
  */
 
-import type { ShipConfig, BattleResults, DiceColor } from "./combat";
+import type {
+  ShipConfig,
+  BattleResultsExtended,
+  DiceColor,
+  SurvivalDistribution,
+} from "./combat";
 import type { Preset, NumericAttributeName } from "./presets";
 import type { AccordionMode } from "./settings";
 
@@ -47,8 +52,10 @@ export interface FleetBuilderProps {
 // ============================================================================
 
 export interface BattleResultsProps {
-  results: BattleResults | null;
+  results: BattleResultsExtended | null;
   isCalculating: boolean;
+  defenders?: ShipConfig[];
+  attackers?: ShipConfig[];
 }
 
 export interface VictoryChanceProps {
@@ -60,6 +67,7 @@ export interface VictoryChanceProps {
 export interface SurvivalListProps {
   title: string;
   shipSurvival: Record<string, number>;
+  survivalDistributions?: Record<string, SurvivalDistribution>;
   color: "red" | "blue";
 }
 

@@ -10,9 +10,12 @@ export interface UserSettings {
   accordionMode: AccordionMode;
   /** Enable cascade animation effect on fleet collapse/expand */
   cascadeAnimation: boolean;
+  /** Enable automatic calculation on fleet changes (Feature 6) */
+  autoCalculate: boolean;
 }
 
 export const DEFAULT_SETTINGS: UserSettings = {
   accordionMode: "multiple",
   cascadeAnimation: true,
+  autoCalculate: true,
 };

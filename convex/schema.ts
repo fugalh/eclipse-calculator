@@ -5,41 +5,40 @@
 
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
-  // Game photos table - stores uploaded gameplay photos
-  gamePhotos: defineTable({
-    // Reference to the file in Convex storage
-    storageId: v.string(),
-    // Timestamp when the photo was uploaded
-    uploadedAt: v.number(),
-    // Optional game round number (1-8 for Second Dawn)
-    gameRound: v.optional(v.number()),
-    // Optional number of players in the game
-    playerCount: v.optional(v.number()),
-    // Optional notes about the photo
-    notes: v.optional(v.string()),
-    // Optional annotations on the photo
-    annotations: v.optional(
-      v.array(
-        v.object({
-          x: v.number(),
-          y: v.number(),
-          text: v.string(),
-        }),
-      ),
-    ),
-    // Optional reference to a game session
-    sessionId: v.optional(v.id("gameSessions")),
-  }),
+  ...authTables,
 
   // Game sessions table - groups related photos together
   gameSessions: defineTable({
-    // Optional name for the session
+    ownerId: v.id("users"), // Session creator
+    shareCode: v.string(), // 6-char code for sharing (e.g., "ABC123")
     name: v.optional(v.string()),
-    // Timestamp when the session was created
     createdAt: v.number(),
-    // Number of players in this game
+    lastActivityAt: v.optional(v.number()), // Last activity timestamp for cleanup
     playerCount: v.optional(v.number()),
-  }),
+    blockedUsers: v.optional(v.array(v.id("users"))), // Blocked user IDs
+  })
+    .index("by_owner", ["ownerId"])
+    .index("by_share_code", ["shareCode"]),
+
+  // Game photos table - stores uploaded gameplay photos
+  gamePhotos: defineTable({
+    userId: v.id("users"),
+    sessionId: v.id("gameSessions"),
+    // Storage abstraction: storageId for Convex, can swap to fileUrl/fileKey for uploadthing
+    storageId: v.id("_storage"),
+    photoType: v.union(
+      v.literal("tech_tray"),
+      v.literal("sector_map"),
+      v.literal("other"),
+    ),
+    uploadedAt: v.number(),
+    gameRound: v.optional(v.number()),
+    notes: v.optional(v.string()),
+  })
+    .index("by_user", ["userId"])
+    .index("by_session", ["sessionId"])
+    .index("by_session_type", ["sessionId", "photoType"]),
 });

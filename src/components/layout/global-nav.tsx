@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Calculator, BookOpen, Search } from "lucide-react";
+import { Calculator, BookOpen, Search, Camera, Info } from "lucide-react";
+import { LogoutButton } from "@/components/auth/logout-button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 const NAV_ITEMS = [
   { label: "Calculator", href: "/", icon: Calculator },
   { label: "Reference", href: "/reference", icon: BookOpen },
   { label: "Search", href: "/search", icon: Search },
+  { label: "Photos", href: "/photos", icon: Camera },
+  { label: "About", href: "/about", icon: Info },
 ];
 
 export function GlobalNav() {
@@ -46,6 +50,11 @@ export function GlobalNav() {
             );
           })}
         </nav>
+
+        <div className="ml-auto flex items-center gap-1">
+          <ThemeToggle />
+          <LogoutButton />
+        </div>
       </div>
     </header>
   );

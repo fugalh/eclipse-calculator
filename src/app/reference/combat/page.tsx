@@ -1,41 +1,99 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useMemo, useCallback } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   PageHeader,
   CombatRulesList,
   CombatQuickReference,
-  SearchFilter,
 } from "@/components/reference";
+import { SearchInput } from "@/components/filters";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { COMBAT_RULES } from "@/lib/data";
 import { BookOpen, Zap } from "lucide-react";
 
 type ViewMode = "full" | "quick";
 
-export default function CombatPage() {
-  const [search, setSearch] = useState("");
-  const [viewMode, setViewMode] = useState<ViewMode>("full");
+function CombatPageSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-4 w-96" />
+      </div>
+      <div className="flex gap-2">
+        <Skeleton className="h-9 w-28" />
+        <Skeleton className="h-9 w-24" />
+      </div>
+      <div className="space-y-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Skeleton key={i} className="h-32 w-full" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CombatPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Parse URL state
+  const query = searchParams.get("q") ?? "";
+  const viewMode = (searchParams.get("view") as ViewMode) ?? "full";
+
+  // URL update helper
+  const updateUrl = useCallback(
+    (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
+      for (const [key, value] of Object.entries(updates)) {
+        if (value === null || value === "") {
+          params.delete(key);
+        } else {
+          params.set(key, value);
+        }
+      }
+      const qs = params.toString();
+      router.push(qs ? `/reference/combat?${qs}` : "/reference/combat");
+    },
+    [router, searchParams],
+  );
 
   // Filter sections by search
-  const filteredSections = search
-    ? COMBAT_RULES.filter((section) => {
-        const searchLower = search.toLowerCase();
-        return (
-          section.title.toLowerCase().includes(searchLower) ||
-          section.content.toLowerCase().includes(searchLower) ||
-          section.subsections?.some(
-            (sub) =>
-              sub.title.toLowerCase().includes(searchLower) ||
-              sub.content.toLowerCase().includes(searchLower),
-          ) ||
-          section.tips?.some((tip) =>
-            tip.toLowerCase().includes(searchLower),
-          ) ||
-          section.examples?.some((ex) => ex.toLowerCase().includes(searchLower))
-        );
-      })
-    : COMBAT_RULES;
+  const filteredSections = useMemo(() => {
+    if (!query) return COMBAT_RULES;
+
+    const searchLower = query.toLowerCase();
+    return COMBAT_RULES.filter((section) => {
+      return (
+        section.title.toLowerCase().includes(searchLower) ||
+        section.content.toLowerCase().includes(searchLower) ||
+        section.subsections?.some(
+          (sub) =>
+            sub.title.toLowerCase().includes(searchLower) ||
+            sub.content.toLowerCase().includes(searchLower),
+        ) ||
+        section.tips?.some((tip) => tip.toLowerCase().includes(searchLower)) ||
+        section.examples?.some((ex) => ex.toLowerCase().includes(searchLower))
+      );
+    });
+  }, [query]);
+
+  // Handlers
+  const handleQueryChange = useCallback(
+    (newQuery: string) => {
+      updateUrl({ q: newQuery || null });
+    },
+    [updateUrl],
+  );
+
+  const handleViewModeChange = useCallback(
+    (mode: ViewMode) => {
+      updateUrl({ view: mode === "full" ? null : mode });
+    },
+    [updateUrl],
+  );
 
   return (
     <div className="space-y-6">
@@ -47,7 +105,7 @@ export default function CombatPage() {
             <Button
               variant={viewMode === "full" ? "default" : "outline"}
               size="sm"
-              onClick={() => setViewMode("full")}
+              onClick={() => handleViewModeChange("full")}
             >
               <BookOpen className="mr-2 h-4 w-4" />
               Full Rules
@@ -55,7 +113,7 @@ export default function CombatPage() {
             <Button
               variant={viewMode === "quick" ? "default" : "outline"}
               size="sm"
-              onClick={() => setViewMode("quick")}
+              onClick={() => handleViewModeChange("quick")}
             >
               <Zap className="mr-2 h-4 w-4" />
               Quick Ref
@@ -68,10 +126,11 @@ export default function CombatPage() {
         <>
           {/* Search */}
           <div className="flex items-center justify-between gap-4">
-            <SearchFilter
-              value={search}
-              onChange={setSearch}
+            <SearchInput
+              value={query}
+              onChange={handleQueryChange}
               placeholder="Search rules..."
+              debounceMs={200}
               className="w-64"
             />
             <span className="text-sm text-muted-foreground">
@@ -149,5 +208,13 @@ export default function CombatPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function CombatPage() {
+  return (
+    <Suspense fallback={<CombatPageSkeleton />}>
+      <CombatPageContent />
+    </Suspense>
   );
 }
