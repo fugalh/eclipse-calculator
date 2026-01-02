@@ -14,8 +14,100 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload, X, Loader2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Upload, X, Loader2, ImageIcon } from "lucide-react";
 import Image from "next/image";
+
+const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
+
+function formatFileSize(bytes: number | undefined): string {
+  if (!bytes) return "0 B";
+  const mb = bytes / (1024 * 1024);
+  return mb >= 1 ? `${mb.toFixed(1)}MB` : `${(bytes / 1024).toFixed(0)}KB`;
+}
+
+const MIN_DIMENSION = 100; // Don't resize below 100px
+
+async function resizeImage(file: File, maxSizeBytes: number): Promise<File> {
+  return new Promise((resolve, reject) => {
+    const img = document.createElement("img");
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+
+      let quality = 0.9;
+      let width = img.width;
+      let height = img.height;
+
+      const tryResize = () => {
+        // Guard against infinite loops - stop if dimensions get too small
+        if (width < MIN_DIMENSION || height < MIN_DIMENSION) {
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error("Failed to resize image"));
+                return;
+              }
+              resolve(new File([blob], file.name, { type: "image/jpeg" }));
+            },
+            "image/jpeg",
+            quality,
+          );
+          return;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error("Failed to resize image"));
+              return;
+            }
+
+            if (blob.size <= maxSizeBytes || quality <= 0.1) {
+              resolve(new File([blob], file.name, { type: "image/jpeg" }));
+            } else {
+              // Reduce quality first, then dimensions
+              if (quality > 0.5) {
+                quality -= 0.1;
+              } else {
+                width = Math.floor(width * 0.9);
+                height = Math.floor(height * 0.9);
+              }
+              tryResize();
+            }
+          },
+          "image/jpeg",
+          quality,
+        );
+      };
+
+      tryResize();
+    };
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Failed to load image"));
+    };
+    img.src = objectUrl;
+  });
+}
 
 interface PhotoUploaderProps {
   sessionId: Id<"gameSessions">;
@@ -40,6 +132,9 @@ export function PhotoUploader({
   const [preview, setPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showResizeDialog, setShowResizeDialog] = useState(false);
+  const [oversizedFile, setOversizedFile] = useState<File | null>(null);
+  const [isResizing, setIsResizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,9 +147,10 @@ export function PhotoUploader({
       return;
     }
 
-    // Validate file size (8MB max)
-    if (file.size > 8 * 1024 * 1024) {
-      setError("Image must be smaller than 8MB");
+    // Validate file size (8MB max) - show resize dialog if over limit
+    if (file.size > MAX_FILE_SIZE) {
+      setOversizedFile(file);
+      setShowResizeDialog(true);
       return;
     }
 
@@ -123,6 +219,40 @@ export function PhotoUploader({
     }
   };
 
+  const handleResizeAndContinue = async () => {
+    if (!oversizedFile) return;
+
+    setIsResizing(true);
+    setShowResizeDialog(false);
+
+    try {
+      const resizedFile = await resizeImage(oversizedFile, MAX_FILE_SIZE);
+
+      setSelectedFile(resizedFile);
+      setError(null);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(resizedFile);
+    } catch {
+      setError("Failed to resize image. Please try a smaller file.");
+    } finally {
+      setIsResizing(false);
+      setOversizedFile(null);
+    }
+  };
+
+  const handleResizeDialogClose = () => {
+    setShowResizeDialog(false);
+    setOversizedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -153,7 +283,12 @@ export function PhotoUploader({
         </div>
       )}
 
-      {preview ? (
+      {isResizing ? (
+        <div className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-8">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">Resizing image...</p>
+        </div>
+      ) : preview ? (
         <div className="relative">
           <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
             <Image
@@ -213,6 +348,29 @@ export function PhotoUploader({
           )}
         </Button>
       )}
+
+      <AlertDialog open={showResizeDialog} onOpenChange={setShowResizeDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogMedia>
+              <ImageIcon className="h-4 w-4" />
+            </AlertDialogMedia>
+            <AlertDialogTitle>Image Too Large</AlertDialogTitle>
+            <AlertDialogDescription>
+              This image is {formatFileSize(oversizedFile?.size)} which exceeds
+              the 8MB limit. Would you like to automatically resize it?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleResizeDialogClose}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleResizeAndContinue}>
+              Resize & Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

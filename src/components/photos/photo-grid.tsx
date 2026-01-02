@@ -1,34 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Image from "next/image";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import type { PhotoType } from "@/convex/types";
-import { formatDistanceToNow } from "date-fns";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Trash2, X } from "lucide-react";
-
-interface PhotoData {
-  _id: Id<"gamePhotos">;
-  userId: Id<"users">;
-  photoType: PhotoType;
-  uploadedAt: number;
-  url: string;
-  gameRound?: number;
-  notes?: string;
-}
+import type { PhotoType, GamePhotoData } from "@/convex/types";
+import { PhotoViewer } from "./photo-viewer";
 
 interface PhotoGridProps {
-  photos: PhotoData[];
+  photos: GamePhotoData[];
   canDelete?: boolean;
   currentUserId?: Id<"users">;
   sessionOwnerId?: Id<"users">;
@@ -48,24 +29,53 @@ export function PhotoGrid({
   sessionOwnerId,
   onPhotoDeleted,
 }: PhotoGridProps) {
-  const [selectedPhoto, setSelectedPhoto] = useState<PhotoData | null>(null);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
+    null,
+  );
   const removePhoto = useMutation(api.photos.remove);
 
+  // Group photos by type (memoized to prevent unnecessary recalculations)
+  const photosByType = useMemo(
+    () =>
+      photos.reduce(
+        (acc, photo) => {
+          if (!acc[photo.photoType]) {
+            acc[photo.photoType] = [];
+          }
+          acc[photo.photoType].push(photo);
+          return acc;
+        },
+        {} as Record<PhotoType, GamePhotoData[]>,
+      ),
+    [photos],
+  );
+
+  // Flatten photos maintaining type-group order for navigation
+  const flattenedPhotos = useMemo(() => {
+    const ordered: GamePhotoData[] = [];
+    for (const type of Object.keys(PHOTO_TYPE_LABELS) as PhotoType[]) {
+      if (photosByType[type]) {
+        ordered.push(...photosByType[type]);
+      }
+    }
+    return ordered;
+  }, [photosByType]);
+
+  const handlePhotoClick = (photo: GamePhotoData) => {
+    const index = flattenedPhotos.findIndex((p) => p._id === photo._id);
+    setSelectedPhotoIndex(index);
+  };
+
   const handleDelete = async (photoId: Id<"gamePhotos">) => {
-    setIsDeleting(true);
     try {
       await removePhoto({ id: photoId });
-      setSelectedPhoto(null);
       onPhotoDeleted?.();
     } catch (error) {
       console.error("Failed to delete photo:", error);
-    } finally {
-      setIsDeleting(false);
     }
   };
 
-  const canDeletePhoto = (photo: PhotoData) => {
+  const canDeletePhoto = (photo: GamePhotoData) => {
     if (!canDelete || !currentUserId) return false;
     // Session owner can delete any photo
     if (sessionOwnerId && currentUserId === sessionOwnerId) return true;
@@ -84,18 +94,6 @@ export function PhotoGrid({
     );
   }
 
-  // Group photos by type
-  const photosByType = photos.reduce(
-    (acc, photo) => {
-      if (!acc[photo.photoType]) {
-        acc[photo.photoType] = [];
-      }
-      acc[photo.photoType].push(photo);
-      return acc;
-    },
-    {} as Record<PhotoType, PhotoData[]>,
-  );
-
   return (
     <>
       <div className="space-y-6">
@@ -113,7 +111,7 @@ export function PhotoGrid({
                   <button
                     key={photo._id}
                     className="group relative aspect-square overflow-hidden rounded-lg border bg-muted"
-                    onClick={() => setSelectedPhoto(photo)}
+                    onClick={() => handlePhotoClick(photo)}
                   >
                     <Image
                       src={photo.url}
@@ -130,53 +128,15 @@ export function PhotoGrid({
         })}
       </div>
 
-      <Dialog
-        open={selectedPhoto !== null}
-        onOpenChange={(open) => !open && setSelectedPhoto(null)}
-      >
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedPhoto && PHOTO_TYPE_LABELS[selectedPhoto.photoType]}
-            </DialogTitle>
-            <DialogDescription>
-              {selectedPhoto &&
-                `Uploaded ${formatDistanceToNow(selectedPhoto.uploadedAt, { addSuffix: true })}`}
-            </DialogDescription>
-          </DialogHeader>
-          {selectedPhoto && (
-            <div className="relative">
-              <div className="relative aspect-video w-full overflow-hidden rounded-lg">
-                <Image
-                  src={selectedPhoto.url}
-                  alt={PHOTO_TYPE_LABELS[selectedPhoto.photoType]}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-              <div className="mt-4 flex justify-between">
-                <Button
-                  variant="outline"
-                  onClick={() => setSelectedPhoto(null)}
-                >
-                  <X className="mr-2 h-4 w-4" />
-                  Close
-                </Button>
-                {canDeletePhoto(selectedPhoto) && (
-                  <Button
-                    variant="destructive"
-                    onClick={() => handleDelete(selectedPhoto._id)}
-                    disabled={isDeleting}
-                  >
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    {isDeleting ? "Deleting..." : "Delete"}
-                  </Button>
-                )}
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      {selectedPhotoIndex !== null && (
+        <PhotoViewer
+          photos={flattenedPhotos}
+          initialIndex={selectedPhotoIndex}
+          onClose={() => setSelectedPhotoIndex(null)}
+          onDelete={handleDelete}
+          canDelete={canDeletePhoto}
+        />
+      )}
     </>
   );
 }
