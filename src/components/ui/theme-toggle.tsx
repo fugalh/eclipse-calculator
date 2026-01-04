@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,10 +16,12 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Prevent hydration mismatch - lazy mount pattern
+  // Prevent hydration mismatch - mount after first render
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   if (!mounted) {
-    // Trigger mount on first render
-    setTimeout(() => setMounted(true), 0);
     return (
       <Button variant="ghost" size="icon" className="size-9">
         <Sun className="size-4" />
