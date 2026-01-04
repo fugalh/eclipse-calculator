@@ -79,6 +79,8 @@ export interface PresetManagerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSelectPreset: (preset: ShipConfig) => void;
+  onDeletePreset?: (name: string) => void;
+  refreshKey?: number;
 }
 
 export interface PresetItemProps {

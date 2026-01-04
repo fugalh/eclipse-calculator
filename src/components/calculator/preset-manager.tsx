@@ -22,7 +22,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { useReducer, useMemo, useCallback } from "react";
+import { useReducer, useState, useEffect, useCallback } from "react";
 import { getShipIcon } from "@/lib/icons";
 
 // ============================================================================
@@ -47,47 +47,49 @@ function PresetItem({ preset, onSelect, onDelete }: PresetItemProps) {
   const iconPath = getShipIcon(preset.shipClass);
 
   return (
-    <button
-      type="button"
-      onClick={onSelect}
-      className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors text-left group"
-    >
-      <div className="w-9 h-9 rounded bg-muted flex items-center justify-center shrink-0 overflow-hidden">
-        {iconPath ? (
-          <Image
-            src={iconPath}
-            alt={preset.shipClass}
-            width={36}
-            height={36}
-            className="w-7 h-7 object-contain"
-            unoptimized
-          />
-        ) : (
-          <span className="text-xs font-medium">
-            {preset.shipClass.charAt(0)}
-          </span>
-        )}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate">{preset.name}</div>
-        <div className="text-xs text-muted-foreground">{preset.shipClass}</div>
-      </div>
-      <Badge className={cn("text-[10px] px-1.5", TYPE_COLORS[preset.type])}>
-        {TYPE_LABELS[preset.type]}
-      </Badge>
+    <div className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted transition-colors group">
+      <button
+        type="button"
+        onClick={onSelect}
+        className="flex items-center gap-3 flex-1 min-w-0 text-left"
+      >
+        <div className="w-9 h-9 rounded bg-muted flex items-center justify-center shrink-0 overflow-hidden">
+          {iconPath ? (
+            <Image
+              src={iconPath}
+              alt={preset.shipClass}
+              width={36}
+              height={36}
+              className="w-7 h-7 object-contain"
+              unoptimized
+            />
+          ) : (
+            <span className="text-xs font-medium">
+              {preset.shipClass.charAt(0)}
+            </span>
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium truncate">{preset.name}</div>
+          <div className="text-xs text-muted-foreground">
+            {preset.shipClass}
+          </div>
+        </div>
+        <Badge className={cn("text-[10px] px-1.5", TYPE_COLORS[preset.type])}>
+          {TYPE_LABELS[preset.type]}
+        </Badge>
+      </button>
       {onDelete && (
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          className="opacity-0 group-hover:opacity-100 p-1 hover:bg-destructive/20 rounded transition-all"
+          onClick={onDelete}
+          className="p-1 hover:bg-destructive/20 rounded transition-all shrink-0"
+          aria-label="Delete preset"
         >
           <X className="size-3.5 text-destructive" />
         </button>
       )}
-    </button>
+    </div>
   );
 }
 
@@ -99,23 +101,32 @@ export function PresetManager({
   open,
   onOpenChange,
   onSelectPreset,
+  onDeletePreset,
+  refreshKey: externalRefreshKey,
 }: PresetManagerProps) {
   // Use reducer to force refresh of custom presets
   const [refreshKey, forceRefresh] = useReducer((x: number) => x + 1, 0);
+  const [customPresets, setCustomPresets] = useState<Preset[]>([]);
 
-  // Load custom presets - refreshed when open or refreshKey changes
-  const customPresets = useMemo(() => {
-    // Only load when dialog is open
-    if (!open) return [];
-    // refreshKey in closure ensures we reload after delete
-    void refreshKey;
-    return getCustomPresets();
-  }, [open, refreshKey]);
+  // Load custom presets when dialog opens or refresh keys change
+  useEffect(() => {
+    if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCustomPresets(getCustomPresets());
+    }
+  }, [open, refreshKey, externalRefreshKey]);
 
-  const handleDeleteCustomPreset = useCallback((name: string) => {
-    deleteCustomPreset(name);
-    forceRefresh();
-  }, []);
+  const handleDeleteCustomPreset = useCallback(
+    (name: string) => {
+      if (onDeletePreset) {
+        onDeletePreset(name);
+      } else {
+        deleteCustomPreset(name);
+      }
+      forceRefresh();
+    },
+    [onDeletePreset],
+  );
 
   const handleSelectPreset = useCallback(
     (preset: Preset) => {

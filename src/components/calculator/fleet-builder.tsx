@@ -70,7 +70,7 @@ export function FleetBuilder({
     const ship = ships[index];
     const preset = findPresetByName(ship.name);
     if (preset) {
-      handleShipChange(index, { ...preset, number: ship.number });
+      handleShipChange(index, { ...preset, id: ship.id, number: ship.number });
     }
   };
 

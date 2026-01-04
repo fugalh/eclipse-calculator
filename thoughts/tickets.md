@@ -2,6 +2,7 @@
 
 - audit: is hit priority logic in line with NPC algo? "If possible, dice are assigned so that your Ships are destroyed from largest to smallest. If none of your Ships can be destroyed in the Attack, dice are assigned to inflict as much damage to your Ships as possible, from largest to smallest."
 - TESTS
+- When deleting a custom preset that a deployed ship is using, the ship's name is updated to "Custom Ship" but clicking "Reset" still resets to the (now deleted) custom preset. It should instead fall back to the standard ship blueprint based on shipClass (e.g., reset a Cruiser to the default Cruiser preset).
 
 # Wishlist
 

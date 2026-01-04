@@ -10,7 +10,11 @@ import type {
 } from "@/lib/types";
 import { DEFAULT_SETTINGS } from "@/lib/types";
 import { calculate, generateShipId } from "@/lib/combat/simulation";
-import { findPresetByName, saveCustomPreset } from "@/lib/presets";
+import {
+  findPresetByName,
+  saveCustomPreset,
+  deleteCustomPreset,
+} from "@/lib/presets";
 import { decodeBattleConfig } from "@/lib/share";
 import { getSettings, updateSettings } from "@/lib/settings";
 import { useDebouncedCalculation } from "@/lib/hooks/use-debounced-calculation";
@@ -212,13 +216,43 @@ export function CalculatorContent() {
     setManualResults(null);
   };
 
+  const [presetRefreshKey, setPresetRefreshKey] = useState(0);
+
+  const handleDeletePreset = (presetName: string) => {
+    // Delete the preset from localStorage
+    deleteCustomPreset(presetName);
+
+    // Update any ships using this preset to have a generic name
+    const updateShipName = (fleet: ShipConfig[]) =>
+      fleet.map((ship) =>
+        ship.name === presetName ? { ...ship, name: "Custom Ship" } : ship,
+      );
+
+    setAttackerFleet((prev) => updateShipName(prev));
+    setDefenderFleet((prev) => updateShipName(prev));
+
+    // Trigger refresh of preset manager
+    setPresetRefreshKey((k) => k + 1);
+  };
+
   const handleSavePreset = (ship: ShipConfig) => {
     const name = window.prompt(
       "Name your preset:",
       `Ship ${Math.ceil(Math.random() * 1000)}`,
     );
     if (name) {
+      // Save the preset with the new name
       saveCustomPreset({ ...ship, name });
+
+      // Update the ship's name in the fleet
+      const updateFleetName = (fleet: ShipConfig[]) =>
+        fleet.map((s) => (s.id === ship.id ? { ...s, name } : s));
+
+      setAttackerFleet((prev) => updateFleetName(prev));
+      setDefenderFleet((prev) => updateFleetName(prev));
+
+      // Trigger refresh of preset manager
+      setPresetRefreshKey((k) => k + 1);
     }
   };
 
@@ -348,6 +382,8 @@ export function CalculatorContent() {
         open={presetDialog.open}
         onOpenChange={(open) => setPresetDialog((prev) => ({ ...prev, open }))}
         onSelectPreset={handleSelectPreset}
+        onDeletePreset={handleDeletePreset}
+        refreshKey={presetRefreshKey}
       />
     </main>
   );
