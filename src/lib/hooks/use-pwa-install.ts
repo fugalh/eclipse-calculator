@@ -51,12 +51,42 @@ function isDismissedWithin10Days(): boolean {
   return Date.now() - timestamp < TEN_DAYS_MS;
 }
 
+function getRandomBytes(n: number): Uint8Array {
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    return crypto.getRandomValues(new Uint8Array(n));
+  }
+
+  // Final fallback using Math.random (should never reach here in modern browsers)
+  const bytes = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    bytes[i] = (Math.random() * 256) | 0;
+  }
+  return bytes;
+}
+
+function generateUUID(): string {
+  // Use crypto.randomUUID if available (requires secure context: HTTPS or localhost)
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  // Fallback: generate UUID v4 from random bytes
+  const bytes = getRandomBytes(16);
+  bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4
+  bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant 10
+
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join(
+    "",
+  );
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 function getSessionId(): string {
   if (typeof window === "undefined") return "";
 
   let sessionId = sessionStorage.getItem("pwa-session-id");
   if (!sessionId) {
-    sessionId = crypto.randomUUID();
+    sessionId = generateUUID();
     sessionStorage.setItem("pwa-session-id", sessionId);
   }
   return sessionId;
