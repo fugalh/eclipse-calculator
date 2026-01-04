@@ -4,8 +4,9 @@ import { useConvexAuth } from "convex/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, Suspense } from "react";
 import { SignInForm } from "@/components/auth/sign-in-form";
+import { isConvexAvailable } from "@/lib/convex-available";
 
-function SignInContent() {
+function SignInFormContent() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,6 +35,23 @@ function SignInContent() {
       <SignInForm />
     </main>
   );
+}
+
+function SignInContent() {
+  if (!isConvexAvailable()) {
+    return (
+      <div className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold">Authentication Unavailable</h1>
+        <p className="text-muted-foreground mt-2">
+          Authentication requires Convex configuration. Please run{" "}
+          <code className="bg-muted px-1 py-0.5 rounded">npx convex dev</code>{" "}
+          and ensure NEXT_PUBLIC_CONVEX_URL is set.
+        </p>
+      </div>
+    );
+  }
+
+  return <SignInFormContent />;
 }
 
 export default function SignInPage() {

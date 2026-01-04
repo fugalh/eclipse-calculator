@@ -12,8 +12,8 @@ A web-based companion app for the board game _Eclipse: Second Dawn for the Galax
 bun dev              # Start development server (localhost:3000)
 bun check            # Run ESLint + TypeScript type checking
 bun format           # Prettier formatting
-bun build            # Production build
-npx convex dev       # Convex database development (required for photos feature)
+bun run build        # Production build
+npx convex dev       # [OPTIONAL] Convex database (enables photos feature)
 ```
 
 ## Architecture
@@ -92,6 +92,18 @@ import { useMutation, useQuery } from "convex/react";
 const userId = await auth.getUserId(ctx);
 if (!userId) throw new Error("Not authenticated");
 ```
+
+## Optional Features
+
+### Photos Feature (Requires Convex)
+
+The collaborative photo sharing feature requires Convex configuration:
+
+1. Run `npx convex dev` to start the Convex development server
+2. This will create `.env.local` with `NEXT_PUBLIC_CONVEX_URL`
+3. Restart the Next.js dev server to enable photos and authentication
+
+**Without Convex:** The app will run normally with calculator, reference, and search features. The Photos nav item and auth pages will be hidden.
 
 ## Workflow Instructions
 

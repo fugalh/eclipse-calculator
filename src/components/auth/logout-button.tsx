@@ -5,8 +5,9 @@ import { useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import { isConvexAvailable } from "@/lib/convex-available";
 
-export function LogoutButton() {
+function LogoutButtonContent() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const { signOut } = useAuthActions();
   const router = useRouter();
@@ -31,4 +32,12 @@ export function LogoutButton() {
       <span className="hidden sm:inline">Logout</span>
     </Button>
   );
+}
+
+export function LogoutButton() {
+  if (!isConvexAvailable()) {
+    return null;
+  }
+
+  return <LogoutButtonContent />;
 }

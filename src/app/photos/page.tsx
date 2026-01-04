@@ -8,8 +8,9 @@ import { SessionCard } from "@/components/photos/session-card";
 import { CreateSessionDialog } from "@/components/photos/create-session-dialog";
 import { JoinSessionDialog } from "@/components/photos/join-session-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { isConvexAvailable } from "@/lib/convex-available";
 
-export default function PhotosPage() {
+function PhotosPageContent() {
   const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
   const router = useRouter();
 
@@ -108,4 +109,21 @@ export default function PhotosPage() {
       </Tabs>
     </main>
   );
+}
+
+export default function PhotosPage() {
+  if (!isConvexAvailable()) {
+    return (
+      <div className="container mx-auto p-4">
+        <h1 className="text-2xl font-bold">Photos Feature Unavailable</h1>
+        <p className="text-muted-foreground mt-2">
+          The photos feature requires Convex configuration. Please run{" "}
+          <code className="bg-muted px-1 py-0.5 rounded">npx convex dev</code>{" "}
+          and ensure NEXT_PUBLIC_CONVEX_URL is set.
+        </p>
+      </div>
+    );
+  }
+
+  return <PhotosPageContent />;
 }

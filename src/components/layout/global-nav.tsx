@@ -24,6 +24,7 @@ import {
   SheetClose,
 } from "@/components/ui/sheet";
 import { useInstallPrompt } from "@/components/pwa";
+import { isConvexAvailable } from "@/lib/convex-available";
 
 const NAV_ITEMS = [
   { label: "Calculator", href: "/", icon: Calculator },
@@ -36,6 +37,13 @@ const NAV_ITEMS = [
 export function GlobalNav() {
   const pathname = usePathname();
   const { isMobile, isInstalled, onLearnHow } = useInstallPrompt();
+
+  const navItems = NAV_ITEMS.filter((item) => {
+    if (item.href === "/photos" && !isConvexAvailable()) {
+      return false;
+    }
+    return true;
+  });
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -53,7 +61,7 @@ export function GlobalNav() {
               <SheetTitle>Eclipse</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 mt-4">
-              {NAV_ITEMS.map((item) => {
+              {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive =
                   item.href === "/"
@@ -102,7 +110,7 @@ export function GlobalNav() {
 
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-1">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             const isActive =
               item.href === "/"

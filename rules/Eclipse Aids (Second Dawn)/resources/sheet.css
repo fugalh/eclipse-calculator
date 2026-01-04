@@ -134257,10 +134257,9 @@ svg.mdc-button__icon {
 .appsElementsWorkspaceRecommendationFeatureComparisonGridContentFeatureTable {
   display: grid;
   position: relative;
-  grid-template-columns: minmax(min-content, 0.1fr) minmax(
-      min-content,
-      2fr
-    ) repeat(calc(var(--num-cols) - 2), minmax(min-content, 1.2fr));
+  grid-template-columns:
+    minmax(min-content, 0.1fr) minmax(min-content, 2fr)
+    repeat(calc(var(--num-cols) - 2), minmax(min-content, 1.2fr));
   gap: 0;
   padding: 8px 16px;
   box-sizing: border-box;
