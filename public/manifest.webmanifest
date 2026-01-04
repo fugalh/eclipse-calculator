@@ -1,7 +1,7 @@
 {
-  "name": "Eclipse Combat Calculator",
-  "short_name": "Eclipse Calc",
-  "description": "Combat calculator for Eclipse: Second Dawn for the Galaxy board game",
+  "name": "Eclipse Companion",
+  "short_name": "Eclipse",
+  "description": "Companion app for Eclipse: Second Dawn for the Galaxy with combat simulator, reference guides, rule search, and photo sharing",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#09090b",

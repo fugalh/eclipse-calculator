@@ -107,7 +107,7 @@ The collaborative photo sharing feature requires Convex configuration:
 
 ## Workflow Instructions
 
-- After completing a plan, use an agent to find and address any issues with `bun check`; when that agent completes successfully, run `bun format`
+- After completing a plan, use an agent to find and address any issues with `bun check`; when that agent completes successfully, run `bun format`; then `bun run build`
 - When a plan is completed, copy the markdown file to `./plans/` and append the completion summary to the local `{plan}.md` file
 
 ## Roadmap Status

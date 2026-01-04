@@ -43,7 +43,7 @@ export function InstallTutorialSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
         <SheetHeader className="text-left">
-          <SheetTitle>Install Eclipse Calculator</SheetTitle>
+          <SheetTitle>Install Eclipse Companion</SheetTitle>
           <SheetDescription>
             {platform === "ios"
               ? "Add to your home screen for quick access"
@@ -275,7 +275,7 @@ function IOSShareSheetInitialMockup() {
           className="shrink-0 rounded-lg"
         />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">Eclipse Calculator</p>
+          <p className="truncate text-sm font-semibold">Eclipse Companion</p>
           <p className="text-muted-foreground truncate text-xs">
             eclipse-calc.vercel.app
           </p>

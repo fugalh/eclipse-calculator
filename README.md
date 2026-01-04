@@ -75,7 +75,7 @@ open http://localhost:3000
 ```bash
 bun check        # TypeScript checking
 bun format       # Code formatting
-bun build        # Production build
+bun run build    # Production build
 npx convex dev   # Convex development (when using database features)
 ```
 
@@ -91,7 +91,7 @@ See [ROADMAP.md](./ROADMAP.md) for planned features:
 
 ## Modifications History
 
-### Phase 1: NextJS Migration (2025-12-29)
+### NextJS Migration (2025-12-29)
 
 Migrated the application from static HTML/JS to NextJS:
 

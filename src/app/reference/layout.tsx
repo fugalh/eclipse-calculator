@@ -2,7 +2,7 @@ import { NotationProvider } from "@/components/reference";
 import { ReferenceSidebar, ReferenceTabs } from "@/components/reference";
 
 export const metadata = {
-  title: "Reference - Eclipse Calculator",
+  title: "Reference - Eclipse Companion",
   description: "Quick reference guides for Eclipse: Second Dawn for the Galaxy",
 };
 

@@ -19,9 +19,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const APP_NAME = "Eclipse Calculator";
+const APP_NAME = "Eclipse Companion";
 const APP_DESCRIPTION =
-  "Combat calculator for Eclipse: Second Dawn for the Galaxy board game. Simulate ship battles and calculate victory probabilities.";
+  "Companion app for Eclipse: Second Dawn for the Galaxy. Features combat simulator, quick reference guides, rule search, and game photo sharing.";
 
 export const metadata: Metadata = {
   applicationName: APP_NAME,

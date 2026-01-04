@@ -113,12 +113,12 @@ export function useInstallToast({
 function getToastMessage(platform: Platform): string {
   switch (platform) {
     case "ios":
-      return "Add Eclipse Calculator to your home screen for quick access";
+      return "Add Eclipse Companion to your home screen for quick access";
     case "android":
-      return "Install Eclipse Calculator for a better experience";
+      return "Install Eclipse Companion for a better experience";
     case "chrome-desktop":
-      return "Install the Eclipse Calculator app";
+      return "Install the Eclipse Companion app";
     default:
-      return "Install Eclipse Calculator for offline access";
+      return "Install Eclipse Companion for offline access";
   }
 }
