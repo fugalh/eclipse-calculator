@@ -1,110 +1,133 @@
 # Eclipse Combat Calculator
 
-A web application for calculating combat outcomes in the board game *Eclipse: Second Dawn for the Galaxy*.
+A web application for calculating combat outcomes in the board game _Eclipse: Second Dawn for the Galaxy_.
+
+## Features
+
+- Calculate victory chances in ship battles using Monte Carlo simulation (1000 iterations)
+- Configure attacker and defender fleets with customizable ship attributes
+- Tap-to-cycle interface optimized for mobile devices
+- Save custom ship configurations as presets (stored in localStorage)
+- See survival probabilities for ships in the winning fleet
+- PWA support for mobile installation
+- Dark mode default
 
 ## Provenance
 
 This application was originally hosted at `eclipse-calculator.com` and created in 2014. When the original website was abandoned, the files were preserved on Amazon S3 at `https://s3.amazonaws.com/eclipse-calculator/`.
 
-The current version was retrieved from the Wayback Machine archive on December 29, 2025, and downloaded from the S3 bucket for local hosting and modification.
+The current version was retrieved from the Wayback Machine archive on December 29, 2025, and downloaded from the S3 bucket. It has since been migrated to a modern NextJS architecture.
 
 ### Original Copyright
 
 © 2014 Eclipse-Calculator.com
 
-## What This App Does
+## Tech Stack
 
-The Eclipse Combat Calculator allows *Eclipse: Second Dawn for the Galaxy* players to:
+| Layer       | Technology                        |
+| ----------- | --------------------------------- |
+| Framework   | Next.js 16.1.1 (App Router)       |
+| Language    | TypeScript (strict mode)          |
+| Styling     | Tailwind CSS + shadcn/ui          |
+| Database    | Convex (for future photo sharing) |
+| Persistence | localStorage (presets)            |
+| Deployment  | Vercel (recommended)              |
 
-- Calculate victory chances in ship battles
-- Simulate combat between attacker and defender forces
-- See survival chances for ships in the event of victory
-- Save ship configurations as presets for quick access
-- Optimize for mobile/smartphone use with progressive web app features
+## Getting Started
 
-## Modifications
+```bash
+# Install dependencies
+bun install
 
-### Initial Setup (2025-12-29)
+# Start development server
+bun dev
 
-**Downloaded all assets from S3:**
-- HTML, CSS, and JavaScript files
-- All image assets (icons, backgrounds, app icons)
-- Total of 31 files
+# Open in browser
+open http://localhost:3000
+```
 
-**Updated HTML:**
-- Changed app icon references from `web.archive.org` URLs to local paths
-- Removed Wayback Machine archive comments
+## Project Structure
 
-**Downloaded dependencies locally (2025-12-29):**
-- jQuery 2.1.0, jquery-cookie 1.4.0, and Underscore.js 1.5.2
-- Saved to `js/vendor/` directory
-- Updated script tags in `index.html` to reference local files
+```
+├── src/
+│   ├── app/                    # NextJS App Router pages
+│   │   └── page.tsx            # Combat calculator (main page)
+│   ├── components/
+│   │   ├── calculator/         # Calculator UI components
+│   │   │   ├── ship-configurator.tsx
+│   │   │   ├── fleet-builder.tsx
+│   │   │   ├── battle-results.tsx
+│   │   │   └── preset-manager.tsx
+│   │   └── ui/                 # shadcn/ui components
+│   └── lib/
+│       ├── combat/
+│       │   └── simulation.ts   # Combat simulation engine
+│       ├── types/              # Centralized TypeScript types
+│       └── presets.ts          # Preset storage utilities
+├── convex/                     # Convex schema and functions
+├── public/                     # Static assets and PWA manifest
+├── plans/                      # Implementation plans
+└── rules/                      # Eclipse game rules reference
+```
 
-**Current state:**
-- Fully functional local copy with no external dependencies
-- All assets and libraries stored locally
-- No functional changes to the application logic
+## Development
+
+```bash
+bun check        # TypeScript checking
+bun format       # Code formatting
+bun run build    # Production build
+npx convex dev   # Convex development (when using database features)
+```
+
+## Roadmap
+
+See [ROADMAP.md](./ROADMAP.md) for planned features:
+
+- **Phase 1**: NextJS Migration (Complete)
+- **Phase 2**: Quick Reference Guides
+- **Phase 3**: Rule Search
+- **Phase 4**: Gameplay Photo Upload
+- **Phase 5**: Polish & Integration
+
+## Modifications History
+
+### NextJS Migration (2025-12-29)
+
+Migrated the application from static HTML/JS to NextJS:
+
+- Set up NextJS 16.1.1 with App Router and React Compiler
+- Ported combat simulation engine to TypeScript (`src/lib/combat/simulation.ts`)
+- Created React components for ship configuration and battle results
+- Replaced cookie storage with localStorage for presets
+- Added PWA manifest and mobile app icons
+- Integrated Tailwind CSS and shadcn/ui for styling
+- Added dark mode as default theme
+
+### Type Centralization (2025-12-29)
+
+Centralized TypeScript types for all phases:
+
+- Created `src/lib/types/` with types for combat, presets, components, game entities
+- Added Convex schema for Phase 4 photo storage
+- Refactored existing components to use centralized types
 
 ### Second Dawn Compatibility Update (2025-12-29)
 
-**Updated combat mechanics for Second Dawn rules:**
-- Changed missiles from 2 dice per module to 1 die per missile (matching cannon behavior)
-- Added blue missiles support (all 4 colors now available: yellow, orange, blue, red)
-- Downloaded `missiles_blue.png` icon from S3
-- Updated missile damage values to match cannons (yellow=1, orange=2, blue=3, red=4)
+Updated combat mechanics for Second Dawn rules (in legacy code, preserved in TypeScript port):
 
-**UI improvements:**
-- Reorganized ship attributes into three logical rows:
-  - Row 1: Initiative, Hull, Computers, Shields, Number
-  - Row 2: Missiles (all 4 colors)
-  - Row 3: Cannons (all 4 colors)
-- Updated legend to be less redundant and reflect new missile mechanics
-- Added CSS styling for blue missiles
+- Changed missiles from 2 dice per module to 1 die per missile
+- Added blue missiles support (all 4 colors: yellow, orange, blue, red)
+- Updated missile damage values to match cannons
 
-**Files modified:**
-- `js/battlestats.js` - Core combat simulation engine
-- `js/ui.js` - Ship configuration UI
-- `css/analyzer.css` - Styling for missile icons and layout
-- `index.html` - Updated legend and game reference
-- `images/icons/missiles_blue.png` - Added icon
+### Initial Setup (2025-12-29)
 
-## File Structure
+Downloaded and preserved the original application:
 
-```
-├── css/
-│   ├── analyzer.css
-│   └── style.css
-├── images/
-│   ├── appicons/      # iOS and Android app icons
-│   ├── icons/         # Game ship and component icons
-│   └── *.png          # Background textures
-├── js/
-│   ├── vendor/        # Third-party libraries
-│   │   ├── jquery-2.1.0.min.js
-│   │   ├── jquery.cookie-1.4.0.js
-│   │   └── underscore-1.5.2.min.js
-│   ├── battlestats.js
-│   └── ui.js
-└── index.html
-```
+- Retrieved all assets from S3 and Wayback Machine
+- Converted external URLs to local paths
+- Downloaded dependencies locally (jQuery, jquery-cookie, Underscore.js)
+- Added git repository
 
-## Dependencies
+## Original Source
 
-The following third-party libraries are included locally in `js/vendor/`:
-- jQuery 2.1.0 - DOM manipulation and utilities
-- jquery-cookie 1.4.0 - Cookie management for presets
-- Underscore.js 1.5.2 - Functional programming utilities
-
-## Usage
-
-Simply open `index.html` in a web browser. The app is optimized for mobile devices but works on desktop as well.
-
-For the best mobile experience, add the app to your device's home screen.
-
-## Future Modifications
-
-Potential improvements to consider:
-- Modernize codebase (unminify, convert to ES6+)
-- Add TypeScript type definitions
-- Update to modern build tooling
-- Enhance UI/UX for modern mobile devices
+The original HTML/JS/CSS files from 2014 have been migrated and removed. The combat simulation logic from `js/battlestats.js` was ported to TypeScript in `src/lib/combat/simulation.ts` with full type safety and documentation.
