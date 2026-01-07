@@ -9,7 +9,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "check": "eslint . --cache && tsc --noEmit",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,mdx,css}\" --cache -l"
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,md,mdx,css}\" --cache -l",
+    "test": "bun test"
   },
   "dependencies": {
     "@auth/core": "0.37.0",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bun": "latest",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

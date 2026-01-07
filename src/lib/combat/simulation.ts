@@ -641,3 +641,25 @@ export function createDefaultShipConfig(
     ...overrides,
   };
 }
+
+// ============================================================================
+// Internal API - Exported for Testing Only
+// ============================================================================
+
+/**
+ * Internal functions exposed for testing purposes.
+ * These are implementation details and may change without notice.
+ * External consumers should only use the public API above.
+ */
+export const Internal = {
+  createDice,
+  checkHit,
+  createDicePool,
+  createCombatant,
+  isAlive,
+  applyDamage,
+  canBeKilled,
+  createShipGroup,
+  createInitiativeOrder,
+  distributeHits,
+} as const;
