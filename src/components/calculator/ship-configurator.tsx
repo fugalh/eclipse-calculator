@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import type {
@@ -8,7 +9,11 @@ import type {
   DiceColor,
   TargetPriority,
 } from "@/lib/types";
-import { cycleAttribute } from "@/lib/presets";
+import {
+  cycleAttribute,
+  ATTRIBUTE_LIMITS,
+  SHIP_COUNT_LIMITS,
+} from "@/lib/presets";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -74,6 +79,7 @@ interface AttributeButtonProps {
   name: NumericAttributeName;
   value: number;
   onClick: () => void;
+  onLongPress?: () => void;
   variant?: "stat" | "dice" | "missile";
   diceColor?: DiceColor;
 }
@@ -82,15 +88,80 @@ function AttributeButton({
   name,
   value,
   onClick,
+  onLongPress,
   variant = "stat",
   diceColor,
 }: AttributeButtonProps) {
+  // Long-press detection state and refs
+  const [isLongPressing, setIsLongPressing] = useState(false);
+  const [justReset, setJustReset] = useState(false);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const wasLongPressedRef = useRef(false);
+  const LONG_PRESS_DURATION = 375; // ms
+
+  // Pointer event handlers for long-press detection
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault(); // Prevents text selection during long-press
+    wasLongPressedRef.current = false;
+    setIsLongPressing(true);
+
+    timerRef.current = setTimeout(() => {
+      wasLongPressedRef.current = true; // Mark: long-press triggered
+      if (onLongPress) {
+        onLongPress();
+      }
+      setIsLongPressing(false);
+
+      // Visual and haptic feedback on successful reset
+      setJustReset(true);
+      if ("vibrate" in navigator) {
+        navigator.vibrate(50); // 50ms haptic buzz
+      }
+      setTimeout(() => setJustReset(false), 200); // Flash for 200ms
+    }, LONG_PRESS_DURATION);
+  };
+
+  const handlePointerUp = () => {
+    setIsLongPressing(false);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const handlePointerLeave = () => {
+    setIsLongPressing(false);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  // Wrapper to prevent onClick after successful long-press
+  const handleClick = () => {
+    if (!wasLongPressedRef.current) {
+      onClick(); // Only cycle if NOT long-pressed
+    }
+    wasLongPressedRef.current = false; // Reset for next interaction
+  };
+
+  // Cleanup timer on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
   const baseClasses = cn(
     "relative flex items-center justify-center overflow-hidden",
     "min-w-[72px] h-[72px]", // Mobile: 72x72
     "md:min-w-[80px] md:h-[80px]", // Desktop: 80x80 (matches original)
     "rounded-lg border-2 cursor-pointer select-none",
-    "transition-all active:scale-95 touch-manipulation",
+    "transition-all touch-manipulation",
+    "[&_img]:pointer-events-none [&_img]:select-none", // Prevent image interactions
+    !isLongPressing && "active:scale-95", // Only apply if NOT long-pressing
   );
 
   const getVariantClasses = () => {
@@ -135,30 +206,44 @@ function AttributeButton({
   return (
     <button
       type="button"
-      onClick={onClick}
-      className={cn(baseClasses, getVariantClasses())}
+      onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerLeave}
+      onContextMenu={(e) => e.preventDefault()} // Disable context menu on long-press
+      style={{ WebkitTouchCallout: "none" } as React.CSSProperties} // Prevent iOS callout
+      className={cn(
+        baseClasses,
+        getVariantClasses(),
+        isLongPressing && "scale-85", // Visual feedback during long-press (more dramatic)
+        justReset && "ring-2 ring-green-500 ring-opacity-75", // Flash green ring on reset
+      )}
     >
       {/* Icon at top */}
       {iconPath && (
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 opacity-90">
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 opacity-90 pointer-events-none"
+          onContextMenu={(e) => e.preventDefault()}
+        >
           <Image
             src={iconPath}
             alt={name}
             width={64}
             height={64}
             className="w-14 h-14 md:w-16 md:h-16 object-contain"
+            draggable={false}
             unoptimized
           />
         </div>
       )}
       {/* Fallback icon at top for stats without images */}
       {!iconPath && fallback && (
-        <span className="absolute top-0 left-1/2 -translate-x-1/2 text-xl md:text-2xl opacity-80 font-bold">
+        <span className="absolute top-0 left-1/2 -translate-x-1/2 text-xl md:text-2xl opacity-80 font-bold pointer-events-none">
           {fallback}
         </span>
       )}
       {/* Value at bottom */}
-      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-lg md:text-xl font-bold">
+      <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-lg md:text-xl font-bold pointer-events-none">
         {name === "number" ? `×${value}` : value}
       </span>
     </button>
@@ -182,6 +267,22 @@ export function ShipConfigurator({
     // Pass shipClass for 'number' attribute to use class-specific limits
     const newValue = cycleAttribute(currentValue, attr, ship.shipClass);
     onChange({ ...ship, [attr]: newValue });
+  };
+
+  const handleAttributeReset = (attr: NumericAttributeName) => {
+    let resetValue: number;
+
+    if (attr === "number" && ship.shipClass) {
+      // For ship count, reset to class-specific minimum (usually 1)
+      const limits =
+        SHIP_COUNT_LIMITS[ship.shipClass] ?? SHIP_COUNT_LIMITS.default;
+      resetValue = limits[0]; // Min value
+    } else {
+      // For other attributes, reset to minimum (usually 0)
+      resetValue = ATTRIBUTE_LIMITS[attr][0]; // Min value
+    }
+
+    onChange({ ...ship, [attr]: resetValue });
   };
 
   const handleToggle = (field: "splitter" | "missile_shield") => {
@@ -274,12 +375,14 @@ export function ShipConfigurator({
               name="initiative"
               value={ship.initiative}
               onClick={() => handleAttributeClick("initiative")}
+              onLongPress={() => handleAttributeReset("initiative")}
               variant="stat"
             />
             <AttributeButton
               name="number"
               value={ship.number}
               onClick={() => handleAttributeClick("number")}
+              onLongPress={() => handleAttributeReset("number")}
               variant="stat"
             />
           </div>
@@ -290,18 +393,21 @@ export function ShipConfigurator({
               name="hull"
               value={ship.hull}
               onClick={() => handleAttributeClick("hull")}
+              onLongPress={() => handleAttributeReset("hull")}
               variant="stat"
             />
             <AttributeButton
               name="computers"
               value={ship.computers}
               onClick={() => handleAttributeClick("computers")}
+              onLongPress={() => handleAttributeReset("computers")}
               variant="stat"
             />
             <AttributeButton
               name="shields"
               value={ship.shields}
               onClick={() => handleAttributeClick("shields")}
+              onLongPress={() => handleAttributeReset("shields")}
               variant="stat"
             />
           </div>
@@ -312,6 +418,7 @@ export function ShipConfigurator({
               name="missiles_yellow"
               value={ship.missiles_yellow}
               onClick={() => handleAttributeClick("missiles_yellow")}
+              onLongPress={() => handleAttributeReset("missiles_yellow")}
               variant="missile"
               diceColor="yellow"
             />
@@ -319,6 +426,7 @@ export function ShipConfigurator({
               name="missiles_orange"
               value={ship.missiles_orange}
               onClick={() => handleAttributeClick("missiles_orange")}
+              onLongPress={() => handleAttributeReset("missiles_orange")}
               variant="missile"
               diceColor="orange"
             />
@@ -326,6 +434,7 @@ export function ShipConfigurator({
               name="missiles_blue"
               value={ship.missiles_blue}
               onClick={() => handleAttributeClick("missiles_blue")}
+              onLongPress={() => handleAttributeReset("missiles_blue")}
               variant="missile"
               diceColor="blue"
             />
@@ -333,6 +442,7 @@ export function ShipConfigurator({
               name="missiles_red"
               value={ship.missiles_red}
               onClick={() => handleAttributeClick("missiles_red")}
+              onLongPress={() => handleAttributeReset("missiles_red")}
               variant="missile"
               diceColor="red"
             />
@@ -344,6 +454,7 @@ export function ShipConfigurator({
               name="yellow"
               value={ship.yellow}
               onClick={() => handleAttributeClick("yellow")}
+              onLongPress={() => handleAttributeReset("yellow")}
               variant="dice"
               diceColor="yellow"
             />
@@ -351,6 +462,7 @@ export function ShipConfigurator({
               name="orange"
               value={ship.orange}
               onClick={() => handleAttributeClick("orange")}
+              onLongPress={() => handleAttributeReset("orange")}
               variant="dice"
               diceColor="orange"
             />
@@ -358,6 +470,7 @@ export function ShipConfigurator({
               name="blue"
               value={ship.blue}
               onClick={() => handleAttributeClick("blue")}
+              onLongPress={() => handleAttributeReset("blue")}
               variant="dice"
               diceColor="blue"
             />
@@ -365,6 +478,7 @@ export function ShipConfigurator({
               name="red"
               value={ship.red}
               onClick={() => handleAttributeClick("red")}
+              onLongPress={() => handleAttributeReset("red")}
               variant="dice"
               diceColor="red"
             />

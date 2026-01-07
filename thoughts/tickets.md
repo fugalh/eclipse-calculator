@@ -5,6 +5,7 @@
 - When deleting a custom preset that a deployed ship is using, the ship's name is updated to "Custom Ship" but clicking "Reset" still resets to the (now deleted) custom preset. It should instead fall back to the standard ship blueprint based on shipClass (e.g., reset a Cruiser to the default Cruiser preset).
 
 # Features
+
 - top-line results should be always-visible
 - show ship info when collapsed, cf sketch.png or maybe text like `3^ 2~~ ~ *** ** +1 -3 2@` (initiative, missiles, cannons, computers, shields, hull)
 
