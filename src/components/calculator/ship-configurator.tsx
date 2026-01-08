@@ -22,6 +22,7 @@ import {
   AccordionContent,
 } from "@/components/ui/accordion";
 import { GAME_ICONS, getShipIcon } from "@/lib/icons";
+import { generateShipSummary } from "@/lib/combat/ship-summary";
 
 // ============================================================================
 // Constants
@@ -301,36 +302,33 @@ export function ShipConfigurator({
       className="bg-card border border-border rounded-lg overflow-hidden group"
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-3">
-        <AccordionTrigger className="flex items-center gap-2 hover:no-underline hover:opacity-80 transition-opacity p-0 border-0 text-left flex-1 [&>svg]:hidden">
-          <ChevronDown className="size-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
-          <div className="w-7 h-7 md:w-9 md:h-9 rounded bg-muted flex items-center justify-center overflow-hidden shrink-0">
-            {getShipIcon(ship.shipClass) ? (
-              <Image
-                src={getShipIcon(ship.shipClass)!}
-                alt={ship.shipClass}
-                width={36}
-                height={36}
-                className="w-6 h-6 md:w-8 md:h-8 object-contain"
-                unoptimized
-              />
-            ) : (
-              <span className="text-xs font-medium">
-                {ship.shipClass.charAt(0)}
-              </span>
-            )}
-          </div>
-          <div className="text-left min-w-0">
-            <div className="text-sm font-medium truncate">{ship.name}</div>
-            <div className="text-xs text-muted-foreground">
-              {ship.shipClass}
+      <div className="p-3 pb-2">
+        <div className="flex items-center justify-between">
+          <AccordionTrigger className="flex items-center gap-2 hover:no-underline hover:opacity-80 transition-opacity p-0 border-0 text-left flex-1 [&_[data-slot=accordion-trigger-icon]]:hidden">
+            <ChevronDown className="size-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+            <div className="w-7 h-7 md:w-9 md:h-9 rounded bg-muted flex items-center justify-center overflow-hidden shrink-0">
+              {getShipIcon(ship.shipClass) ? (
+                <Image
+                  src={getShipIcon(ship.shipClass)!}
+                  alt={ship.shipClass}
+                  width={36}
+                  height={36}
+                  className="w-6 h-6 md:w-8 md:h-8 object-contain"
+                  unoptimized
+                />
+              ) : (
+                <span className="text-xs font-medium">
+                  {ship.shipClass.charAt(0)}
+                </span>
+              )}
             </div>
-          </div>
-          {/* Show count when collapsed */}
-          <span className="text-sm text-muted-foreground ml-2 group-data-[state=open]:hidden">
-            ×{ship.number}
-          </span>
-        </AccordionTrigger>
+            <div className="text-left min-w-0">
+              <div className="text-sm font-medium truncate">{ship.name}</div>
+              <div className="text-xs text-muted-foreground">
+                {ship.shipClass}
+              </div>
+            </div>
+          </AccordionTrigger>
         <div className="flex items-center gap-1 shrink-0">
           {/* Actions visible when expanded */}
           <div className="hidden group-data-[state=open]:flex items-center gap-1">
@@ -363,6 +361,11 @@ export function ShipConfigurator({
           >
             Remove
           </button>
+        </div>
+        </div>
+        {/* Summary line - full width */}
+        <div className="text-xs text-muted-foreground mt-1">
+          ×{ship.number} {generateShipSummary(ship)}
         </div>
       </div>
 
