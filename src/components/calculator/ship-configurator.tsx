@@ -83,6 +83,7 @@ interface AttributeButtonProps {
   onLongPress?: () => void;
   variant?: "stat" | "dice" | "missile";
   diceColor?: DiceColor;
+  className?: string;
 }
 
 function AttributeButton({
@@ -92,6 +93,7 @@ function AttributeButton({
   onLongPress,
   variant = "stat",
   diceColor,
+  className,
 }: AttributeButtonProps) {
   // Long-press detection state and refs
   const [isLongPressing, setIsLongPressing] = useState(false);
@@ -218,6 +220,7 @@ function AttributeButton({
         getVariantClasses(),
         isLongPressing && "scale-85", // Visual feedback during long-press (more dramatic)
         justReset && "ring-2 ring-green-500 ring-opacity-75", // Flash green ring on reset
+        className,
       )}
     >
       {/* Icon at top */}
@@ -302,7 +305,9 @@ export function ShipConfigurator({
       className="bg-card border border-border rounded-lg overflow-hidden group"
     >
       {/* Header */}
-      <div className="p-3 pb-2">
+      <div
+        className={`p-3 pb-2 transition-opacity ${ship.number === 0 ? "opacity-40" : ""}`}
+      >
         <div className="flex items-center justify-between">
           <AccordionTrigger className="flex items-center gap-2 hover:no-underline hover:opacity-80 transition-opacity p-0 border-0 text-left flex-1 [&_[data-slot=accordion-trigger-icon]]:hidden">
             <ChevronDown className="size-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
@@ -329,39 +334,39 @@ export function ShipConfigurator({
               </div>
             </div>
           </AccordionTrigger>
-        <div className="flex items-center gap-1 shrink-0">
-          {/* Actions visible when expanded */}
-          <div className="hidden group-data-[state=open]:flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
+            {/* Actions visible when expanded */}
+            <div className="hidden group-data-[state=open]:flex items-center gap-1">
+              <button
+                type="button"
+                onClick={onOpenPresets}
+                className="text-xs text-primary hover:underline px-2 py-1"
+              >
+                Presets
+              </button>
+              <button
+                type="button"
+                onClick={onReset}
+                className="text-xs text-muted-foreground hover:text-foreground px-2 py-1"
+              >
+                Reset
+              </button>
+              <button
+                type="button"
+                onClick={onSave}
+                className="text-xs text-muted-foreground hover:text-foreground px-2 py-1"
+              >
+                Save
+              </button>
+            </div>
             <button
               type="button"
-              onClick={onOpenPresets}
-              className="text-xs text-primary hover:underline px-2 py-1"
+              onClick={onRemove}
+              className="text-xs text-destructive hover:text-destructive/80 px-2 py-1"
             >
-              Presets
-            </button>
-            <button
-              type="button"
-              onClick={onReset}
-              className="text-xs text-muted-foreground hover:text-foreground px-2 py-1"
-            >
-              Reset
-            </button>
-            <button
-              type="button"
-              onClick={onSave}
-              className="text-xs text-muted-foreground hover:text-foreground px-2 py-1"
-            >
-              Save
+              Remove
             </button>
           </div>
-          <button
-            type="button"
-            onClick={onRemove}
-            className="text-xs text-destructive hover:text-destructive/80 px-2 py-1"
-          >
-            Remove
-          </button>
-        </div>
         </div>
         {/* Summary line - full width */}
         <div className="text-xs text-muted-foreground mt-1">
@@ -387,6 +392,7 @@ export function ShipConfigurator({
               onClick={() => handleAttributeClick("number")}
               onLongPress={() => handleAttributeReset("number")}
               variant="stat"
+              className={ship.number === 0 ? "opacity-40" : undefined}
             />
           </div>
 

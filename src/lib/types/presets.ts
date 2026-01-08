@@ -48,20 +48,21 @@ export const ATTRIBUTE_LIMITS: Record<NumericAttributeName, [number, number]> =
     shields: [0, 8],
     hull: [0, 8],
     initiative: [0, 8],
-    number: [1, 6], // Default, see SHIP_COUNT_LIMITS for class-specific limits
+    number: [0, 6], // Default, see SHIP_COUNT_LIMITS for class-specific limits
   };
 
 // Class-specific ship count limits based on Eclipse rules
 // Rules: 8 Interceptors, 4 Cruisers, 2 Dreadnoughts, 4 Starbases per player
+// Minimum of 0 allows "disabling" a ship type while keeping its configuration
 export const SHIP_COUNT_LIMITS: Record<string, [number, number]> = {
-  Interceptor: [1, 8],
-  Cruiser: [1, 4],
-  Dreadnought: [1, 2],
-  Starbase: [1, 4],
-  Orbital: [1, 1], // One per sector
-  Ancient: [1, 6],
-  Guardian: [1, 2],
-  GC: [1, 1],
-  Deathmoon: [1, 1],
-  default: [1, 6],
+  Interceptor: [0, 8],
+  Cruiser: [0, 4],
+  Dreadnought: [0, 2],
+  Starbase: [0, 4],
+  Orbital: [0, 1], // One per sector
+  Ancient: [0, 6],
+  Guardian: [0, 2],
+  GC: [0, 1],
+  Deathmoon: [0, 1],
+  default: [0, 6],
 };

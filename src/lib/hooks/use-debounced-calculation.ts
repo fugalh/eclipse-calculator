@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import type { ShipConfig, BattleResultsExtended } from "@/lib/types";
-import { calculate } from "@/lib/combat/simulation";
+import { calculate, hasActiveShips } from "@/lib/combat/simulation";
 
 interface UseDebouncedCalculationOptions {
   /** Debounce delay in milliseconds (default: 500) */
@@ -45,8 +45,8 @@ export function useDebouncedCalculation(
   const attackerKey = JSON.stringify(attackerFleet);
 
   const runCalculation = useCallback(() => {
-    // Don't calculate if either fleet is empty
-    if (defenderFleet.length === 0 || attackerFleet.length === 0) {
+    // Don't calculate if either fleet is empty or has no active ships
+    if (!hasActiveShips(defenderFleet) || !hasActiveShips(attackerFleet)) {
       setResults(null);
       setIsCalculating(false);
       return;

@@ -9,7 +9,11 @@ import type {
   AccordionMode,
 } from "@/lib/types";
 import { DEFAULT_SETTINGS } from "@/lib/types";
-import { calculate, generateShipId } from "@/lib/combat/simulation";
+import {
+  calculate,
+  generateShipId,
+  hasActiveShips,
+} from "@/lib/combat/simulation";
 import {
   findPresetByName,
   saveCustomPreset,
@@ -163,7 +167,7 @@ export function CalculatorContent() {
 
   // Handlers
   const handleCalculate = useCallback(() => {
-    if (defenderFleet.length === 0 || attackerFleet.length === 0) {
+    if (!hasActiveShips(defenderFleet) || !hasActiveShips(attackerFleet)) {
       return;
     }
 

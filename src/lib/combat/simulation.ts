@@ -218,7 +218,7 @@ function createShipGroup(
   isDefender: boolean,
 ): ShipGroup {
   const ships: Combatant[] = [];
-  const shipCount = shipConfig.number || 1;
+  const shipCount = shipConfig.number;
 
   for (let i = 0; i < shipCount; i++) {
     ships.push(createCombatant(shipConfig, isDefender));
@@ -610,6 +610,13 @@ export function calculate(
  */
 export function generateShipId(): string {
   return `ship-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+/**
+ * Check if a fleet has any active ships (at least one ship with number > 0)
+ */
+export function hasActiveShips(ships: ShipConfig[]): boolean {
+  return ships.some((ship) => ship.number > 0);
 }
 
 /**
