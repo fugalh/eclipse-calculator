@@ -17,7 +17,7 @@ describe("Ship Blueprint Summary", () => {
         computers: 1,
         hull: 2,
       });
-      expect(generateShipSummary(ship)).toBe("^^ 3øøøø +1 **");
+      expect(generateShipSummary(ship)).toBe("^^ 3øøøø +1 ⍟⍟");
     });
 
     test("mixed cannons + full defense", () => {
@@ -29,7 +29,7 @@ describe("Ship Blueprint Summary", () => {
         shields: 2,
         hull: 4,
       });
-      expect(generateShipSummary(ship)).toBe("^^^ ooo oo +1 -2 ****");
+      expect(generateShipSummary(ship)).toBe("^^^ ooo oo +1 -2 ⍟⍟⍟⍟");
     });
 
     // Additional examples
@@ -49,7 +49,7 @@ describe("Ship Blueprint Summary", () => {
         shields: 2,
         hull: 2,
       });
-      expect(generateShipSummary(ship)).toBe("^^ o +1 -2 **");
+      expect(generateShipSummary(ship)).toBe("^^ o +1 -2 ⍟⍟");
     });
 
     test("missile boat - mixed missiles", () => {
@@ -59,7 +59,7 @@ describe("Ship Blueprint Summary", () => {
         missiles_blue: 1,
         hull: 1,
       });
-      expect(generateShipSummary(ship)).toBe("^ øøø 2øø *");
+      expect(generateShipSummary(ship)).toBe("^ øøø 2øø ⍟");
     });
 
     test("dreadnought loadout - heavy weapons", () => {
@@ -71,7 +71,7 @@ describe("Ship Blueprint Summary", () => {
         shields: 1,
         hull: 3,
       });
-      expect(generateShipSummary(ship)).toBe("^^ 2oooo ooo +2 -1 ***");
+      expect(generateShipSummary(ship)).toBe("^^ 2oooo ooo +2 -1 ⍟⍟⍟");
     });
 
     test("ancient ship - high initiative glass cannon", () => {
@@ -105,14 +105,14 @@ describe("Ship Blueprint Summary", () => {
       expect(generateShipSummary(ship)).toBe("-2");
     });
 
-    test("hull shows as repeated *", () => {
+    test("hull shows as repeated ⍟", () => {
       const ship = createDefaultShipConfig({ hull: 4 });
-      expect(generateShipSummary(ship)).toBe("****");
+      expect(generateShipSummary(ship)).toBe("⍟⍟⍟⍟");
     });
 
-    test("single hull shows as *", () => {
+    test("single hull shows as ⍟", () => {
       const ship = createDefaultShipConfig({ hull: 1 });
-      expect(generateShipSummary(ship)).toBe("*");
+      expect(generateShipSummary(ship)).toBe("⍟");
     });
   });
 
@@ -200,24 +200,24 @@ describe("Ship Blueprint Summary", () => {
         shields: 1,
         hull: 1,
       });
-      expect(generateShipSummary(ship)).toBe("^ ø o +1 -1 *");
+      expect(generateShipSummary(ship)).toBe("^ ø o +1 -1 ⍟");
     });
   });
 
   describe("Zero Value Omission", () => {
     test("zero initiative is omitted", () => {
       const ship = createDefaultShipConfig({ initiative: 0, hull: 1 });
-      expect(generateShipSummary(ship)).toBe("*");
+      expect(generateShipSummary(ship)).toBe("⍟");
     });
 
     test("zero computers are omitted", () => {
       const ship = createDefaultShipConfig({ computers: 0, hull: 1 });
-      expect(generateShipSummary(ship)).toBe("*");
+      expect(generateShipSummary(ship)).toBe("⍟");
     });
 
     test("zero shields are omitted", () => {
       const ship = createDefaultShipConfig({ shields: 0, hull: 1 });
-      expect(generateShipSummary(ship)).toBe("*");
+      expect(generateShipSummary(ship)).toBe("⍟");
     });
 
     test("zero hull is omitted", () => {
@@ -237,7 +237,7 @@ describe("Ship Blueprint Summary", () => {
         hull: 8,
       });
       expect(generateShipSummary(ship)).toBe(
-        "^^^^^^^^ 6øøøø 6oooo +8 -8 ********",
+        "^^^^^^^^ 6øøøø 6oooo +8 -8 ⍟⍟⍟⍟⍟⍟⍟⍟",
       );
     });
 

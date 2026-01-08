@@ -88,7 +88,7 @@ export const NOTATION_LEGEND = {
     description: "+1 Initiative bonus",
   },
   ">": { symbol: ">", meaning: "Drive", description: "+1 Movement" },
-  "*": { symbol: "*", meaning: "Hull", description: "+1 Hull point" },
+  "⍟": { symbol: "⍟", meaning: "Hull", description: "+1 Hull point" },
   "-": {
     symbol: "-",
     meaning: "Shield",
@@ -113,7 +113,7 @@ export function parseNotationToDescription(notation: string): string {
   const energyProd = notation.match(/(\d+)z/)?.[1];
   const initiative = (notation.match(/\^/g) || []).length;
   const movement = (notation.match(/>/g) || []).length;
-  const hull = (notation.match(/\*/g) || []).length;
+  const hull = (notation.match(/⍟/g) || []).length;
   const shield =
     notation.match(/-(\d+)/)?.[1] || (notation.match(/-/g) || []).length;
   const computer = notation.match(/\+(\d+)/)?.[1];

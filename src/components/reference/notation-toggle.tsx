@@ -132,7 +132,7 @@ export function NotationLegend() {
           <code className="text-muted-foreground">&gt;</code> Drive/Movement
         </div>
         <div>
-          <code className="text-muted-foreground">*</code> Hull
+          <code className="text-muted-foreground">⍟</code> Hull
         </div>
         <div>
           <code className="text-muted-foreground">-</code> Shield

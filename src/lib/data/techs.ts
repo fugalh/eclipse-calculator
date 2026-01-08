@@ -25,7 +25,7 @@ export interface TechData {
  * z  = Energy Source/Production
  * ^  = Initiative
  * >  = Drive/Movement
- * *  = Hull
+ * ⍟  = Hull
  * -  = Shield
  * +  = Computer hit bonus
  * ø  = Missile damage die

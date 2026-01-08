@@ -36,7 +36,7 @@ function formatWeapon(count: number, color: DiceColor, symbol: string): string {
  *
  * @example
  * generateShipSummary({ initiative: 2, missiles_red: 3, computers: 1, hull: 2, ... })
- * // Returns "^^ 3øøøø +1 **"
+ * // Returns "^^ 3øøøø +1 ⍟⍟"
  */
 export function generateShipSummary(ship: ShipConfig): string {
   const parts: string[] = [];
@@ -71,9 +71,9 @@ export function generateShipSummary(ship: ShipConfig): string {
     parts.push(`-${ship.shields}`);
   }
 
-  // 6. Hull (repeated *)
+  // 6. Hull (repeated ⍟)
   if (ship.hull > 0) {
-    parts.push("*".repeat(ship.hull));
+    parts.push("⍟".repeat(ship.hull));
   }
 
   return parts.join(" ");
