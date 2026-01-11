@@ -49,7 +49,7 @@ export const SPECIES: SpeciesData[] = [
       money: 3,
     },
     colonyShips: 3,
-    startingTechs: [],
+    startingTechs: ["starbase"],
     tradeRatio: 2,
     activations: {
       explore: 1,
@@ -81,7 +81,7 @@ export const SPECIES: SpeciesData[] = [
     startingResources: {
       materials: 4,
       science: 2,
-      money: 26,
+      money: 2,
     },
     colonyShips: 3,
     startingTechs: ["gauss-shield", "fusion-drive", "plasma-cannon"],
@@ -171,7 +171,7 @@ export const SPECIES: SpeciesData[] = [
     },
     colonyShips: 4,
     startingTechs: ["starbase"],
-    tradeRatio: 3,
+    tradeRatio: 4,
     activations: {
       explore: 2,
       research: 1,
@@ -251,7 +251,7 @@ export const SPECIES: SpeciesData[] = [
       },
       {
         name: "Ancient Affinity",
-        description: "+1 VP per Ancient on game board at end of game",
+        description: "+1 VP per Ancient Sector you Control at end of game",
         isPositive: true,
       },
       {

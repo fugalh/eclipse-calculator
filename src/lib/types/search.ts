@@ -28,7 +28,10 @@ export type KnownCategory =
   | "diplomacy"
   | "scoring"
   | "discovery"
-  | "movement";
+  | "movement"
+  | "setup"
+  | "faq"
+  | "components";
 
 // ============================================================================
 // Search Query Types

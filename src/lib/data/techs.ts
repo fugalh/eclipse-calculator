@@ -51,13 +51,13 @@ export const TECHS: TechData[] = [
     effect:
       "When Attacking Population, all Population Cubes in Sector destroyed automatically",
     notation: "",
-    techType: "permanent",
+    techType: "instant",
   },
   {
     id: "starbase",
     name: "Starbase",
     category: "military",
-    scienceCost: 4,
+    scienceCost: 3,
     minCost: 2,
     effect: "May Build Starbases (3 Materials)",
     notation: "",
@@ -308,7 +308,7 @@ export const TECHS: TechData[] = [
   },
 
   // ============================================================================
-  // Rare Technologies (14)
+  // Rare Technologies (15)
   // ============================================================================
   {
     id: "antimatter-splitter",

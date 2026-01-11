@@ -89,6 +89,11 @@ export const CATEGORY_INFO: Record<string, CategoryInfo> = {
     color: "bg-teal-500",
     badgeColor: "bg-teal-100 text-teal-800",
   },
+  components: {
+    label: "Components",
+    color: "bg-stone-500",
+    badgeColor: "bg-stone-100 text-stone-800",
+  },
 };
 
 /**
@@ -270,6 +275,10 @@ export const HEADING_CATEGORY_MAP: Array<{
     patterns: [/FAQ/i, /question/i, /clarification/i],
     category: "faq",
   },
+  {
+    patterns: [/game\s*components?/i, /components?\s*list/i],
+    category: "components",
+  },
 ];
 
 /**
@@ -309,5 +318,10 @@ export const CONTENT_CATEGORY_PATTERNS: Array<{
   {
     pattern: /\b(upkeep|production|population|colony\s*ship)\b/i,
     category: "upkeep",
+  },
+  {
+    pattern:
+      /\b(miniature|dice|sector\s*hex|control\s*board|species\s*board|tech\s*tray|upgrade\s*tray|reputation\s*tile\s*bag|storage\s*marker|damage\s*cube)\b/i,
+    category: "components",
   },
 ];
