@@ -25,10 +25,10 @@ export const DEFAULT_PRESETS: Preset[] = [
   },
   {
     ...createDefaultShipConfig({
-      name: "Galactic Center",
+      name: "GCDS",
       shipClass: "GC",
       yellow: 4,
-      computers: 1,
+      computers: 2,
       hull: 7,
     }),
     type: "npc",
@@ -50,7 +50,7 @@ export const DEFAULT_PRESETS: Preset[] = [
       shipClass: "Guardian",
       yellow: 3,
       computers: 2,
-      hull: 3,
+      hull: 2,
       initiative: 3,
     }),
     type: "npc",
