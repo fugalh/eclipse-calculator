@@ -35,6 +35,12 @@ for (const [category, count] of Object.entries(categoryCounts).sort(
   console.log(`  ${category}: ${count}`);
 }
 
+console.log("\nSample sections:");
+console.log(`  First: ${sections[0].heading} (${sections[0].id})`);
+console.log(
+  `  Last: ${sections[sections.length - 1].heading} (${sections[sections.length - 1].id})`,
+);
+
 /**
  * Generate TypeScript file content
  */

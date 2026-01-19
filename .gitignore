@@ -42,5 +42,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated files
+src/lib/data/rules-index.ts
 rules/eclipse-second-dawn-for-the-galaxy-rulebook.pdf
 generateKeys.mjs
