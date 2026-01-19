@@ -211,13 +211,12 @@ export const COMBAT_RULES: CombatRuleSection[] = [
         examples: [
           "Roll 4 + Computer 2 - Shield 1 = 5 → Miss",
           "Roll 5 + Computer 2 - Shield 1 = 6 → Hit",
-          "Roll 6 → Always Hit (natural 6)",
           "Roll 1 → Always Miss (natural 1)",
         ],
       },
     ],
     tips: [
-      "Natural 6 always hits regardless of shields",
+      "Burst symbol (★) always hits regardless of modifiers",
       "Natural 1 always misses regardless of computers",
       "High shields can make ships nearly immune to low-computer attacks",
     ],

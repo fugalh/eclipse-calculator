@@ -1,1194 +1,862 @@
-# Eclipse: Second Dawn for the Galaxy - Rules Reference
+# ECLIPSE: SECOND DAWN FOR THE GALAXY
 
-## Game Overview
+**The galaxy has been a peaceful place for many years.**
 
-Eclipse places you in control of a vast interstellar civilization, competing for domination with its rivals. Each Round you expand your civilization by Exploring and colonizing new Sectors, Researching Technologies, and Building Ships to wage war. After eight Rounds the game ends, and victory is awarded to the player with the most Victory Points (VP).
+After the ruthless Terran-Hegemony War (30.027–33.364), much effort has been employed by all major spacefaring species to prevent the terrifying events from repeating themselves. The Galactic Council was formed to enforce precious peace, and it has taken many courageous efforts to prevent the escalation of malicious acts.
 
-VP are gained from:
+Nevertheless, tension and discord are growing among the seven major species and in the Council itself. Old alliances are shattering, and hasty diplomatic treaties are made in secrecy. A confrontation of the superpowers seems inevitable—only the outcome of the galactic conflict remains to be seen.
 
-- Fighting battles (Reputation Tiles)
-- Forming Diplomatic Relations (Ambassador Tiles)
-- Controlling Sectors
-- Controlling Monoliths
-- Making Discoveries
-- Researching Technologies
+Which faction will emerge victorious and lead the galaxy under its rule?
+
+The shadows of the great civilizations are about to eclipse the galaxy. **Lead your people to victory!**
 
 ---
 
-## Game Concepts
+## GAME COMPONENTS
+
+**CIVILIZATION COMPONENTS**
+Each civilization (blue, red, green, yellow, white, black) has:
+
+- 18 Ships (8 Interceptors, 4 Cruisers, 2 Dreadnoughts, 4 Starbases)
+- 33 Population Cubes
+- 16 Influence Discs
+- 3 Ambassador Tiles
+
+**SECTOR HEXES**
+43 Sectors:
+
+- 10 Inner Sectors (101-110)
+- 13 Middle Sectors (201-211, 214, 281)
+- 20 Outer Sectors (301-318, 381-382)
+- 1 Galactic Center Sector (001)
+- 6 Starting Sectors (221-232)
+- 4 Guardian Sectors (271-274)
+
+**BOARDS & TRAYS**
+
+- 6 Species Boards (two-sided)
+- 6 Species Trays (Tray + Lid)
+- 6 Control Board tops
+- 6 Control Board bottoms
+- 1 Tech Tray
+- 1 Upgrade Tray
+- 2 Table Trays
+- 1 Base Tray
+
+**TILES**
+
+- 114 Tech Tiles (39 different)
+- 282 Ship Part Tiles (24 different)
+- 36 Discovery Tiles (24 different)
+- 19 Colony Ship Tiles
+- 6 Blueprint Tiles (2 Ancient, 2 Galactic Center Defense System, 2 Guardian)
+- 33 Reputation Tiles
+- 10 extra Orbital/Monolith Tiles
+- 5 extra Colony Ship Tiles
+- 1 Start Player Tile
+- 6 Summary Tiles
+- 1 Traitor Tile
+- 4 Info Tiles
+
+**MINIATURES**
+
+- 1 Galactic Center Defense System (GCDS)
+- 14 Ancients
+- 4 Guardians
+- 12 Orbitals
+- 10 Monoliths
+
+**MISCELLANEOUS**
+
+- 24 custom 6-sided dice (8 yellow, 6 orange, 6 blue, 4 red)
+- 18 Storage Markers (6 each in orange, pink, and brown)
+- 12 purple Damage Cubes
+- 1 Round Marker
+- 1 black Reputation Tile Bag
+- 1 white Tech Tile Bag
+
+---
+
+## GAME OVERVIEW
+
+Eclipse places you in control of a vast interstellar civilization, competing for domination with its rivals.
+
+Each Round expand your civilization by Exploring and colonizing new Sector hexes (Sectors), Researching Technologies (Techs), and Building Spaceships (Ships) to wage war.
+
+After eight Rounds the game ends, and victory is awarded to the player with the most Victory Points (VP).
+
+VP are gained from fighting battles, forming Diplomatic Relations, Controlling Sectors, Controlling Monoliths, making Discoveries, and Researching Techs.
+
+There are many potential paths to victory, so plan your strategy according to your civilization's strengths and weaknesses while paying attention to other civilizations' endeavors!
+
+---
+
+## GAME SETUP
+
+1. **Tech Tiles:** Put the Tech Tiles in the white Tech Tile Bag and shuffle them. Draw Tech Tiles randomly from the Tech Tile Bag until the indicated number of regular Tech Tiles (Military, Grid, and Nano) for your player count has been drawn. Set drawn Tech Tiles in the slots of the Tech Tray with the matching Tech and cost icons. Tech Tile cost is indicated by the value in the large pink circle on each Tech Tile. Stack duplicate Tech Tiles in the same slot. Place any Rare Tech Tiles drawn in any of the seven slots on the bottom row of the Tech Tray, but do not count them against the number of regular Tech Tiles drawn for Game Setup.
+
+- _2 Players: 12 Tiles_
+- _3 Players: 14 Tiles_
+- _4 Players: 16 Tiles_
+- _5 Players: 18 Tiles_
+- _6 Players: 20 Tiles_
+
+2. **Reputation Tiles:** Put the Reputation Tiles in the black Reputation Tile Bag and shuffle them.
+3. **Discovery Tiles:** Shuffle the Discovery Tiles and set them facedown near the Tech Tray and Upgrade Tray.
+4. **Blueprints:** Choose one Blueprint Tile of each type (Ancient, Guardian, GCDS) to use for this game.
+
+- _Note: Blueprint Tiles with two notches on their border are advanced and should only be used with experienced players._
+
+5. **General Supply:** Set the chosen Blueprint Tiles, Damage Cubes, and the Traitor Tile beside the Tech and Upgrade Trays. Arrange the Ship Part Tiles by type in the Upgrade Tray.
+6. **Galactic Center:** Set the Galactic Center Sector in the middle of the table. Place a facedown Discovery Tile on the Galactic Center Sector's Discovery Tile Symbol, then the Galactic Center Defense System (GCDS) miniature on top.
+7. **Sectors:** Shuffle each of the Sector hexes by Ring: Inner (I), Middle (II), and Outer (III).
+
+- _Note: if you do not want to play with the optional Warp Portals module, remove Sectors 281, 381-382 from the game before shuffling._
+  Place the shuffled Sectors into facedown stacks. The Outer Sector stack should contain the number of Outer (III) Sectors indicated for your player count:
+- _2 Players: 5 Sectors_
+- _3 Players: 8 Sectors_
+- _4 Players: 14 Sectors_
+- _5 Players: 16 Sectors_
+- _6 Players: 18 Sectors_
+
+8. **Start Player:** Give the Start Player Tile to the player who has spent the least time on planet Terra, in the Sol system.
+9. **Player Components:** Beginning with the player to the right of the Start Player and moving in counterclockwise order, choose a Species Board and take the Species Tray with a lid of the matching color.
+
+- _Note: Since Species Boards are double-sided, each player selecting to play Terrans is effectively removing one Alien Species from play in that game._
+
+10. **Starting Sectors:** Place your Starting Sector in the Starting Zone closest to you as shown in the Starting Layouts illustration (oriented so that the arrow faces the GCDS).
+11. **Guardian Sectors:** Fill all empty Starting Zones with random Guardian Sectors oriented so that the arrow faces the GCDS (Guardian Sectors are not used in 6-player games). Place a facedown Discovery Tile on the Guardian Symbol of each Guardian Sector, then a Guardian miniature on top. Put the remaining Starting Sectors, Guardian Sectors, and Species Boards back in the box—they will not be used this game.
+12. **Species Setup:** Take the following components from your Species Tray and set them next to your Species Board:
+
+- The number of Colony Ships shown on your Species Board.
+- The Summary Tile, with the Action Phase Overview faceup.
+
+13. **Influence Discs:** Take the Influence Discs from your Species Tray and place them on the Influence Track of your Species Board (leave the three Influence Discs that don't fit on your Influence Track in your Species Tray).
+
+- _Note: You have three extra Influence discs that are only used if you Research the ADVANCED ROBOTICS or QUANTUM GRID Tech._
+
+14. **Control Board:** Place the following on your Control Board:
+
+- One Population Cube on each square valued 3-28 of the three Population Tracks (Materials, Science, and Money).
+- One Storage Marker of each color on your Storage Track with the single-pointed end of the Storage Marker facing the center of the Control Board, at the Starting Storage Resource values indicated on your Species Board.
+
+15. **Starting Units:** Place the following on your Starting Sector:
+
+- One Interceptor Ship miniature.
+- One Population Cube in each Population Square without a star, taken from the "3" space of your corresponding Population Track.
+- One Influence Disc, placed on the Influence Space, taken from the leftmost space of your Influence Track.
+
+_Leave Ships and Ambassador Tiles in your Species Tray for easy access._
+
+---
+
+## GAME CONCEPTS
 
 ### Actions and Activations
 
-During each game Round, players take turns selecting and resolving individual Actions until all players Pass. Actions are comprised of a number of Activations that correspond to your Species and the Techs you have Researched. Each Activation allows you to perform an activity associated with the chosen Action.
+During each game Round, players take turns selecting and resolving individual Actions until all players Pass. Actions are comprised of a number of **Activations** that correspond to your Species and the Techs that you have Researched. Each Activation allows you to perform an activity associated with the chosen Action. This means that each player may have a variable number of activities they can perform each time they select an Action.
 
 ### Resources
 
-Sectors produce up to three kinds of Resources:
+Sectors Produce up to three kinds of Resources: Materials, Science, and Money.
 
-| Resource      | Symbol | Used For                               |
-| ------------- | ------ | -------------------------------------- |
-| **Materials** | Orange | Building new Ships and Structures      |
-| **Science**   | Pink   | Researching new Technologies           |
-| **Money**     | Brown  | Controlling Sectors and taking Actions |
+- **Materials [Orange]:** Needed for Building new Ships and Structures.
+- **Science [Pink]:** Needed for Researching new Techs.
+- **Money [Yellow]:** Needed for Controlling Sectors and taking Actions.
 
-The amount of each Resource you have is marked with a Storage Marker on your Storage Track. When you Produce or gain Resources, move the appropriate Storage Marker forward. When you Pay Resources, move it backward.
+The amount of each Resource you have is marked with a Storage Marker on your Storage Track. When you **Produce** or **Gain** Resources, move the appropriate Storage Marker(s) one space forward on the Storage Track per Resource gained. When you **Pay** Resources, move the appropriate Storage Marker backward one space on the Storage Track per Resource Paid.
 
-**Storage Overflow:** If you ever have more than 40 of one kind of Resource, turn the Storage Marker so that the four-pointed end faces the center of the Control Board, indicating you have 40 plus the Storage Track value.
+The amount of Resources you can have is not limited by the values on the Storage Track. If you ever have more than 40 of one kind of Resource, turn the Storage Marker so that the four-pointed end faces the center of the Control Board, indicating you have 40 plus the Storage Track value of that kind of Resource.
 
 ### Trade
 
-At any time, as many times as you choose and are able, you may Pay the number of one Resource indicated by the Trade Value on your Species Board to gain one Resource of any other kind.
+At any time, as many times as you choose and are able, you may Pay the number of one Resource indicated by the **Trade Value** on your Species Board, to gain one Resource (Materials, Science, Money) of any other kind.
 
 ### Population Cubes
 
-Population Cubes placed on Sectors Produce Resources. The highest value empty square on each Population Track shows how many Resources of each kind you will Produce during the Upkeep Phase.
+Your civilization's population is represented by the Population Cubes in your player color. Population Cubes placed on Sectors Produce Resources. The highest value empty square on each Population Track shows how many Resources of each kind you will Produce during the Upkeep Phase.
 
 ### Colony Ships
 
-Colony Ships are used to place Population Cubes on Population Squares in Sectors you Control. **Colony Ships are the only way to move Population Cubes to Sectors.**
+Colony Ships are used to place Population Cubes on Population Squares in Sectors you Control. Colony Ships are the only way to move Population Cubes to Sectors.
 
 ### Influence Discs
 
-Influence Discs mark the Sectors your civilization Controls. Each Action you take requires you to move an Influence Disc from your Influence Track to the corresponding Action Space.
+Your civilization's influence is represented by the Influence Discs in your player color. Influence Discs are used to mark the Sectors your civilization Controls. Also, each Action you take requires you to move an Influence Disc from your Influence Track to the corresponding Action Space.
 
-- The leftmost Influence Disc is always used when moving from your Influence Track
-- When returned to the Influence Track, discs are placed on the rightmost available space
-- The rightmost empty space shows how much Money you must Pay at the end of the Round
+- The **leftmost** Influence Disc is always used when Influence Discs are moved _from_ your Influence Track.
+- When Influence Discs are moved _to_ your Influence Track, they are always placed on the **rightmost** available space.
+
+The rightmost empty space on the Influence Track shows how much Money you have to Pay at the end of the Round to keep your civilization functioning. Thus, the more Sectors you Control and Actions you take, the more Money you need to maintain your civilization.
 
 ### Control
 
-The player with an Influence Disc in a Sector Controls it. Controlling Sectors allows you to:
+The player with an Influence Disc in a Sector **Controls** it. Controlling Sectors allows you to expand your empire by colonizing planets, Producing Resources, Building Ships and Structures, and Exploring, Moving or Influencing from a Sector. The player that Controls a Sector Controls its Structures and is always considered the Defender in battles there.
 
-- Colonize planets
-- Produce Resources
-- Build Ships and Structures
-- Explore, Move, or Influence from that Sector
+### Tech
 
-The player that Controls a Sector Controls its Structures and is always considered the Defender in battles there.
-
-### Technologies
-
-Researching Techs gives your civilization advantages. Techs are divided into categories:
-
-- **Military** (Crosshair symbol)
-- **Grid** (Grid symbol)
-- **Nano** (Gear symbol)
-- **Rare** (Circle symbol)
-
-Each Tech you Research gives you a discount on further Techs Researched in the same category.
+Researching Techs gives your civilization advantages. Some Techs are prerequisites for Upgrading your Ships with new Ship Part Tiles or Building Starbases and Structures, while others make your civilization more efficient (e.g. increasing your Production or giving you more Influence Discs). Techs are divided into three basic categories (**Military**, **Grid**, or **Nano**) plus **Rare Techs**. Each Tech you Research gives you a discount on further Techs Researched in the same category. Researched Tech Tiles are placed on the Tech Track of your Species Board.
 
 ### Ships
 
-Ships are used for Exploring and fighting opponents. There are four kinds:
+Ships are used for Exploring and fighting opponents (players, the non-player Ancients, Guardians, and the GCDS). There are four kinds of Ships:
 
-| Ship Type        | Count        | Notes             |
-| ---------------- | ------------ | ----------------- |
-| **Interceptors** | 8 per player | Smallest, fastest |
-| **Cruisers**     | 4 per player | Medium            |
-| **Dreadnoughts** | 2 per player | Largest           |
-| **Starbases**    | 4 per player | Immobile defense  |
+- **Interceptors** (8 per player)
+- **Cruisers** (4 per player)
+- **Dreadnoughts** (2 per player)
+- **Starbases** (4 per player)
+
+Bigger Ships cost more to Build but have more space for Ship Parts. Starbases are immobile.
 
 ### Blueprints
 
-All Ships have Blueprints depicting their abilities (weapons, Initiative, Shields, etc.). Player Ship Blueprints are on their Species Board and can be customized using the Upgrade Action.
+All Ships have Blueprints depicting their abilities (e.g. weapons, Initiative, Shields, etc.). Non-player Ship Blueprints are represented by Blueprint Tiles which do not change during the game. Player Ship Blueprints are represented on their Species Board and can be customized during the game using the Upgrade Action.
 
-Some Ship Blueprints have extra Ship Parts outside the Ship Part grid. These work just like other Ship Parts except they cannot be replaced.
+- _Note: Some Ship Blueprints have extra Ship Parts outside the Ship Part grid. These work just like other Ship Parts except that they cannot be replaced._
+- _Note: One Discovery Tile provides a Ship Part that is placed outside the Ship Part grid._
 
 ### Ship Parts
 
-| Part Type          | Effect                                                       |
-| ------------------ | ------------------------------------------------------------ |
-| **Weapons**        | For each Die Symbol, roll one die of the corresponding color |
-| **Computers**      | Added to die rolls to Hit                                    |
-| **Shields**        | Subtracted from opponent die rolls to Hit                    |
-| **Hull**           | Determines how much damage Ship can absorb                   |
-| **Drives**         | Determines Ship's Movement Value                             |
-| **Energy Sources** | Determines total Energy Production                           |
+Ship Parts on Blueprints indicate which abilities a Ship has. They can be preprinted on player Species Boards or gained with the Upgrade Action. Many Ship Parts can only be Upgraded once their corresponding Tech Tile has been Researched.
 
 ### Structures
 
-| Structure     | Effect                                  |
-| ------------- | --------------------------------------- |
-| **Orbitals**  | Provide an additional Population Square |
-| **Monoliths** | Grant 3 VP at end of game               |
+Structures are colossal objects Built in your Controlled Sectors.
 
-Structures are permanent and remain in the Sector until the end of the game.
+- **Orbitals:** Provide an additional Population Square.
+- **Monoliths:** Grant VP at the end of the game.
+  Structures are permanent, remaining in the Sector they are Built until the end of the game.
 
 ### Zones and Rings
 
-The game board is comprised of Zones where Sectors can be placed. Zones and Sectors are grouped into Rings:
+The game board is comprised of Zones, empty spaces where each Sector can be placed during the game with the Explore Action. Zones and Sectors are grouped into Rings: **Inner (I)**, **Middle (II)**, and **Outer (III)**. This corresponds to their distance from the Galactic Center Sector in the middle of the board. Rings are used to determine which type of Sector is revealed when Exploring a Zone.
 
-- **Ring I (Inner)** - Closest to Galactic Center
-- **Ring II (Middle)** - Middle distance
-- **Ring III (Outer)** - Furthest from center
+### Sectors
+
+The game board is built from hexagonal Sector tiles. Each Sector represents a star system and may contain Population Squares representing worlds Producing Resources.
 
 ### Wormholes
 
-Ships may only Move using the Wormhole network. Wormholes may normally only be used to Explore, Move to, and Influence adjacent Sectors if the edges connecting the Sector tiles each contain a Wormhole, creating a **Wormhole Connection**.
+Due to the immense distance between Sectors, Ships may only Move using the Wormhole network. The Wormhole network is represented by the individual Wormholes on the edge(s) of Sector tiles. Wormholes may normally only be used to Explore, Move to, and Influence adjacent Sectors if the edges connecting the Sector tiles each contain a Wormhole, creating a **Wormhole Connection**.
 
 ### Discovery Tiles
 
-Some Sectors contain a Discovery Tile awarded when:
+Some Sectors contain a Discovery Tile which is awarded when the Sector is first Explored (in the case of unoccupied Sectors) or the Sector's defender is destroyed (in the case of occupied Sectors). Each Discovery Tile is double-sided: the front showing one of various rewards (extra Resources, new Technologies, Ancient Ship Parts, etc.) and the back showing a 2 VP value. When awarded a Discovery Tile you must reveal it and decide which side to use before ending your Activation (or the Combat Phase if awarded during the Combat Phase).
 
-- The Sector is first Explored (if unoccupied)
-- The Sector's defender is destroyed (if occupied)
+### Ambassador Tiles
 
-Each Discovery Tile is double-sided:
-
-- **Front:** Various rewards (Resources, Technologies, Ship Parts, etc.)
-- **Back:** 2 VP value
-
-When awarded a Discovery Tile, you must reveal it and decide which side to use before ending your Activation.
-
-### Ambassador Tiles (4+ Players)
-
-In games with four or more players, you can use Ambassadors to form Diplomatic Relations with other players. Diplomatic Relations increase your Production and are worth VP at the end of the game.
+In games with four or more players, you can use your Ambassadors to form Diplomatic Relations with other players. Diplomatic Relations increase your Production and are worth VP at the end of the game.
 
 ### Reputation Tiles
 
-You receive Reputation Tiles for participating in combat. They are worth 1-4 VP at the end of the game.
+You receive Reputation Tiles for participating in combat. They are worth VP at the end of the game.
 
 ### Limited vs Unlimited Components
 
-**Limited:** Ships, Population Cubes, Influence Discs, Tech Tiles, Discovery Tiles, Reputation Tiles, Sectors, Ambassador Tiles - if they run out, they run out.
+Ships, Population Cubes, Influence Discs, Tech Tiles, Discovery Tiles, Reputation Tiles, Sectors, and Ambassador Tiles are all limited to the components included in the game. If they run out, they run out. All other game components are meant to be unlimited. If unlimited components run out, use the provided extra tiles or another substitute.
 
-**Unlimited:** All other game components. If they run out, use provided extra tiles or substitutes.
+### Warp Portals (Optional Module)
 
----
-
-## Game Setup
-
-### Tech Tray Setup
-
-| Players | Tech Tiles to Draw |
-| ------- | ------------------ |
-| 2       | 12                 |
-| 3       | 14                 |
-| 4       | 16                 |
-| 5       | 18                 |
-| 6       | 20                 |
-
-Draw Tech Tiles randomly until the indicated number of regular Tech Tiles (Military, Grid, and Nano) has been drawn. Place drawn Tech Tiles in the slots of the Tech Tray with matching Tech and cost icons.
-
-**Rare Tech Tiles** drawn go in any of the seven slots on the bottom row of the Tech Tray but do not count toward the regular Tech Tile count.
-
-### Outer Sector Stack Size
-
-| Players | Outer Sectors |
-| ------- | ------------- |
-| 2       | 5             |
-| 3       | 8             |
-| 4       | 14            |
-| 5       | 16            |
-| 6       | 18            |
-
-### Player Setup
-
-1. Choose a Species Board and matching color Species Tray
-2. Place Starting Sector in the Starting Zone closest to you (arrow facing GCDS)
-3. Fill empty Starting Zones with Guardian Sectors (not used in 6-player games)
-4. Take Colony Ships shown on Species Board
-5. Place Influence Discs on Influence Track (leave 3 extra in tray)
-6. Place Population Cubes on squares 3-28 of Population Tracks
-7. Place Storage Markers at starting positions
-
-### Starting Sector Setup
-
-Place on your Starting Sector:
-
-- One Interceptor Ship miniature
-- One Population Cube in each Population Square without a star (from the 3 space of corresponding Population Track)
-- One Influence Disc on the Influence Space (from leftmost space of Influence Track)
+The Warp Portals are an optional module that opens up the galaxy, making it often possible to Move, Influence, and form Diplomatic Relations across the game board. The Warp Portals consist of three Sectors [one Middle (II) and two Outer (III)], one Discovery Tile, one Rare Tech, and one Warp Portal Tile. To use the module, shuffle components with base game components. All Sectors with Warp Portals are considered to be adjacent to each other and have a full Wormhole Connection between them. You may Move, Influence, and form Diplomatic Relations through Warp Portals.
 
 ---
 
-## Game Round Structure
+## GAME ROUND
 
 Each game Round consists of four phases:
 
-### 1. Action Phase
-
-Take Actions clockwise, one Action at a time until all players have Passed.
-
-### 2. Combat Phase
-
-Resolve battles and conquer Sectors.
-
-### 3. Upkeep Phase
-
-Pay Civilization Upkeep Costs and Produce Resources.
-
-### 4. Cleanup Phase
-
-Return Influence Discs from Action Spaces to Influence Track and draw new Tech Tiles.
+1. **ACTION PHASE:** Take Actions clockwise, one Action at a time until all players have Passed.
+2. **COMBAT PHASE:** Resolve battles and conquer Sectors.
+3. **UPKEEP PHASE:** Pay Civilization Upkeep Costs and Produce Resources.
+4. **CLEANUP PHASE:** Return Influence Discs from Action Spaces to the Influence Track and draw new Tech Tiles.
 
 ---
 
-## Action Phase
+## ACTION PHASE
 
-Starting with the player holding the Start Player Tile, and moving clockwise, you may take one Action or Pass. This continues until all players' Summary Tiles are flipped with the Reaction Overview faceup.
+Starting with the player holding the Start Player Tile, and moving clockwise, you may take one **Action** or **Pass**. This continues until all players' Summary Tiles are flipped with the Reaction Overview faceup, at which point the Action Phase immediately ends.
 
-### Taking an Action
+When taking an Action, move the leftmost Influence Disc from your Influence Track to the Action Space on your Action Track corresponding with the chosen Action. Stack subsequent Influence Discs on top of any already occupying an Action Space; the same Action may be taken multiple times.
 
-When taking an Action, move the leftmost Influence Disc from your Influence Track to the Action Space on your Action Track corresponding with the chosen Action. Stack subsequent Influence Discs on top; **the same Action may be taken multiple times**.
+**The possible Actions are:**
 
-### Available Actions
-
-| Action        | Icon | Description                      |
-| ------------- | ---- | -------------------------------- |
-| **Explore**   | EXP  | Discover new Sectors             |
-| **Research**  | RES  | Develop new Technologies         |
-| **Upgrade**   | UPG  | Modify Ship Blueprints           |
-| **Build**     | BUI  | Build Ships and Structures       |
-| **Move**      | MOV  | Move Ships                       |
-| **Influence** | INF  | Gain/withdraw Control of Sectors |
+- **EXPLORE**
+- **RESEARCH**
+- **UPGRADE**
+- **BUILD**
+- **MOVE**
+- **INFLUENCE**
 
 ### Passing
 
-The first time you Pass in a Round:
-
-1. Flip your Summary Tile to Reactions Overview side
-2. **First player to Pass** receives 2 Money and the Start Player Tile for next Round
-3. On subsequent turns, players who have Passed may take one Reaction or Pass again
-
-### Reactions
-
-After Passing, you may only take Reactions (weaker versions of Upgrade, Build, and Move):
-
-| Reaction    | Effect                         |
-| ----------- | ------------------------------ |
-| **Upgrade** | Execute one Upgrade Activation |
-| **Build**   | Execute one Build Activation   |
-| **Move**    | Execute one Move Activation    |
-
-**Important:** Techs granting extra Activations do NOT apply to Reactions!
+The first time you Pass in a Round, flip your Summary Tile with the Reactions Overview faceup. The first player to Pass receives 2 Money and the Start Player Tile for the next Round.
+On subsequent Actions, players who have Passed may take one **Reaction** or Pass. Reactions are weaker versions of the Upgrade, Build, and Move Actions.
 
 ### Colony Ships
 
-At any time during your Action or Reaction, you may use one or more of your faceup Colony Ships by flipping them facedown. For each Colony Ship used:
+At any time during your Action or Reaction you may use one or more of your faceup Colony Ships by flipping them facedown. For each Colony Ship used this way, you may move one Population Cube from your Control Board to any empty Population Square in a Sector you Control. Each Population Cube you move must be taken from the Population Track that corresponds to the color of the Population Square it is being placed on. **Colony Ships are the only way to move Population Cubes to Sectors!**
 
-- Move one Population Cube from your Control Board to any empty Population Square in a Sector you Control
-- The Population Cube must come from the Population Track matching the color of the Population Square
-
-### Population Square Types
-
-| Type                       | Description                                             |
-| -------------------------- | ------------------------------------------------------- |
-| **Regular**                | Standard colored squares                                |
-| **Gray**                   | May receive a Population Cube from any Population Track |
-| **Advanced** (star symbol) | Requires related Advanced Tech to colonize              |
+- **Gray Population Squares:** May receive a Population Cube from any of the three Population Tracks.
+- **Advanced Population Squares (Star symbol):** You may only place Population Cubes here if you have Researched the related Advanced Tech (Advanced Mining, Advanced Labs, Advanced Economy, or Metasynthesis).
+- **Orbitals:** May only receive a Population Cube from the Science or Money Population Tracks.
 
 ---
 
-## Explore Action
+### [EXP] EXPLORE
 
-The Explore Action allows you to discover new Sectors to colonize.
+The Explore Action allows you to discover new Sectors to colonize. Each Explore Action grants you the number of Explore Activations indicated by the Explore Action Icon on your Species Board.
 
-### Procedure
+For each Explore Activation:
 
-1. Choose one Unexplored Zone next to a Sector where you have Control or at least one Unpinned Ship
-2. Flip a Sector tile faceup from the stack corresponding to the Zone's Ring (I, II, or III)
-3. Choose whether to place the Sector or discard it
+1. Choose one Unexplored Zone next to a Sector where you have Control or at least one Unpinned Ship.
+2. Flip a Sector tile faceup from the stack corresponding to the chosen Zone's position (Ring I, II, or III).
+3. Choose whether to place the flipped Sector or discard it.
 
-**Note:** The edge of a Sector you can Explore from must have a Wormhole adjacent to the Zone being Explored (except with Wormhole Generator Tech).
+- _Note: To place the Sector, the edge of a Sector you can Explore from must have a Wormhole adjacent to the Zone being Explored (unless you have the Wormhole Generator Tech)._
 
-### Placing Explored Sectors
+**Placing Explored Sectors:**
+Placed Sectors must be oriented so that a Wormhole Connection is made with a Sector where you have Control or at least one Unpinned Ship.
 
-- Must be oriented so a Wormhole Connection is made with a Sector where you have Control or an Unpinned Ship
-- If the Sector contains a Discovery Tile Symbol, place a facedown Discovery Tile on it
-- If the Sector contains Ancient Symbols, place that many Ancients on top of the Discovery Tile
+- If the Sector contains a **Discovery Tile Symbol**, place a Discovery Tile on it facedown.
+- If the Sector contains **Ancient Symbols**, place that many Ancients on top of the Discovery Tile.
 
-### Discovery Tiles from Exploration
+**Discovery Tiles:** As part of your Explore Activation, take the Discovery Tile from any undefended (no Ancients) Sector Explored this Action. You must reveal it and decide whether to use the reward or keep it for VP (2 VP).
 
-- Take the Discovery Tile from any undefended (no Ancients) Sector Explored this Action
-- Discovery Tiles from Sectors with Ancients can only be claimed after defeating them in Combat Phase
-- Reveal the tile and decide which side to use before ending your Activation
+**Taking Control:** After placing an Explored Sector, you may take Control of it by placing an Influence Disc from your Influence Track on the Sector's Influence Space. You cannot take Control of a Sector containing Ancients until they are destroyed.
 
-### Taking Control
-
-After placing an Explored Sector, you may take Control by placing the leftmost Influence Disc from your Influence Track on the Sector's Influence Space.
-
-**You cannot take Control of a Sector containing Ancients until they are destroyed.**
-
-### Discarding Explored Sectors
-
-If you don't want to place a Sector, discard it faceup near the corresponding stack. This ends your Explore Activation.
-
-### Discovery Tile Types
-
-| Tile                                     | Effect                                                                                     |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------ |
-| **+6 Materials / +5 Science / +8 Money** | Gain indicated Resources                                                                   |
-| **+2 Materials +2 Science +3 Money**     | Gain indicated Resources                                                                   |
-| **Ancient Tech**                         | Take the regular Tech Tile with lowest printed cost you don't have from Tech Tray for free |
-| **Ancient Cruiser**                      | Place one of your Unbuilt Cruisers in the Sector                                           |
-| **Ancient Orbital**                      | Place an Orbital in the Sector and gain 2 Materials                                        |
-| **Ancient Monolith**                     | Place a Monolith in the Sector                                                             |
-| **Ancient Ship Parts**                   | Place on any Ship Blueprint or keep for later Upgrade Action                               |
-| **Muon Source**                          | Ship Part placed outside Blueprint grid                                                    |
-| **Ancient Warp Portal**                  | Place in Sector; connects to all other Warp Portal Sectors; worth 2 VP                     |
+**Discarding:** If you do not want to place the Sector, discard it faceup to the appropriate discard pile. This ends your Activation.
 
 ---
 
-## Research Action
+### [RES] RESEARCH
 
-The Research Action allows you to Research new Technologies.
+The Research Action allows you to Research new Techs. Each Research Action grants you the number of Research Activations indicated on your Species Board.
 
-### Procedure
+For each Research Activation, you may Research one available Tech Tile from the Tech Tray by Paying its Science cost.
 
-1. Choose one available Tech Tile from the Tech Tray
-2. Pay its Science cost
-3. Place the Tech Tile on the leftmost available space of the Tech Track of its category
+1. Place the Tech Tile on the leftmost available space of the matching Tech Track (Military, Grid, or Nano) on your Species Board.
+2. **Discounts:** Each Tech you have in a category gives a discount on further Techs in the same category (indicated by the lowest visible discount value on your board). However, all Techs have a minimum Science cost.
 
-### Discounts
+**Restrictions:**
 
-Each Tech you have in a category gives you a discount on further Techs Researched in the same category. The discount is shown by the lowest visible value in that category on your Species Board.
+- If a track is full, no more Techs of that type may be Researched.
+- You cannot Research a Tech you already have.
+- You cannot discard a Researched Tech.
 
-**All Techs have a minimum Science cost regardless of discounts.**
+**Tech Types:**
 
-### Restrictions
+- **Ship Part:** Allows Upgrading to this part.
+- **Build:** Allows Building this Ship/Structure.
+- **Instant:** One-time effect.
+- **Permanent:** Active until end of game.
 
-- You cannot Research a Tech already on your Species Board
-- You cannot discard a Researched Tech Tile
-- If a Tech Track is full, no more Techs of that type may be Researched
-
-### Tech Types
-
-| Type          | Effect                                        |
-| ------------- | --------------------------------------------- |
-| **Ship Part** | Gives ability to Upgrade with this Ship Part  |
-| **Instant**   | One-time effect when Researched               |
-| **Build**     | Gives ability to Build this Ship or Structure |
-| **Permanent** | Active until end of game                      |
-
-### Tech Track VP
-
-At end of game, each Tech Track scores VP based on the leftmost VP symbol not covered:
-
-- 4 tiles = 1 VP
-- 5 tiles = 2 VP
-- 6 tiles = 3 VP
-- 7 tiles = 5 VP
-
-### Wormhole Generator
-
-With this Tech, you may Explore, Move to, and Influence adjacent Sectors as long as the edges connecting the Sectors contain **at least one Wormhole** (doesn't need to be on both sides).
+**VP:** At game end, score VP shown on the leftmost uncovered VP symbol on each Tech Track.
 
 ---
 
-## Upgrade Action
+### [UPG] UPGRADE
 
-The Upgrade Action allows you to modify your Ship Blueprints. **When you Upgrade a Ship's Blueprint, all Ships of that type are instantly Upgraded regardless of location.**
+The Upgrade Action allows you to modify your Ship Blueprints. When you Upgrade a Blueprint, **all** Ships of that type are instantly Upgraded.
 
-### Procedure
+Each Upgrade Action grants you the number of Upgrade Activations indicated on your Species Board. With each Upgrade Activation you may, in order:
 
-For each Upgrade Activation, you may (in order):
+1. **Return** any number of Ship Part Tiles from your Blueprints to the Upgrade Tray. (Exception: Ancient Ship Parts are removed from the game, not returned to the Tray.)
+2. **Move** any one Ship Part Tile from the Upgrade Tray to any empty or preprinted Ship Part Space on a Ship Blueprint.
 
-1. **Return** any number of Ship Part Tiles from your Ship Blueprints to the Upgrade Tray
-   - Exception: Ancient Ship Parts are removed from the game when removed from Blueprints
-2. **Move** any one Ship Part Tile from the Upgrade Tray to any empty or preprinted Ship Part Space
+**Restrictions:**
 
-### Restrictions
+- You must have Researched the requisite Tech for the part.
+- Total Energy Consumption cannot exceed Total Energy Production.
+- Drive parts cannot be put on Starbases.
+- Interceptors, Cruisers, and Dreadnoughts must have at least one Drive.
 
-- Must have Researched the requisite Tech for the Ship Part
-- Must not cause total Energy Consumption to exceed total Energy Production
-- Drive Ship Parts cannot be moved to Starbase Blueprints
-- At least one Drive Ship Part must be present on Interceptor, Cruiser, and Dreadnought Blueprints
+**Ship Part Stats:**
 
-**Taking and returning Ship Parts costs nothing. All values from Ship Parts are cumulative.**
-
-### Ship Part Reference
-
-| Part                  | Effect                                |
-| --------------------- | ------------------------------------- |
-| **Ion Cannon**        | Yellow die, 1 damage                  |
-| **Plasma Cannon**     | Orange die, 2 damage                  |
-| **Soliton Cannon**    | Blue die, 3 damage                    |
-| **Antimatter Cannon** | Red die, 4 damage                     |
-| **Ion Missile**       | Yellow die, 1 damage (missiles)       |
-| **Plasma Missile**    | Orange die, 2 damage (missiles)       |
-| **Soliton Missile**   | Blue die, 3 damage (missiles)         |
-| **Flux Missile**      | Red die, 4 damage (missiles)          |
-| **Electron Computer** | +1 to hit                             |
-| **Positron Computer** | +2 to hit                             |
-| **Gluon Computer**    | +3 to hit                             |
-| **Hull**              | +1 damage absorption                  |
-| **Improved Hull**     | +2 damage absorption                  |
-| **Sentient Hull**     | +1 damage absorption, +1 Initiative   |
-| **Gauss Shield**      | -1 to opponent's hit rolls            |
-| **Phase Shield**      | -2 to opponent's hit rolls            |
-| **Absorption Shield** | -1 to opponent's hit rolls, +1 Energy |
-| **Conifold Field**    | -3 to opponent's hit rolls            |
-| **Nuclear Drive**     | 1 Movement, +1 Initiative             |
-| **Fusion Drive**      | 2 Movement, +2 Initiative             |
-| **Tachyon Drive**     | 3 Movement, +3 Initiative             |
-| **Transition Drive**  | 3 Movement, +3 Initiative             |
-| **Nuclear Source**    | +3 Energy                             |
-| **Fusion Source**     | +6 Energy                             |
-| **Tachyon Source**    | +9 Energy                             |
-| **Zero-Point Source** | +12 Energy                            |
+- **Weapons:** Roll dice of corresponding color (Yellow=1 dmg, Orange=2 dmg, Blue=3 dmg, Red=4 dmg).
+- **Computers:** Add value to Hit rolls.
+- **Shields:** Subtract value from opponent Hit rolls.
+- **Hull:** Absorbs damage.
+- **Drives:** Determine Movement Value and Initiative.
+- **Energy Sources:** Provide Energy.
 
 ---
 
-## Build Action
+### [BUI] BUILD
 
-The Build Action allows you to Build Ships and Structures.
+The Build Action allows you to Build Ships and Structures. Each Build Action grants you the number of Build Activations indicated on your Species Board.
 
-### Procedure
+For each Build Activation, you may Build one Ship or Structure in any Sector you Control by Paying the Materials cost.
 
-For each Build Activation:
+- **Interceptor:** 3 Materials
+- **Cruiser:** 5 Materials
+- **Dreadnought:** 8 Materials
+- **Starbase:** 3 Materials
+- **Orbital:** 4 Materials
+- **Monolith:** 10 Materials
 
-1. Choose a Sector you Control
-2. Pay the Materials cost
-3. Place the Ship or Structure
+**Restrictions:**
 
-### Basic Building Costs
-
-| Item            | Cost         |
-| --------------- | ------------ |
-| **Interceptor** | 3 Materials  |
-| **Cruiser**     | 5 Materials  |
-| **Dreadnought** | 8 Materials  |
-| **Starbase**    | 3 Materials  |
-| **Orbital**     | 4 Materials  |
-| **Monolith**    | 10 Materials |
-
-### Restrictions
-
-- Must have Researched the requisite Tech for Starbases and Structures
-- Each Sector may have at most one Monolith and one Orbital
+- Must have requisite Tech for Starbases/Structures.
+- Max 1 Monolith and 1 Orbital per Sector.
 
 ---
 
-## Move Action
+### [MOV] MOVE
 
-The Move Action allows you to Move your Ships.
+The Move Action allows you to Move your Ships. Each Move Action grants the number of Move Activations indicated on your Species Board.
 
-### Procedure
+For each Move Activation, you may Move one Ship up to the number of Sectors determined by its **Movement Value** (total Drive value).
 
-For each Move Activation:
-
-- Move one Ship up to the number of Sectors determined by its Movement Value (total Drive value)
-
-### Restrictions
-
-- Ships may only Move to Sectors with a Wormhole or Warp Portal Connection
-- Ships cannot Move to Unexplored Zones
-- Pinned Ships cannot Move from a Sector containing opponent Ships
-
-### Pinning
-
-To determine if Ships are Pinned:
-
-1. Total the number of opponent Ships in that Sector
-2. Each opponent Ship Pins one of your Ships (of your choosing)
-3. Pinning is determined for each Move Activation
-
-**Special Cases:**
-
-- The GCDS Pins all Ships in the Galactic Center Sector
-- With Cloaking Device Tech, two Ships are required to Pin each of your Ships
+- Ships may only Move to Sectors with a Wormhole Connection (unless you have Wormhole Generator).
+- Cannot move to Unexplored Zones.
+- **Pinning:** Pinned Ships cannot Move from a Sector containing opponent Ships.
+- To determine Pinning, total the number of opponent Ships. Each opponent Ship Pins one of your Ships (your choice).
+- The GCDS Pins all Ships in the Galactic Center.
 
 ---
 
-## Influence Action
+### [INF] INFLUENCE
 
-The Influence Action allows you to modify Control by moving Influence Discs to or from Sectors.
+The Influence Action allows you to modify Control. Each Influence Action grants the number of Activations indicated on your board **PLUS** allows you to flip up to two used Colony Ships faceup.
 
-### Procedure
+Each Influence Activation allows you to move an Influence Disc from your Track or a Controlled Sector to:
 
-Each Influence Action also allows you to **flip up to two of your used Colony Ships faceup**.
+1. An Uncontrolled Sector where no opponent Ships are present AND a Wormhole Connection exists to a Sector you have a Ship or Control in.
+2. An Uncontrolled Sector where only you have a Ship.
+3. The rightmost empty space of your Influence Track.
 
-For each Influence Activation, move an Influence Disc from your Influence Track or a Sector you Control to:
-
-1. An Uncontrolled Sector where no opponent Ships are present AND a Wormhole/Warp Portal Connection exists with a Sector where you have a Ship or Control
-2. OR an Uncontrolled Sector where only you have a Ship
-3. OR the rightmost empty space of your Influence Track
-
-**You cannot use more than one Influence Activation in the same Sector per Influence Action.**
-
-### Removing a Disc from a Sector
-
-When you remove an Influence Disc from a Sector:
-
-- Return all Population Cubes from the Sector to their respective Population Tracks
-- Population Cubes from gray squares may return to any Population Track
-- Population Cubes from Orbitals may return to Science or Money Track
+**Removing Discs:** If you remove a Disc from a Sector, return all Population Cubes from that Sector to your Tracks.
 
 ---
 
-## Diplomatic Relations (4+ Players)
+### REACTIONS
 
-In games with four or more players, any two players may propose Diplomatic Relations at any time during their Action.
+After Passing, you can only take Reactions.
 
-### Requirements
-
-- Players must have a Wormhole Connection joining Sectors they Control
-- Cannot use Wormhole Generator for this connection
-- Neither player's Ships may be present in a Sector Controlled by or containing a Ship from the other player
-- Neither player may already have an Ambassador Tile from the other player
-- Neither player may hold the Traitor Tile
-- Both players must have an empty space on their Reputation Track
-
-### Forming Diplomatic Relations
-
-If both players agree:
-
-1. Each player gives the other one Ambassador Tile containing a Population Cube from any Population Track
-2. Ambassador Tiles are placed on empty Ambassador Tile spaces on each player's Reputation Track
-
-### Breaking Diplomatic Relations
-
-Diplomatic Relations are broken by an **Act of Aggression**: having any number of your Ships in a Sector where the other player has a Ship or Control at the end of your Action.
-
-**Note:** Moving through an opponent's Sectors is NOT an Act of Aggression if your Ships remain Unpinned!
-
-When broken:
-
-- Each player returns the other's Ambassador Tile and Population Cube
-- The player initiating the Act of Aggression receives the **Traitor Tile**
-
-### Traitor Tile
-
-The player holding the Traitor Tile:
-
-- Cannot form Diplomatic Relations
-- Receives -2 VP penalty at end of game
+- **UPGRADE:** 1 Upgrade Activation.
+- **BUILD:** 1 Build Activation.
+- **MOVE:** 1 Move Activation.
+  _(Techs granting extra Activations do not apply to Reactions)_
 
 ---
 
-## Combat Phase
+## DIPLOMATIC RELATIONS (4+ Players)
 
-The Combat Phase consists of six steps:
+In games with 4+ players, any two players may propose Diplomatic Relations during their Action.
 
-### 1. Determine Battles
+**Requirements:**
 
-Identify all Sectors containing opposing Ships.
+- Wormhole Connection between Sectors they Control (Wormhole Generator does not count).
+- Neither player has Ships in a Sector Controlled by/containing Ships of the other.
+- Don't already have an Ambassador from that player.
+- Neither holds the Traitor Tile.
+- Both have space on Reputation Track.
 
-### 2. Resolve Battles
+**Effect:**
+Exchange Ambassador Tiles. Place a Population Cube from any Track on the Ambassador Tile. It provides production and 1 VP.
 
-Resolve battles by Sector Number in **descending numerical order**.
+**Breaking Relations:**
+Only an **Act of Aggression** breaks relations (having Ships in a Sector where the other player has a Ship or Control at the end of your Action).
 
-### 3. Attack Population
-
-Ships attack opponent Population Cubes in their Sector.
-
-### 4. Influence Sectors
-
-Players may take Control of Uncontrolled Sectors where they have Ships.
-
-### 5. Discovery Tiles
-
-Undefended Discovery Tiles are claimed.
-
-### 6. Repair Damage
-
-All Ship damage is reset by returning Damage Cubes to supply.
+- Return Ambassadors/Cubes.
+- Aggressor receives **Traitor Tile** (-2 VP, cannot form relations).
 
 ---
 
-## Resolve Battles
+## COMBAT PHASE
 
-### Battle Order
+Battles occur if a Sector is occupied by more than one opponent. Battles are resolved in descending Sector Number order.
 
-- Battles are resolved in **descending Sector Number order**
-- Battles with multiple opponents are resolved between two players at a time in **reverse order of entry** into the Sector
-- Non-player Ships (Ancients, Guardians, GCDS) battle the last surviving player
+**Battle Steps:**
 
-### Attacker vs Defender
+1. **Determine Battles:** Identify Sectors.
+2. **Resolve Battles:**
 
-- The player who first entered the Sector is the **Defender**
-- The player who entered last is the **Attacker**
-- **A player who Controls the Sector is always the Defender**, regardless of entry order
-- Ancients, Guardians, and GCDS are always considered Defenders
+- Determine Attacker/Defender (Controller is always Defender; otherwise, first to enter is Defender).
+- Determine Initiative (Highest Initiative acts first; Defender wins ties).
+- **Missiles:** Fire once before engagement rounds, by Ship type in Initiative order.
+- **Engagement Rounds:** Repeat until one side Retreats or is destroyed.
+- Activate Ships in Initiative order.
+- Roll dice for Weapons.
+- **Hit:** 6+ (after Computer + and Shield - modifiers). Die results showing burst symbol (★) are always a Hit. Natural 1 is always a miss.
+- **Damage:** Assign damage to Ships. If damage >= Hull, Ship is destroyed. Excess damage cannot spill over to other Ships.
 
-### Initiative
+3. **Draw Reputation Tiles:**
 
-Initiative determines the order of Attack in an Engagement Round:
+- 1 Tile for participating.
+- 1 per Interceptor/Starbase/Ancient destroyed.
+- 2 per Cruiser/Guardian destroyed.
+- 3 per Dreadnought/GCDS destroyed.
+- Draw max 5, keep 1.
 
-- Total the Initiative Symbols on the Blueprint of each Ship type
-- Initiative ties between opponents are resolved in favor of the Defender
-- You choose the order for your own Ships that are tied
+4. **Attack Population:** Surviving Ships attack Population Cubes (Cube has 0 Shield). Each hit destroys a Cube. (Neutron Bombs destroy all automatically).
+5. **Influence Sectors:** If you have a Ship in an Uncontrolled Sector with no Population, you may place an Influence Disc.
+6. **Discovery Tiles:** Claim tiles in Sectors where you have a Ship.
+7. **Repair Damage:** Remove all Damage Cubes.
 
-### Steps of Battle (Per Sector)
+**Retreating:** Ships may Retreat to a Controlled Sector with no enemies via a Wormhole Connection (or half-connection with Wormhole Generator). On their next Ship Activation, Retreating Ships complete Retreat by moving to the neighboring Sector. They can be Attacked until they leave.
 
-1. Determine order of player battle resolution
-2. Determine Attacker and Defender
-3. Determine Initiative
-4. **Fire Missiles** (first round only)
-5. Repeated Engagement Rounds
+**Retreat Penalty:** If ALL your remaining Ships attempt to Retreat, you do NOT draw a Reputation Tile for participating (but still draw for destroyed enemy Ships).
 
-For battles with more than two opponents, repeat steps 1-5 until a single opponent's Ships remain.
+**Stalemate:** If neither side can destroy the other (e.g., all Ships unarmed or only have Missiles), the Attacker must Retreat or their Ships are destroyed.
 
-### Firing Missiles
+**NPC Damage Assignment:** When battling Ancients/Guardians/GCDS, another player rolls their dice. Hits are assigned to destroy your Ships largest-to-smallest; if none can be destroyed, damage is assigned largest-to-smallest.
 
-All Ship types with Missiles fire their Missiles in Initiative order. Roll dice of the corresponding color equal to the number of Die Symbols on Missile Ship Parts.
-
-**Missiles fire only once per battle (before the first Engagement Round).**
-
-### Engagement Rounds
-
-Each Engagement Round, Ship types are Activated in Initiative order. When Activated, the owning player decides whether to **Attack** or **Retreat**.
-
-Engagement Rounds repeat until all of one player's Ships have Retreated or are destroyed.
-
-### Attacking
-
-In Initiative order, each Ship type may Attack by rolling one die of the corresponding color for every Die Symbol on their Ship Blueprint.
-
-**All dice of all colors for each Ship type are rolled simultaneously.**
-
-After rolling, each die is assigned to a single opponent Ship to determine if it's a Hit.
-
-### Hitting
-
-| Die Result             | Outcome             |
-| ---------------------- | ------------------- |
-| One or more bursts (★) | **Always a Hit**    |
-| Blank face             | **Always a Miss**   |
-| Number                 | Calculate Hit Value |
-
-**Hit Value Calculation:**
-
-```
-Hit Value = Die Roll + Your Computers - Target's Shields
-```
-
-If Hit Value ≥ 6, it's a Hit.
-
-### Damage
-
-- Hits inflict damage equal to the number of bursts (★) on their weapon's Die Symbol
-- Ships receiving damage greater than their Hull Value are destroyed
-- Damage exceeding a Ship's Hull Value cannot be assigned to another Ship
-- Mark damage on surviving Ships with Damage Cubes
-
-### Retreat
-
-To attempt Retreat during a Ship Activation:
-
-1. Move all your Ships of that type to the edge of a neighboring Sector with a Wormhole Connection
-2. You may only Retreat to a Sector you Control where no opponent Ships are present
-3. On next Ship Activation, Retreating Ships may complete Retreat by moving to the neighboring Sector
-
-**Retreating Ships:**
-
-- Cannot Attack or be Attacked during current battle
-- Are eligible to be Attacked until moved to neighboring Sector
-
-### Hits and Damage with Non-Player Opponents
-
-When battling Ancients, Guardians, or GCDS:
-
-- Any other player rolls their dice
-- Dice are assigned to destroy your Ships from largest to smallest if possible
-- Otherwise, inflict maximum damage to largest Ships first
-
-### Stalemate
-
-If neither player can destroy the other's Ships (all Ships unarmed or only have Missiles):
-
-- The Attacker must Retreat
-- If Attacker cannot Retreat, their Ships are destroyed
-
-### Reputation Tiles
-
-After all battles in a Sector, each participating player draws Reputation Tiles:
-
-| Source                     | Tiles Drawn |
-| -------------------------- | ----------- |
-| Participating in battle    | 1           |
-| Each Interceptor destroyed | 1           |
-| Each Starbase destroyed    | 1           |
-| Each Ancient destroyed     | 1           |
-| Each Cruiser destroyed     | 2           |
-| Each Guardian destroyed    | 2           |
-| Each Dreadnought destroyed | 3           |
-| Destroying GCDS            | 3           |
-
-**Maximum 5 tiles per battle.**
-
-Drawing is done in order of player entry:
-
-1. Draw Reputation Tiles
-2. Select up to one to place facedown on Reputation Track
-3. Return others to bag
-
-**Retreat Penalty:** If all your remaining Ships attempt to Retreat, you do NOT draw a tile for participating (but still draw for destroyed opponent Ships).
+**Structures:** Orbitals and Monoliths cannot be destroyed and are never removed from Sectors. Orbital Population Cubes can still be Attacked.
 
 ---
 
-## Completing the Combat Phase
+## UPKEEP PHASE
 
-### Attack Population
+1. **Colony Ships:** Activate remaining Colony Ships to colonize Sectors (only if no opponents present).
+2. **Civilization Upkeep:** Compare Money Income (Population Track) vs Upkeep Cost (Influence Track).
 
-At end of Combat Phase, remaining Ships attack opponent Population Cubes in their Sector:
+- Adjust Money Storage by the difference.
+- **Bankruptcy:** If you cannot pay, you must Trade resources for Money or Abandon Sectors (returning Discs/Cubes) until you can pay. If you still can't pay, you are Eliminated.
 
-- Each Ship may attack once with non-Missile weapons
-- Use normal rules to Hit (Population Cubes have 0 Shield Value)
-- Each damage destroys one Population Cube of attacker's choosing
-
-**Neutron Bombs Tech:** All Population Cubes in the Sector may be destroyed automatically.
-
-Destroyed Population Cubes are returned to the defeated player's Graveyards on their Control Board.
-
-### Influence Sectors
-
-At end of Combat Phase, if you have at least one Ship in a Sector that has no Population Cubes (including Orbitals):
-
-1. Remove the Controlling player's Influence Disc to their Influence Track
-2. You may move Influence Discs from your Influence Track to any Sector where you have a Ship and no Influence Disc is present
-
-### Discovery Tiles
-
-At end of Combat Phase, if you have at least one Ship in a Sector with a Discovery Tile, take the tile.
-
-### Repair Damage
-
-Remove all Damage Cubes from Ships.
+3. **Production:** Gain Materials and Science based on Population Tracks.
 
 ---
 
-## Upkeep Phase
+## CLEANUP PHASE
 
-### Colony Ships
-
-All players may activate any remaining Colony Ships to move Population Cubes to Sectors.
-
-**Important:** Unlike the Action Phase, Colony Ships **cannot** be used during Upkeep Phase to move Population Cubes to Sectors containing opponent Ships.
-
-### Civilization Upkeep
-
-Compare your **Money Income** (highest exposed number on Money Population Track) with your **Civilization Upkeep Cost** (highest exposed number on Influence Track).
-
-Adjust your Money Storage Marker by the net difference:
-
-- Positive difference = Gain Money
-- Negative difference = Pay Money
-
-### Bankruptcy
-
-At no time may your Money Storage Marker move below zero. If you can't pay:
-
-1. **Trade** Materials and/or Science for Money
-2. **Abandon** Control of Sectors until Upkeep Cost is affordable
-
-When Abandoning a Sector:
-
-- Influence Disc returns to Influence Track
-- All Population Cubes return to respective Population Tracks
-
-**Warning:** Abandoning may reduce Income as Population Cubes return to Money Track.
-
-### Player Elimination
-
-Players are eliminated if:
-
-- Unable to Pay Civilization Upkeep Cost after Trading and Abandoning
-- Having neither Ships nor Controlled Sectors at end of Combat Phase
-
-Eliminated players count their score and return components to the game box.
-
-### Materials and Science Production
-
-After Upkeep Cost, collect Materials and Science Production equal to the highest exposed number on respective Population Tracks.
+1. **Techs:** Draw new Tech Tiles until the indicated number for your player count is reached (2p:5, 3p:6, 4p:7, 5p:8, 6p:9). Rare Techs do not count toward this number.
+2. **Reset:** Return Influence Discs from Action Spaces to Track. Return Population Cubes from Graveyards to their respective Population Tracks (if a track is full, place on another track). Flip Colony Ships/Summary Tile faceup.
+3. **Round:** Advance Round Marker.
 
 ---
 
-## Cleanup Phase
-
-### New Tech Tiles
-
-| Players | Tiles to Draw |
-| ------- | ------------- |
-| 2       | 5             |
-| 3       | 6             |
-| 4       | 7             |
-| 5       | 8             |
-| 6       | 9             |
-
-Draw Tech Tiles from the Tech Tile Bag until the indicated number of regular Tech Tiles has been drawn. Rare Tech Tiles do not count toward this number.
-
-### End of Round
-
-1. Move all Influence Discs from Action Track back to Influence Track
-2. Move Population Cubes from Graveyards to respective Population Tracks
-3. Flip all Colony Ships faceup
-4. Flip Summary Tiles to Action Phase Overview side
-5. Move Round Marker one step forward
-
----
-
-## Game End
+## GAME END
 
 The game ends after the 8th Round.
 
-### Victory Points
+**VICTORY POINTS (VP):**
 
-| Source                          | VP             |
-| ------------------------------- | -------------- |
-| Reputation Tiles                | 1-4 per tile   |
-| Ambassador Tiles                | 1 per tile     |
-| Controlled Sectors              | 1-4 per Sector |
-| Monoliths on Controlled Sectors | 3 per Monolith |
-| Discovery Tiles kept VP side up | 2 per tile     |
-| Traitor Tile                    | -2             |
-| Progress on each Tech Track     | See below      |
-| Species bonuses                 | Varies         |
+- **Reputation Tiles:** 1-4 VP per tile.
+- **Ambassador Tiles:** 1 VP per tile.
+- **Controlled Sectors:** 1-4 VP per Sector.
+- **Monoliths:** 3 VP per Monolith.
+- **Discovery Tiles:** 2 VP if kept for points.
+- **Traitor Tile:** -2 VP.
+- **Tech Tracks:** 4 tiles=1 VP, 5=2 VP, 6=3 VP, 7=5 VP.
+- **Species Bonuses:** Specific to species.
 
-### Tech Track VP
-
-| Tiles on Track | VP  |
-| -------------- | --- |
-| 4              | 1   |
-| 5              | 2   |
-| 6              | 3   |
-| 7              | 5   |
-
-### Species Bonuses
-
-| Species                  | Bonus                                 |
-| ------------------------ | ------------------------------------- |
-| **Descendants of Draco** | 1 VP per Ancient on game board at end |
-| **Planta**               | 1 extra VP for each Controlled Sector |
-
-### Tiebreaker
-
-In case of tie, the tied player with the highest total amount of Resources in Storage (Materials + Science + Money) is the winner.
+**Tiebreaker:** Highest total Resources (Materials + Science + Money).
 
 ---
 
-## Non-Player Opponents
+## ALIEN SPECIES
 
-### Ancients
+### ERIDANI EMPIRE
 
-- Found in Explored Sectors with Ancient symbols
-- Use Ancient Blueprint Tile chosen during setup
+- **Start:** 4 Materials, 2 Science, 2 Money. 3 Colony Ships.
+- **Trade:** 3:1
+- **Sector:** 222
+- **Techs:** Gauss Shield, Fusion Drive, Plasma Cannon.
+- **Special:** Start with 2 fewer Influence Discs. Draw 2 Reputation Tiles before game starts. Ships have extra Energy.
 
-### Guardians
+### HYDRAN PROGRESS
 
-- Guard special Guardian Sectors
-- Use Guardian Blueprint Tile chosen during setup
-- Worth 2 Reputation Tiles when destroyed
+- **Start:** 2 Materials, 6 Science, 2 Money. 3 Colony Ships.
+- **Trade:** 3:1
+- **Sector:** 224
+- **Tech:** Advanced Labs.
+- **Special:** 2 Research Activations per Research Action. Start with a Science Cube in Advanced Science square.
 
-### Galactic Center Defense System (GCDS)
+### PLANTA
 
-- Guards the Galactic Center Sector
-- Pins all Ships in Galactic Center Sector
-- Use GCDS Blueprint Tile chosen during setup
-- Worth 3 Reputation Tiles when destroyed
+- **Start:** 4 Materials, 3 Science, 2 Money. 4 Colony Ships.
+- **Trade:** 4:1
+- **Sector:** 226
+- **Tech:** Starbase.
+- **Special:** 2 Explore Activations per Explore Action. Population destroyed by enemy Ships at end of Combat (not by Ancients). +1 VP per Controlled Sector. Ships have weak Initiative but extra Power/Computer.
 
-### Advanced Blueprint Tiles
+### DESCENDANTS OF DRACO
 
-Blueprint Tiles with two notches on their border are advanced and should only be used with experienced players.
+- **Start:** 3 Materials, 4 Science, 2 Money. 3 Colony Ships.
+- **Trade:** 3:1
+- **Sector:** 228
+- **Tech:** Fusion Drive.
+- **Special:** Explore: Flip 2 sectors, choose 1 or none to place (unplaced go to discard faceup). Peaceful with Ancients (can share sectors, don't fight). 1 VP per Ancient Sector you Control at game end.
 
----
+### MECHANEMA
 
-## Technology Reference
+- **Start:** 4 Materials, 3 Science, 3 Money. 3 Colony Ships.
+- **Trade:** 3:1
+- **Sector:** 230
+- **Tech:** Positron Computer.
+- **Special:** 3 Upgrade/Build Activations per Upgrade/Build Action. Cheaper Building costs (Interceptor: 2, Cruiser: 4, Dreadnought: 7, Starbase: 2).
 
-### Military Technologies
+### ORION HEGEMONY
 
-| Tech                | Effect                                                                            |
-| ------------------- | --------------------------------------------------------------------------------- |
-| **Neutron Bombs**   | When Attacking Population, all Population Cubes in Sector destroyed automatically |
-| **Starbase**        | May Build Starbases                                                               |
-| **Plasma Cannon**   | May Upgrade with Plasma Cannon Ship Parts                                         |
-| **Phase Shield**    | May Upgrade with Phase Shield Ship Parts                                          |
-| **Advanced Mining** | May place Population Cubes in Advanced Materials Population Squares               |
-| **Tachyon Source**  | May Upgrade with Tachyon Source Ship Parts                                        |
-| **Gluon Computer**  | May Upgrade with Gluon Computer Ship Parts                                        |
-| **Plasma Missile**  | May Upgrade with Plasma Missile Ship Parts                                        |
+- **Start:** 4 Materials, 3 Science, 3 Money. 3 Colony Ships.
+- **Trade:** 4:1
+- **Sector:** 232
+- **Techs:** Neutron Bombs, Gauss Shield.
+- **Special:** Start with Cruiser instead of Interceptor. +2 Initiative on all Ships. Ships have extra Energy.
 
-### Grid Technologies
+### TERRAN FACTIONS (Standard)
 
-| Tech                  | Effect                                                          |
-| --------------------- | --------------------------------------------------------------- |
-| **Gauss Shield**      | May Upgrade with Gauss Shield Ship Parts                        |
-| **Fusion Source**     | May Upgrade with Fusion Source Ship Parts                       |
-| **Improved Hull**     | May Upgrade with Improved Hull Ship Parts                       |
-| **Positron Computer** | May Upgrade with Positron Computer Ship Parts                   |
-| **Advanced Economy**  | May place Population Cubes in Advanced Money Population Squares |
-| **Tachyon Drive**     | May Upgrade with Tachyon Drive Ship Parts                       |
-| **Antimatter Cannon** | May Upgrade with Antimatter Cannon Ship Parts                   |
-| **Quantum Grid**      | Receive two additional Influence Discs immediately              |
+- **Start:** 4 Materials, 3 Science, 3 Money. 3 Colony Ships.
+- **Tech:** Starbase.
+- **Trade:** 2:1 (Aliens are usually 3:1 or 4:1).
+- **Sectors:** 221, 223, 225, 227, 229, 231.
 
-### Nano Technologies
+## TECHNOLOGY REFERENCE
 
-| Tech                   | Effect                                                                                  |
-| ---------------------- | --------------------------------------------------------------------------------------- |
-| **Nanorobots**         | One extra Activation when taking Build Action                                           |
-| **Fusion Drive**       | May Upgrade with Fusion Drive Ship Parts                                                |
-| **Orbital**            | May Build Orbitals                                                                      |
-| **Advanced Robotics**  | Receive one additional Influence Disc immediately                                       |
-| **Advanced Labs**      | May place Population Cubes in Advanced Science Population Squares                       |
-| **Monolith**           | May Build Monoliths                                                                     |
-| **Wormhole Generator** | May Explore, Move to, and Influence adjacent Sectors if edges contain one Wormhole      |
-| **Artifact Key**       | For each Artifact on Sectors you Control, immediately gain 5 Resources of a single type |
+Military Technologies
 
-### Rare Technologies
+| Technology        | Cost | Type    | Effect                                                                                   |
+| ----------------- | ---- | ------- | ---------------------------------------------------------------------------------------- |
+| **Neutron Bombs** | 2    | Instant | When Attacking Population, all Population Cubes in a Sector are destroyed automatically. |
 
-| Tech                    | Effect                                                                                        |
-| ----------------------- | --------------------------------------------------------------------------------------------- |
-| **Antimatter Splitter** | Split damage from Antimatter Cannons freely over targets                                      |
-| **Conifold Field**      | May Upgrade with Conifold Field Ship Parts                                                    |
-| **Neutron Absorber**    | Enemy Neutron Bombs have no effect on you                                                     |
-| **Absorption Shield**   | May Upgrade with Absorption Shield Ship Parts                                                 |
-| **Cloaking Device**     | Two Ships required to Pin each of your Ships                                                  |
-| **Improved Logistics**  | Gain 1 additional Move Activation during each Move Action                                     |
-| **Sentient Hull**       | May Upgrade with Sentient Hull Ship Parts                                                     |
-| **Soliton Cannon**      | May Upgrade with Soliton Cannon Ship Parts                                                    |
-| **Transition Drive**    | May Upgrade with Transition Drive Ship Parts                                                  |
-| **Warp Portal**         | Place Warp Portal Tile on Sector you Control; connects to all Warp Portal Sectors; worth 1 VP |
-| **Flux Missile**        | May Upgrade with Flux Missile Ship Parts                                                      |
-| **Pico Modulator**      | Gain 2 additional Upgrade Activations during each Upgrade Action                              |
-| **Ancient Labs**        | Immediately draw and resolve one Discovery Tile                                               |
-| **Zero-Point Source**   | May Upgrade with Zero-Point Source Ship Parts                                                 |
-| **Metasynthesis**       | May place Population Cubes in any Advanced Population Squares                                 |
+|
+| **Starbase** | 3 | Build | You may Build Starbases.
 
----
+|
+| **Plasma Cannon** | 4 | Ship Part | You may Upgrade your Ship Blueprints with **Plasma Cannon** Ship Parts.
 
-## Species Reference
+|
+| **Phase Shield** | 6 | Ship Part | You may Upgrade your Ship Blueprints with **Phase Shield** Ship Parts.
 
-### Terran Factions
+|
+| **Advanced Mining** | 10 | Permanent | You may place Population Cubes in **Advanced Materials** Population Squares with your Colony Ships.
 
-All Terran factions use the same stats:
+|
+| **Tachyon Source** | 12 | Ship Part | You may Upgrade your Ship Blueprints with **Tachyon Source** Ship Parts.
 
-- **Starting Resources:** 4 Materials, 3 Science, 3 Money
-- **Colony Ships:** 3
-- **Trade Value:** 2:1
-- **Activations:** EXP 1, RES 1, UPG 2, BUI 2, MOV 3, INF 2
+|
+| **Gluon Computer** | 14 | Ship Part | You may Upgrade your Ship Blueprints with **Gluon Computer** Ship Parts.
 
-| Faction             | Starting Sector |
-| ------------------- | --------------- |
-| Terran Directorate  | 221             |
-| Terran Federation   | 223             |
-| Terran Union        | 225             |
-| Terran Republic     | 227             |
-| Terran Conglomerate | 229             |
-| Terran Alliance     | 231             |
+|
+| **Plasma Missile** | 16 | Ship Part | You may Upgrade your Ship Blueprints with **Plasma Missile** Ship Parts.
 
-### Eridani Empire
+|
 
-- **Starting Resources:** 4 Materials, 2 Science, 26 Money
-- **Colony Ships:** 3
-- **Starting Techs:** Gauss Shield, Fusion Drive, Plasma Cannon
-- **Trade Value:** 3:1
-- **Activations:** EXP 1, RES 1, UPG 2, BUI 2, MOV 2, INF 2
-- **Starting Sector:** 222
+Grid Technologies
 
-**Special Rules:**
+| Technology       | Cost | Type      | Effect                                                                 |
+| ---------------- | ---- | --------- | ---------------------------------------------------------------------- |
+| **Gauss Shield** | 2    | Ship Part | You may Upgrade your Ship Blueprints with **Gauss Shield** Ship Parts. |
 
-- Draw two random Reputation Tiles before game starts
-- Start with two fewer Influence Discs
-- Ship Blueprints have additional Energy Production
+|
+| **Fusion Source** | 4 | Ship Part | You may Upgrade your Ship Blueprints with **Fusion Source** Ship Parts.
 
-### Hydran Progress
+|
+| **Improved Hull** | 6 | Ship Part | You may Upgrade your Ship Blueprints with **Improved Hull** Ship Parts.
 
-- **Starting Resources:** 2 Materials, 6 Science, 2 Money
-- **Colony Ships:** 3
-- **Starting Tech:** Advanced Labs
-- **Trade Value:** 3:1
-- **Activations:** EXP 1, RES 2, UPG 2, BUI 2, MOV 2, INF 2
-- **Starting Sector:** 224
+|
+| **Positron Computer** | 8 | Ship Part | You may Upgrade your Ship Blueprints with **Positron Computer** Ship Parts.
 
-**Special Rules:**
+|
+| **Advanced Economy** | 10 | Permanent | You may place Population Cubes in **Advanced Money** Population Squares with your Colony Ships.
 
-- During setup, place a Population Cube in Advanced Science Population Square on Starting Sector
+|
+| **Tachyon Drive** | 12 | Ship Part | You may Upgrade your Ship Blueprints with **Tachyon Drive** Ship Parts.
 
-### Planta
+|
+| **Antimatter Cannon** | 14 | Ship Part | You may Upgrade your Ship Blueprints with **Antimatter Cannon** Ship Parts.
 
-- **Starting Resources:** 4 Materials, 3 Science, 2 Money
-- **Colony Ships:** 4
-- **Starting Tech:** Starbase
-- **Trade Value:** 3:1
-- **Activations:** EXP 2, RES 1, UPG 2, BUI 2, MOV 2, INF 2
-- **Starting Sector:** 226
+|
+| **Quantum Grid** | 16 | Instant | You receive two additional Influence Discs, placed immediately on your Influence Track.
 
-**Special Rules:**
+|
 
-- Population Cubes automatically destroyed by opponent Ships at end of Combat Phase
-- 1 extra VP for each Controlled Sector at end of game
-- Ship Blueprints have reduced Initiative Bonuses
-- Ship Blueprints have additional Computers and Energy but one less Ship Part Space
+Nano Technologies
 
-### Descendants of Draco
+| Technology     | Cost | Type      | Effect                                                          |
+| -------------- | ---- | --------- | --------------------------------------------------------------- |
+| **Nanorobots** | 2    | Permanent | You have one extra Activation when taking the **Build** Action. |
 
-- **Starting Resources:** 3 Materials, 4 Science, 2 Money
-- **Colony Ships:** 3
-- **Starting Tech:** Fusion Drive
-- **Trade Value:** 3:1
-- **Activations:** EXP 1, RES 1, UPG 2, BUI 2, MOV 2, INF 2
-- **Starting Sector:** 228
+|
+| **Fusion Drive** | 4 | Ship Part | You may Upgrade your Ship Blueprints with **Fusion Drive** Ship Parts.
 
-**Special Rules:**
+|
+| **Orbital** | 6 | Build | You may Build Orbitals.
 
-- **Explore:** May flip two Sectors and choose one (or none) to place
-- 1 VP per Ancient on game board at end of game
-- May have Ships in Sectors containing Ancients but cannot battle them
-- May place Influence Discs in Sectors with Ancients
-- Cannot collect Discovery Tiles from Sectors containing Ancients
+|
+| **Advanced Robotics** | 8 | Instant | You receive one additional Influence Disc, placed immediately on your Influence Track.
 
-### Mechanema
+|
+| **Advanced Labs** | 10 | Permanent | You may place Population Cubes in **Advanced Science** Population Squares with your Colony Ships.
 
-- **Starting Resources:** 4 Materials, 3 Science, 3 Money
-- **Colony Ships:** 3
-- **Starting Tech:** Positron Computer
-- **Trade Value:** 3:1
-- **Activations:** EXP 1, RES 1, UPG 3, BUI 3, MOV 2, INF 2
-- **Starting Sector:** 230
+|
+| **Monolith** | 12 | Build | You may Build Monoliths.
 
-**Special Rules:**
+|
+| **Wormhole Generator** | 14 | Permanent | You may Explore, Move to, and Influence adjacent Sectors if the edges connecting the Sectors contain one Wormhole.
 
-- Cheaper Building costs:
-  - Interceptor: 2 (instead of 3)
-  - Cruiser: 4 (instead of 5)
-  - Dreadnought: 7 (instead of 8)
-  - Starbase: 2 (instead of 3)
-  - Orbital: 3 (instead of 4)
-  - Monolith: 8 (instead of 10)
+|
+| **Artifact Key** | 16 | Instant | For each Artifact on Sectors you Control, immediately gain 5 Resources of a single type.
 
-### Orion Hegemony
+|
 
-- **Starting Resources:** 4 Materials, 3 Science, 3 Money
-- **Colony Ships:** 3
-- **Starting Techs:** Neutron Bombs, Gauss Shield
-- **Trade Value:** 4:1
-- **Activations:** EXP 1, RES 1, UPG 2, BUI 2, MOV 2, INF 2
-- **Starting Sector:** 232
+Rare Technologies
 
-**Special Rules:**
+_Unlike regular Techs, only one of each Rare Tech is ever available per game._
 
-- Start with a Cruiser in Starting Sector instead of Interceptor
-- All Ship Blueprints have increased Initiative Bonuses
-- Ship Blueprints have additional Energy Production
+| Technology              | Effect                                                                  |
+| ----------------------- | ----------------------------------------------------------------------- |
+| **Antimatter Splitter** | Allows you to split damage from Antimatter Cannons freely over targets. |
+
+|
+| **Conifold Field** | You may Upgrade your Ship Blueprints with **Conifold Field** Ship Parts.
+
+|
+| **Neutron Absorber** | Enemy **Neutron Bombs** have no effect on you. _Note: this does not affect Planta's Species weakness_.
+
+|
+| **Absorption Shield** | You may Upgrade your Ship Blueprints with **Absorption Shield** Ship Parts.
+
+|
+| **Cloaking Device** | Two Ships are required to Pin each of your Ships.
+
+|
+| **Improved Logistics** | Gain 1 additional Move Activation during each Move Action you take.
+
+|
+| **Sentient Hull** | You may Upgrade your Ship Blueprints with **Sentient Hull** Ship Parts.
+
+|
+| **Soliton Cannon** | You may Upgrade your Ship Blueprints with **Soliton Cannon** Ship Parts.
+
+|
+| **Transition Drive** | You may Upgrade your Ship Blueprints with **Transition Drive** Ship Parts.
+
+|
+| **Warp Portal** | Immediately place the Warp Portal Tile on any Sector you Control. The Warp Portal Tile connects this Sector to all other Warp Portal Sectors and is worth 1 VP if Controlled at the end of the game.
+
+|
+| **Flux Missile** | You may Upgrade your Ship Blueprints with **Flux Missile** Ship Parts.
+
+|
+| **Pico Modulator** | Gain 2 additional Upgrade Activations during each Upgrade Action you take.
+
+|
+| **Ancient Labs** | Immediately draw and resolve one Discovery Tile.
+
+|
+| **Zero-Point Source** | You may Upgrade your Ship Blueprints with **Zero-Point Source** Ship Parts.
+
+|
+| **Metasynthesis** | You may place Population Cubes in **any** Advanced Population Squares with your Colony Ships.
+
+|
 
 ---
 
-## Warp Portals (Optional Module)
+SHIP PART REFERENCE
 
-The Warp Portals module consists of:
-
-- Three Sectors (one Middle, two Outer)
-- One Discovery Tile
-- One Rare Tech
-- One Warp Portal Tile
-
-### Setup
-
-Shuffle Warp Portal components with their respective base game components before setup.
-
-### Rules
-
-All Sectors with Warp Portals are considered **adjacent to each other** and have a **full Wormhole Connection** between them.
-
-You may:
-
-- Move through Warp Portals
-- Influence through Warp Portals
-- Form Diplomatic Relations through Warp Portals
-
----
-
-## Quick Reference
-
-### Sector Numbers
-
-- **Galactic Center:** 001
-- **Inner Sectors:** 101-110
-- **Middle Sectors:** 201-211, 214, 281
-- **Starting Sectors:** 221-232
-- **Guardian Sectors:** 271-274
-- **Outer Sectors:** 301-318, 381-382
-
-### Dice Colors and Damage
-
-| Color  | Damage |
-| ------ | ------ |
-| Yellow | 1      |
-| Orange | 2      |
-| Blue   | 3      |
-| Red    | 4      |
-
-### Ship Initiative Bonuses
-
-| Ship Type   | Base Initiative |
-| ----------- | --------------- |
-| Interceptor | +2              |
-| Cruiser     | +1              |
-| Dreadnought | 0               |
-| Starbase    | +4              |
-
-### Round Structure Summary
-
-1. **Action Phase:** Take Actions clockwise until all Pass
-2. **Combat Phase:** Resolve battles, attack population, influence sectors, claim discoveries, repair
-3. **Upkeep Phase:** Colony Ships, pay upkeep, produce resources
-4. **Cleanup Phase:** Return discs, draw tech tiles, reset colony ships, advance round
+| Ship Part             | Type     | Stats / Effect                               | Energy Cost |
+| --------------------- | -------- | -------------------------------------------- | ----------- |
+| **Ion Cannon**        | Weapon   | 1 Yellow Die (1 Damage)                      | 1           |
+| **Plasma Cannon**     | Weapon   | 1 Orange Die (2 Damage)                      | 2           |
+| **Soliton Cannon**    | Weapon   | 1 Blue Die (3 Damage)                        | 3           |
+| **Antimatter Cannon** | Weapon   | 1 Red Die (4 Damage)                         | 4           |
+| **Ion Missile**       | Weapon   | 1 Yellow Die (1 Damage), Missile             | 0           |
+| **Plasma Missile**    | Weapon   | 1 Orange Die (2 Damage), Missile             | 0           |
+| **Flux Missile**      | Weapon   | 1 Red Die (4 Damage), Missile                | 0           |
+| **Electron Computer** | Computer | +1 to Hit                                    | 0           |
+| **Positron Computer** | Computer | +2 to Hit                                    | 1           |
+| **Gluon Computer**    | Computer | +3 to Hit                                    | 2           |
+| **Hull**              | Hull     | 1 Hull Point                                 | 0           |
+| **Improved Hull**     | Hull     | 2 Hull Points                                | 0           |
+| **Sentient Hull**     | Hull     | 1 Hull Point, 1 Computer (+1 Hit)            | 1           |
+| **Gauss Shield**      | Shield   | -1 to Opponent Hit Rolls                     | 0           |
+| **Phase Shield**      | Shield   | -2 to Opponent Hit Rolls                     | 1           |
+| **Absorption Shield** | Shield   | -1 to Opponent Hit Rolls, Generates 1 Energy | 0           |
+| **Conifold Field**    | Shield   | -3 to Opponent Hit Rolls                     | 2           |
+| **Nuclear Drive**     | Drive    | Speed 1, Initiative +1                       | 1           |
+| **Fusion Drive**      | Drive    | Speed 2, Initiative +2                       | 2           |
+| **Tachyon Drive**     | Drive    | Speed 3, Initiative +3                       | 3           |
+| **Transition Drive**  | Drive    | Speed 3, Generates 2 Energy                  | 0           |
+| **Nuclear Source**    | Source   | Generates 3 Energy                           | -           |
+| **Fusion Source**     | Source   | Generates 6 Energy                           | -           |
+| **Tachyon Source**    | Source   | Generates 9 Energy                           | -           |
+| **Zero-Point Source** | Source   | Generates 12 Energy                          | -           |
 
 ---
 
-## Frequently Asked Questions
+NON-PLAYER FACTION LORE
 
-### Resources
+**ANCIENTS**
+There are no reliable documents regarding the seclusion of the Ancients. Most theories are based on the relics found in the systems believed to have been colonized by them. Some of the discoveries possess qualities previously unknown in the Galactic Library, but there is no solid theory on who or what the Ancients were, nor where they disappeared to. Interestingly enough, folk tales of several different species allude to a similar, old, evil. Recent messages from various sectors report of multiple contacts with something described as "Ships unlike any known design, with an unsettling feeling of something hovering outside your field of vision."
+
+**GUARDIANS**
+While most of the galaxy still remains uncharted, many systems have already been visited by the Galactic Council Reconnaissance Fleet. The most promising ones have been reserved for Council purposes and declared neutral. Powerful autonomous entities, called the Guardians, have been deployed to maintain order and defend the systems from hostile visitors. However, if the defenses could be broken, the resource-rich planets would provide great opportunities for their new master...
+
+**GALACTIC CENTER**
+Established at the end of the Terran–Hegemony War (30.027–33.364), the awkwardly named Galactic Center has since become the contact hub of known spacefaring species. Evolved around the diplomatic Ships that negotiated the peace... the conglomerate of Ships and habitats is now the home for billions of entities, housing both the Galactic Council and the Library of the Galactic Center. The Galactic Center is protected by the Galactic Center Defense System: unmanned automated heavy defenses programmed to target any military presence.
+
+---
+
+FREQUENTLY ASKED QUESTIONS (FAQ)
 
 **Q: Where can I get more Resources?**
-A: Place Influence Discs on Sectors, use Colony Ships to move Population Cubes to Population Squares, Research Advanced Techs for Advanced Population Squares, Build Orbitals, collect Discovery Tiles.
+**A:** Place Influence Discs on Sectors, and use Colony Ships to move your Population Cubes to Population Squares. Research the Advanced Techs to move your Population Cubes to Advanced Population Squares. Build Orbitals to get more Population Squares. Collect Discovery Tiles.
 
 **Q: What do I need Money for?**
-A: Pay your Civilization Upkeep Cost. The more Actions you take and Sectors you Control, the more you pay each Round. You can also Trade Money for other Resources.
+**A:** You need Money to Pay your Civilization Upkeep Cost. The more Actions you take and Sectors you Control, the more you have to Pay each Round.
 
-### Influence Discs
+**Q: That's all?**
 
-**Q: I don't have enough Influence Discs. What now?**
-A: Use Influence Action to return up to two discs from Sectors. Research Advanced Robotics and Quantum Grid for more discs. You can deliberately use more than you can pay for, forcing you to return some during Upkeep.
+**A:** You can also Trade Money for other Resources, and vice versa.
 
-### Technologies
+**Q: I don't have enough Influence Discs to do everything I want to. What now?**
+**A:** You can use the Influence Action to return up to two Influence Discs from your Sectors to your Influence Track. You can also Research the **Advanced Robotics** and **Quantum Grid** Techs, which give you more Influence Discs. Finally, you can deliberately use more Influence Discs than you can Pay for in the Upkeep Phase, and thus be required to return some of the Influence Discs from your Sectors to your Influence Track.
 
-**Q: The best Techs are expensive. How can I afford them?**
-A: Buy Techs in increasing price order within a category to maximize discounts.
+**Q: The best Techs are terribly expensive. How can I ever afford them?**
+**A:** Having Techs of the same category increases the discount you get when buying more. If you buy the Techs in increasing price order, you get the maximum benefit of the discounts.
 
-**Q: If I have Gluon Computer Tech, can I take Positron Computer Ship Parts?**
-A: No. Each Ship Part (except defaults) requires its own Tech.
+**Q: What is the benefit of being the Start Player?**
 
-### Combat
+**A:** Besides receiving 2 Money, you also get the first pick of Techs for Research or Zones for Exploring.
 
-**Q: My Ships keep getting destroyed. How can I win more battles?**
-A: Upgrade Drives for Initiative (shoot first), use Missiles, upgrade Shields (can't be Hit), upgrade Hull (survive more Hits), collect Discovery Tiles for unique Ship Parts.
+**Q: What happens if the extra Influence Discs acquired through the Advanced Robotics and Quantum Grid Techs do not fit on my Influence Track?**
+**A:** Stack the extra Influence Discs on top of the Influence Disc on the leftmost space of your Influence Track. You may use these extra Influence Discs normally.
 
-**Q: Are Interceptors useful?**
-A: Yes, when specialized. Upgrade with better Energy Source for firepower. Also great for Pinning larger Ships.
+**Q: Using the Influence Action, I can move an Influence Disc from one Sector to a neighboring Sector through a Wormhole Connection. May I move the Influence Disc from the Sector that provides the Wormhole Connection?**
 
-**Q: Are Shields useful if opponents don't have Computers?**
-A: No, but if they don't have Computers, they likely won't Hit you anyway.
+**A:** No. As soon as you remove the Influence Disc from the Sector providing the Wormhole Connection you no longer meet the Influence Action requirements.
 
-### Retreat
+**Q: During the Upkeep Phase, when may I remove Influence Discs from my Sectors?**
+**A:** Only when you do not have enough Money (Produced in this Upkeep Phase, plus your Storage) to Pay your Civilization Upkeep Cost. Then you may remove Influence Discs until your Civilization Upkeep Cost is low enough. Note that if you remove an Influence Disc from a Sector, the Population Cubes in that Sector are immediately returned to your Population Tracks, which may also reduce your Money Production.
 
-**Q: If all my Ships try to Retreat but are destroyed, do I get the participation Reputation Tile?**
-A: No. The Retreat penalty applies as soon as you attempt to Retreat.
+**Q: Is it ever possible to voluntarily remove Population Cubes from the game board without Abandoning the Sector?**
 
-### Descendants of Draco
+**A:** No. It can be achieved with the Influence Action by first removing the Influence Disc and the Population Cubes from the Sector and then returning the Influence Disc back to the Sector in a separate Influence Action.
 
-**Q: If Ancients are destroyed from a Descendants-Controlled Sector, can they take the Discovery Tile?**
-A: Yes, at end of Combat Phase.
+**Q: My precious Ships keep getting blown to pieces. How can I win more battles?**
+**A:** You have an advantage if you get to shoot first, cannot be Hit, or can take some beating. Upgrade your Drives to increase your Initiative, and use Missiles to Attack before close-range combat. Upgrade Shields to render opponent's Computers useless. Upgrade Hull parts to withstand more Hits. Collect Discovery Tiles to get unique, powerful Ship Parts.
 
-### Discovery Tiles
+**Q: Aren't Interceptors too small to be of any use?**
+**A:** Not really, but they do usually work best when specialized somehow. For example, try Upgrading them with a better Energy Source and they can pack quite a punch. Also, Interceptors are great for Pinning larger Ships, forcing opponents to spend more Actions to use them in important battles.
 
-**Q: If Ancient Labs Discovery Tile lets me place something in a Sector, where?**
-A: Your Starting Sector. If you don't Control it, take as 2 VP instead.
+**Q: Are Shields of any use if my opponents don't have Computers?**
+**A:** No. Then again, if they don't have Computers, they most likely won't Hit you anyway. Use that to your advantage.
 
-### Special Abilities
+**Q: If I have the Gluon Computer Tech, can I take Positron Computer Ship Parts?**
 
-**Q: Do I have to use Descendants' or Planta's Explore ability?**
-A: No. You can decide after seeing the first Sector.
+**A:** No. Each Ship Part (apart from the default ones, i.e. **Ion Cannon**, **Nuclear Drive**, **Nuclear Source**, **Hull** and **Electron Computer**) requires its own Tech.
 
-**Q: Can I Move through a Sector with opponent Ships using Cloaking Device without causing Act of Aggression?**
-A: Yes, as long as you remain Unpinned.
+**Q: If all of my Ships try to Retreat but are destroyed while doing so, do I get the Reputation Tile for participation in a battle?**
 
-### Influence
+**A:** No. Your Ships incur the Retreat penalty as soon as they attempt to Retreat, regardless of whether they are able to finish Retreating.
 
-**Q: In what order do players Influence Sectors at end of Combat Phase?**
-A: In descending Sector order when order matters.
+**Q: If the Ancients are destroyed from a Descendants-Controlled Sector but the Descendants still Control the Sector, can they take the Discovery Tile?**
 
----
+**A:** Yes, they take the Discovery Tile at the end of the Combat Phase.
 
-_This reference compiled from Eclipse: Second Dawn for the Galaxy Rulebook © Lautapelit.fi 2019_
+**Q: If the Discovery Tile I get from Ancient Labs allows me to place something in a Sector (such as Ancient Cruiser or Ancient Orbital), where do I place it?**
+**A:** You place it in your Starting Sector. If you do not Control your Starting Sector, you must take the tile as 2VP.
+
+**Q: Do I have to use the Descendants' or Planta's Explore ability? If not, when may I choose whether to use it or not?**
+**A:** You don't have to draw two Sectors with the Descendants, or Explore twice with Planta. You can decide after seeing the first Sector.
+
+**Q: Can I Move through a Sector containing an opponent's Ships using Cloaking Device without causing an Act of Aggression?**
+
+**A:** Yes.
+
+**Q: In what order do players Influence Sectors at the end of the Combat Phase?**
+
+**A:** For situations where the order of Influencing Sectors at the end of the Combat Phase is important, each Sector is resolved in descending Sector order.
