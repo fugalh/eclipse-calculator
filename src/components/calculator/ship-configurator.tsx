@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChevronDown } from "lucide-react";
 import type {
@@ -266,36 +266,48 @@ export function ShipConfigurator({
   onSave,
   onRemove,
 }: ShipConfiguratorProps) {
-  const handleAttributeClick = (attr: NumericAttributeName) => {
-    const currentValue = ship[attr] as number;
-    // Pass shipClass for 'number' attribute to use class-specific limits
-    const newValue = cycleAttribute(currentValue, attr, ship.shipClass);
-    onChange({ ...ship, [attr]: newValue });
-  };
+  const handleAttributeClick = useCallback(
+    (attr: NumericAttributeName) => {
+      const currentValue = ship[attr] as number;
+      // Pass shipClass for 'number' attribute to use class-specific limits
+      const newValue = cycleAttribute(currentValue, attr, ship.shipClass);
+      onChange({ ...ship, [attr]: newValue });
+    },
+    [ship, onChange],
+  );
 
-  const handleAttributeReset = (attr: NumericAttributeName) => {
-    let resetValue: number;
+  const handleAttributeReset = useCallback(
+    (attr: NumericAttributeName) => {
+      let resetValue: number;
 
-    if (attr === "number" && ship.shipClass) {
-      // For ship count, reset to class-specific minimum (usually 1)
-      const limits =
-        SHIP_COUNT_LIMITS[ship.shipClass] ?? SHIP_COUNT_LIMITS.default;
-      resetValue = limits[0]; // Min value
-    } else {
-      // For other attributes, reset to minimum (usually 0)
-      resetValue = ATTRIBUTE_LIMITS[attr][0]; // Min value
-    }
+      if (attr === "number" && ship.shipClass) {
+        // For ship count, reset to class-specific minimum (usually 1)
+        const limits =
+          SHIP_COUNT_LIMITS[ship.shipClass] ?? SHIP_COUNT_LIMITS.default;
+        resetValue = limits[0]; // Min value
+      } else {
+        // For other attributes, reset to minimum (usually 0)
+        resetValue = ATTRIBUTE_LIMITS[attr][0]; // Min value
+      }
 
-    onChange({ ...ship, [attr]: resetValue });
-  };
+      onChange({ ...ship, [attr]: resetValue });
+    },
+    [ship, onChange],
+  );
 
-  const handleToggle = (field: "splitter" | "missile_shield") => {
-    onChange({ ...ship, [field]: !ship[field] });
-  };
+  const handleToggle = useCallback(
+    (field: "splitter" | "missile_shield") => {
+      onChange({ ...ship, [field]: !ship[field] });
+    },
+    [ship, onChange],
+  );
 
-  const handlePriorityChange = (priority: TargetPriority) => {
-    onChange({ ...ship, priorityTarget: priority });
-  };
+  const handlePriorityChange = useCallback(
+    (priority: TargetPriority) => {
+      onChange({ ...ship, priorityTarget: priority });
+    },
+    [ship, onChange],
+  );
 
   const currentPriority = ship.priorityTarget || "normal";
 

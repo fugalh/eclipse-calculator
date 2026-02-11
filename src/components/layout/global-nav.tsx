@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import {
   Calculator,
@@ -27,6 +28,10 @@ import {
 import { useInstallPrompt } from "@/components/pwa";
 import { isConvexAvailable } from "@/lib/convex-available";
 
+// ============================================================================
+// Constants
+// ============================================================================
+
 const NAV_ITEMS = [
   { label: "Calculator", href: "/", icon: Calculator },
   { label: "Reference", href: "/reference", icon: BookOpen },
@@ -34,6 +39,22 @@ const NAV_ITEMS = [
   { label: "Photos", href: "/photos", icon: Camera },
   { label: "About", href: "/about", icon: Info },
 ];
+
+// ============================================================================
+// Helpers
+// ============================================================================
+
+/**
+ * Determines if a nav item is currently active based on pathname
+ * Home ("/") requires exact match; other routes match by prefix
+ */
+function isNavItemActive(itemHref: string, pathname: string): boolean {
+  return itemHref === "/" ? pathname === "/" : pathname.startsWith(itemHref);
+}
+
+// ============================================================================
+// Sub-Components
+// ============================================================================
 
 /**
  * Navigation item component - shared between mobile and desktop
@@ -67,16 +88,23 @@ function NavItem({
   );
 }
 
+// ============================================================================
+// Main Component
+// ============================================================================
+
 export function GlobalNav() {
   const pathname = usePathname();
   const { isMobile, isInstalled, onLearnHow } = useInstallPrompt();
 
-  const navItems = NAV_ITEMS.filter((item) => {
-    if (item.href === "/photos" && !isConvexAvailable()) {
-      return false;
-    }
-    return true;
-  });
+  // Filter nav items based on feature availability
+  const navItems = useMemo(() => {
+    return NAV_ITEMS.filter((item) => {
+      if (item.href === "/photos" && !isConvexAvailable()) {
+        return false;
+      }
+      return true;
+    });
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -94,24 +122,17 @@ export function GlobalNav() {
               <SheetTitle>Eclipse</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 mt-4">
-              {navItems.map((item) => {
-                const isActive =
-                  item.href === "/"
-                    ? pathname === "/"
-                    : pathname.startsWith(item.href);
-
-                return (
-                  <SheetClose key={item.href} asChild>
-                    <NavItem
-                      href={item.href}
-                      label={item.label}
-                      icon={item.icon}
-                      isActive={isActive}
-                      iconSize="h-5 w-5"
-                    />
-                  </SheetClose>
-                );
-              })}
+              {navItems.map((item) => (
+                <SheetClose key={item.href} asChild>
+                  <NavItem
+                    href={item.href}
+                    label={item.label}
+                    icon={item.icon}
+                    isActive={isNavItemActive(item.href, pathname)}
+                    iconSize="h-5 w-5"
+                  />
+                </SheetClose>
+              ))}
             </nav>
             {isMobile && !isInstalled && (
               <SheetClose asChild>
@@ -137,22 +158,15 @@ export function GlobalNav() {
 
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-1">
-          {navItems.map((item) => {
-            const isActive =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
-
-            return (
-              <NavItem
-                key={item.href}
-                href={item.href}
-                label={item.label}
-                icon={item.icon}
-                isActive={isActive}
-              />
-            );
-          })}
+          {navItems.map((item) => (
+            <NavItem
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              icon={item.icon}
+              isActive={isNavItemActive(item.href, pathname)}
+            />
+          ))}
         </nav>
 
         {/* Desktop theme/logout - hidden on mobile (shown in sheet) */}

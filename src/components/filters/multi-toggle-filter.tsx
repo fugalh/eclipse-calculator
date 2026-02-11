@@ -1,9 +1,14 @@
 "use client";
 
+import { useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { FilterOption } from "@/lib/types";
+
+// ============================================================================
+// Multi-Select Toggle Filter
+// ============================================================================
 
 interface MultiToggleFilterProps<T extends string> {
   options: FilterOption<T>[];
@@ -22,8 +27,11 @@ export function MultiToggleFilter<T extends string>({
   onChange,
   className,
 }: MultiToggleFilterProps<T>) {
+  // Convert selected array to Set for O(1) lookups
+  const selectedSet = useMemo(() => new Set(selected), [selected]);
+
   const handleToggle = (value: T) => {
-    if (selected.includes(value)) {
+    if (selectedSet.has(value)) {
       onChange(selected.filter((v) => v !== value));
     } else {
       onChange([...selected, value]);
@@ -33,7 +41,7 @@ export function MultiToggleFilter<T extends string>({
   return (
     <div className={cn("flex flex-wrap gap-2", className)}>
       {options.map((option) => {
-        const isSelected = selected.includes(option.value);
+        const isSelected = selectedSet.has(option.value);
 
         return (
           <Button
@@ -62,6 +70,10 @@ export function MultiToggleFilter<T extends string>({
     </div>
   );
 }
+
+// ============================================================================
+// Single-Select Toggle Filter
+// ============================================================================
 
 interface SingleToggleFilterProps<T extends string> {
   options: FilterOption<T>[];
@@ -104,6 +116,7 @@ export function SingleToggleFilter<T extends string>({
     onChange(null);
   };
 
+  // Derive isAllSelected - no need for useMemo on primitive
   const isAllSelected = selected === null;
 
   return (

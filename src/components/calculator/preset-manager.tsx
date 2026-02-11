@@ -22,7 +22,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { useReducer, useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getShipIcon } from "@/lib/icons";
 
 // ============================================================================
@@ -104,8 +104,8 @@ export function PresetManager({
   onDeletePreset,
   refreshKey: externalRefreshKey,
 }: PresetManagerProps) {
-  // Use reducer to force refresh of custom presets
-  const [refreshKey, forceRefresh] = useReducer((x: number) => x + 1, 0);
+  // Use state to force refresh of custom presets
+  const [refreshKey, setRefreshKey] = useState(0);
   const [customPresets, setCustomPresets] = useState<Preset[]>([]);
 
   // Load custom presets when dialog opens or refresh keys change
@@ -123,7 +123,7 @@ export function PresetManager({
       } else {
         deleteCustomPreset(name);
       }
-      forceRefresh();
+      setRefreshKey((k) => k + 1);
     },
     [onDeletePreset],
   );
