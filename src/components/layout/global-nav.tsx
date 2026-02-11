@@ -11,6 +11,7 @@ import {
   Info,
   Menu,
   Download,
+  type LucideIcon,
 } from "lucide-react";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -33,6 +34,38 @@ const NAV_ITEMS = [
   { label: "Photos", href: "/photos", icon: Camera },
   { label: "About", href: "/about", icon: Info },
 ];
+
+/**
+ * Navigation item component - shared between mobile and desktop
+ */
+function NavItem({
+  href,
+  label,
+  icon: Icon,
+  isActive,
+  iconSize = "h-4 w-4",
+}: {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  isActive: boolean;
+  iconSize?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        isActive
+          ? "bg-primary/10 text-primary"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground",
+      )}
+    >
+      <Icon className={iconSize} />
+      {label}
+    </Link>
+  );
+}
 
 export function GlobalNav() {
   const pathname = usePathname();
@@ -62,7 +95,6 @@ export function GlobalNav() {
             </SheetHeader>
             <nav className="flex flex-col gap-1 mt-4">
               {navItems.map((item) => {
-                const Icon = item.icon;
                 const isActive =
                   item.href === "/"
                     ? pathname === "/"
@@ -70,18 +102,13 @@ export function GlobalNav() {
 
                 return (
                   <SheetClose key={item.href} asChild>
-                    <Link
+                    <NavItem
                       href={item.href}
-                      className={cn(
-                        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                        isActive
-                          ? "bg-primary/10 text-primary"
-                          : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                      )}
-                    >
-                      <Icon className="h-5 w-5" />
-                      {item.label}
-                    </Link>
+                      label={item.label}
+                      icon={item.icon}
+                      isActive={isActive}
+                      iconSize="h-5 w-5"
+                    />
                   </SheetClose>
                 );
               })}
@@ -111,26 +138,19 @@ export function GlobalNav() {
         {/* Desktop navigation */}
         <nav className="hidden md:flex items-center gap-1">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive =
               item.href === "/"
                 ? pathname === "/"
                 : pathname.startsWith(item.href);
 
             return (
-              <Link
+              <NavItem
                 key={item.href}
                 href={item.href}
-                className={cn(
-                  "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.label}
-              </Link>
+                label={item.label}
+                icon={item.icon}
+                isActive={isActive}
+              />
             );
           })}
         </nav>
