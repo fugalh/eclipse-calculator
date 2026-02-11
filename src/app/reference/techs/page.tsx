@@ -14,14 +14,14 @@ import {
   SingleToggleFilter,
   ActiveFilters,
 } from "@/components/filters";
-import {
-  getTechCategoryOptions,
-  TECH_CATEGORY_LABELS,
-  TECH_CATEGORY_BADGE_COLORS,
-} from "@/lib/filters/reference-options";
+import { getTechCategoryOptions } from "@/lib/filters/reference-options";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TECHS, getTechsByCategory } from "@/lib/data/techs";
+import {
+  TECHS,
+  getTechsByCategory,
+  TECH_CATEGORY_INFO,
+} from "@/lib/data/techs";
 import type { TechCategory, ActiveFilter } from "@/lib/types";
 import { LayoutGrid, List } from "lucide-react";
 
@@ -118,8 +118,8 @@ function TechsPageContent() {
     activeFilters.push({
       type: "Category",
       value: category,
-      label: TECH_CATEGORY_LABELS[category],
-      color: TECH_CATEGORY_BADGE_COLORS[category],
+      label: TECH_CATEGORY_INFO[category].label,
+      color: TECH_CATEGORY_INFO[category].color,
     });
   }
 

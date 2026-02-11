@@ -1,12 +1,19 @@
 /**
  * Reference Page Filter Option Builders
  * Converts domain data to FilterOption arrays for shared filter components
+ *
+ * All labels and colors are sourced from centralized *_INFO objects in the data layer
+ * to maintain a single source of truth.
  */
 
 import type { FilterOption } from "@/lib/types";
 import type { TechCategory, PartSlotType } from "@/lib/types";
 import type { PartSource } from "@/lib/data";
-import { TECH_CATEGORY_INFO, PART_TYPE_INFO } from "@/lib/data";
+import {
+  TECH_CATEGORY_INFO,
+  PART_TYPE_INFO,
+  PART_SOURCE_INFO,
+} from "@/lib/data";
 
 // ============================================================================
 // Tech Category Options
@@ -24,20 +31,6 @@ export function getTechCategoryOptions(
     count: counts?.[cat],
   }));
 }
-
-export const TECH_CATEGORY_LABELS: Record<TechCategory, string> = {
-  military: "Military",
-  grid: "Grid",
-  nano: "Nano",
-  rare: "Rare",
-};
-
-export const TECH_CATEGORY_BADGE_COLORS: Record<TechCategory, string> = {
-  military: "bg-orange-100 text-orange-800",
-  grid: "bg-green-100 text-green-800",
-  nano: "bg-zinc-100 text-zinc-800",
-  rare: "bg-purple-100 text-purple-800",
-};
 
 // ============================================================================
 // Part Type Options
@@ -63,16 +56,6 @@ export function getPartTypeOptions(
   }));
 }
 
-export const PART_TYPE_LABELS: Record<PartSlotType, string> = {
-  cannon: "Cannon",
-  missile: "Missile",
-  computer: "Computer",
-  shield: "Shield",
-  hull: "Hull",
-  drive: "Drive",
-  source: "Energy Source",
-};
-
 // ============================================================================
 // Part Source Options
 // ============================================================================
@@ -89,21 +72,8 @@ export function getPartSourceOptions(
 
   return sources.map((source) => ({
     value: source,
-    label: PART_SOURCE_LABELS[source],
+    label: PART_SOURCE_INFO[source].label,
+    color: PART_SOURCE_INFO[source].color,
     count: counts?.[source],
   }));
 }
-
-export const PART_SOURCE_LABELS: Record<PartSource, string> = {
-  starting: "Starting",
-  technology: "Tech",
-  ancient: "Ancient",
-  discovery: "Discovery",
-};
-
-export const PART_SOURCE_BADGE_COLORS: Record<PartSource, string> = {
-  starting: "bg-zinc-100 text-zinc-800",
-  technology: "bg-blue-100 text-blue-800",
-  ancient: "bg-amber-100 text-amber-800",
-  discovery: "bg-purple-100 text-purple-800",
-};

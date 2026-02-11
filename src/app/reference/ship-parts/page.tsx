@@ -17,16 +17,15 @@ import {
 import {
   getPartTypeOptions,
   getPartSourceOptions,
-  PART_TYPE_LABELS,
-  PART_SOURCE_LABELS,
-  PART_SOURCE_BADGE_COLORS,
 } from "@/lib/filters/reference-options";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ALL_PARTS,
+  getAllParts,
   getPartsByType,
   getPartsBySource,
+  PART_TYPE_INFO,
+  PART_SOURCE_INFO,
 } from "@/lib/data/ship-parts";
 import type { PartSlotType, ActiveFilter } from "@/lib/types";
 import type { PartSource } from "@/lib/data/ship-parts";
@@ -121,7 +120,7 @@ function ShipPartsPageContent() {
   const filteredParts = useMemo(() => {
     const searchLower = query.toLowerCase();
 
-    return ALL_PARTS.filter((part) => {
+    return getAllParts().filter((part) => {
       // Type filter
       if (partType !== null && part.type !== partType) return false;
 
@@ -157,7 +156,7 @@ function ShipPartsPageContent() {
     activeFilters.push({
       type: "Type",
       value: partType,
-      label: PART_TYPE_LABELS[partType],
+      label: PART_TYPE_INFO[partType].label,
     });
   }
 
@@ -165,8 +164,8 @@ function ShipPartsPageContent() {
     activeFilters.push({
       type: "Source",
       value: source,
-      label: PART_SOURCE_LABELS[source],
-      color: PART_SOURCE_BADGE_COLORS[source],
+      label: PART_SOURCE_INFO[source].label,
+      color: PART_SOURCE_INFO[source].color,
     });
   }
 
@@ -232,7 +231,7 @@ function ShipPartsPageContent() {
             selected={partType}
             onChange={handleTypeChange}
             includeAllOption
-            allCount={ALL_PARTS.length}
+            allCount={getAllParts().length}
           />
         </div>
 
@@ -246,7 +245,7 @@ function ShipPartsPageContent() {
             selected={source}
             onChange={handleSourceChange}
             includeAllOption
-            allCount={ALL_PARTS.length}
+            allCount={getAllParts().length}
           />
         </div>
       </div>

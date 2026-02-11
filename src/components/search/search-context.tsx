@@ -10,7 +10,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { searchRules } from "@/lib/rules/search";
 import {
-  RULES_INDEX,
+  getRulesIndex,
   getAllCategories,
   getCategoryCounts,
 } from "@/lib/data/rules-index";
@@ -87,7 +87,7 @@ export function SearchProvider({ children }: { children: ReactNode }) {
   // Perform search
   const results = useMemo(() => {
     if (!hasSearchParams) return [];
-    return searchRules(RULES_INDEX, {
+    return searchRules(getRulesIndex(), {
       query,
       categories:
         selectedCategories.length > 0 ? selectedCategories : undefined,
