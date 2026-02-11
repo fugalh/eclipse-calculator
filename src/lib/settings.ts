@@ -6,7 +6,7 @@
 import type { UserSettings } from "@/lib/types";
 import { DEFAULT_SETTINGS } from "@/lib/types";
 
-const SETTINGS_KEY = "eclipse-calculator-settings";
+const SETTINGS_KEY = "eclipse-calculator-settings:v1";
 
 /**
  * Get current user settings from localStorage

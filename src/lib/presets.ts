@@ -6,10 +6,7 @@
 import { createDefaultShipConfig } from "./combat/simulation";
 import type { ShipConfig, Preset, NumericAttributeName } from "@/lib/types";
 import { ATTRIBUTE_LIMITS, SHIP_COUNT_LIMITS } from "@/lib/types";
-
-// Re-export types for backward compatibility
-export type { PresetType, Preset, NumericAttributeName } from "@/lib/types";
-export { ATTRIBUTE_LIMITS, SHIP_COUNT_LIMITS } from "@/lib/types";
+export { ATTRIBUTE_LIMITS, SHIP_COUNT_LIMITS };
 
 // ============================================================================
 // Default Presets
@@ -114,36 +111,50 @@ export const DEFAULT_PRESETS: Preset[] = [
 // Storage Constants
 // ============================================================================
 
-const STORAGE_KEY = "eclipse-calculator-presets";
+const STORAGE_KEY = "eclipse-calculator-presets:v1";
+
+// ============================================================================
+// Module-level Cache
+// ============================================================================
+
+let customPresetsCache: Preset[] | null = null;
 
 // ============================================================================
 // Storage Functions
 // ============================================================================
 
 /**
- * Get custom presets from localStorage
+ * Get custom presets from localStorage with caching
  */
 export function getCustomPresets(): Preset[] {
   if (typeof window === "undefined") {
     return [];
   }
 
+  // Return cached value if available
+  if (customPresetsCache !== null) {
+    return customPresetsCache;
+  }
+
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) {
+      customPresetsCache = [];
       return [];
     }
 
     const parsed = JSON.parse(stored) as Preset[];
     // Filter out any invalid presets
-    return parsed.filter((preset) => preset.name);
+    customPresetsCache = parsed.filter((preset) => preset.name);
+    return customPresetsCache;
   } catch {
+    customPresetsCache = [];
     return [];
   }
 }
 
 /**
- * Save custom presets to localStorage
+ * Save custom presets to localStorage and invalidate cache
  */
 function saveCustomPresets(presets: Preset[]): void {
   if (typeof window === "undefined") {
@@ -152,6 +163,8 @@ function saveCustomPresets(presets: Preset[]): void {
 
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(presets));
+    // Invalidate cache so next read fetches fresh data
+    customPresetsCache = null;
   } catch {
     // Ignore storage errors
   }

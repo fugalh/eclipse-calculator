@@ -63,6 +63,7 @@ export function parseRulesMarkdown(markdown: string): ParsedSection[] {
 /**
  * Assign categories to a section based on heading and content
  * Returns array of categories (primary + secondary from content)
+ * Returns empty array if no categories match (no fallback category)
  */
 export function categorizeSection(heading: string, content: string): string[] {
   const categories = new Set<string>();
@@ -84,16 +85,18 @@ export function categorizeSection(heading: string, content: string): string[] {
     }
   }
 
-  // 3. Default to game-concepts if no category matched
-  if (categories.size === 0) {
-    categories.add("game-concepts");
-  }
-
+  // Return matched categories (empty array if none matched)
+  // This makes miscategorized sections visible rather than hiding them
+  // in a catch-all category
   return Array.from(categories);
 }
 
 /**
  * Build parent-child relationships between sections based on heading levels
+ * Uses a stack-based approach to maintain the hierarchy:
+ * - Pop the stack until we find a section with a lower level (potential parent)
+ * - If stack is not empty, the top element becomes the parent
+ * - Push current section to stack for future children
  */
 function buildHierarchy(sections: ParsedSection[]): ParsedSection[] {
   const result: ParsedSection[] = [];
