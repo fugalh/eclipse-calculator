@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { isConvexAvailable } from "@/lib/convex-available";
 
-function LogoutButtonContent() {
+export function LogoutButton() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const { signOut } = useAuthActions();
   const router = useRouter();
 
-  if (isLoading || !isAuthenticated) {
+  if (!isConvexAvailable() || isLoading || !isAuthenticated) {
     return null;
   }
 
@@ -32,12 +32,4 @@ function LogoutButtonContent() {
       <span className="hidden sm:inline">Logout</span>
     </Button>
   );
-}
-
-export function LogoutButton() {
-  if (!isConvexAvailable()) {
-    return null;
-  }
-
-  return <LogoutButtonContent />;
 }

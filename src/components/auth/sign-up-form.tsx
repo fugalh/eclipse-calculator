@@ -1,7 +1,5 @@
 "use client";
 
-import { useAuthActions } from "@convex-dev/auth/react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,45 +12,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useReturnUrl } from "./use-return-url";
+import { useAuthForm } from "./use-auth-form";
 
 export function SignUpForm() {
-  const { signIn } = useAuthActions();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
-
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      await signIn("password", { email, password, flow: "signUp" });
-      // Redirect to return URL or photos page
-      const returnUrl = searchParams.get("returnUrl") || "/photos";
-      router.push(returnUrl);
-    } catch {
-      setError("Could not create account. Email may already be in use.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const returnUrl = useReturnUrl();
+  const {
+    email,
+    password,
+    confirmPassword,
+    error,
+    isLoading,
+    setEmail,
+    setPassword,
+    setConfirmPassword,
+    clearError,
+    handleSubmit,
+  } = useAuthForm({ flow: "signUp", returnUrl });
 
   return (
     <Card className="w-full max-w-md">
@@ -76,7 +52,10 @@ export function SignUpForm() {
               type="email"
               placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                clearError();
+              }}
               required
             />
           </div>
@@ -86,7 +65,10 @@ export function SignUpForm() {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                clearError();
+              }}
               required
               minLength={8}
             />
@@ -97,7 +79,10 @@ export function SignUpForm() {
               id="confirmPassword"
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                clearError();
+              }}
               required
             />
           </div>

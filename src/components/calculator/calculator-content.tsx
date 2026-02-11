@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import type {
   ShipConfig,
@@ -8,7 +8,6 @@ import type {
   PresetDialogState,
   AccordionMode,
 } from "@/lib/types";
-import { DEFAULT_SETTINGS } from "@/lib/types";
 import {
   calculate,
   generateShipId,
@@ -20,7 +19,7 @@ import {
   deleteCustomPreset,
 } from "@/lib/presets";
 import { decodeBattleConfig } from "@/lib/share";
-import { getSettings, updateSettings } from "@/lib/settings";
+import { getCachedSettings, updateCachedSettings } from "@/lib/settings/cache";
 import { useDebouncedCalculation } from "@/lib/hooks/use-debounced-calculation";
 import { Button } from "@/components/ui/button";
 import {
@@ -39,23 +38,50 @@ import { Switch } from "@/components/ui/switch";
 import { Swords, Settings } from "lucide-react";
 import { markSimulationRun } from "@/components/pwa";
 
+/**
+ * Decode a shared battle config from URL search params.
+ * Returns the decoded config or null if no valid battle param exists.
+ */
+function getInitialBattleConfig(searchParams: URLSearchParams) {
+  const battleParam = searchParams.get("battle");
+  if (!battleParam) return null;
+  return decodeBattleConfig(battleParam);
+}
+
 export function CalculatorContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Fleet state
+  // Decode shared battle from URL once for use in lazy initializers.
+  // This is a plain local variable (not a ref) so it can be read during render.
+  // It is re-evaluated on every render but decodeBattleConfig is cheap and
+  // the lazy initializers only use the value on mount.
+  const initialBattle = getInitialBattleConfig(searchParams);
+  const hadInitialBattle = useRef(initialBattle !== null);
+
+  // Fleet state - initialize from URL battle param if present, otherwise use defaults
   const [defenderFleet, setDefenderFleet] = useState<ShipConfig[]>(() => {
+    if (initialBattle) return initialBattle.defenders;
     const ancient = findPresetByName("Ancient");
     return ancient ? [{ ...ancient, id: generateShipId(), number: 1 }] : [];
   });
   const [attackerFleet, setAttackerFleet] = useState<ShipConfig[]>(() => {
+    if (initialBattle) return initialBattle.attackers;
     const cruiser = findPresetByName("Cruiser");
     return cruiser ? [{ ...cruiser, id: generateShipId(), number: 1 }] : [];
   });
 
   // Results state - for manual calculation or URL-loaded battles
+  // Pre-calculate results if loaded from a shared battle URL
   const [manualResults, setManualResults] =
-    useState<BattleResultsExtended | null>(null);
+    useState<BattleResultsExtended | null>(() => {
+      if (!initialBattle) return null;
+      return calculate(
+        { ships: initialBattle.defenders },
+        { ships: initialBattle.attackers },
+        1000,
+      );
+    });
   const [isManualCalculating, setIsManualCalculating] = useState(false);
 
   // Preset dialog state
@@ -65,30 +91,8 @@ export function CalculatorContent() {
     shipIndex: null,
   });
 
-  // Settings state - initialize from localStorage
-  const [accordionMode, setAccordionMode] = useState<AccordionMode>(() => {
-    // Only access localStorage on client
-    if (typeof window === "undefined") {
-      return DEFAULT_SETTINGS.accordionMode;
-    }
-    return getSettings().accordionMode;
-  });
-
-  const [cascadeAnimation, setCascadeAnimation] = useState<boolean>(() => {
-    // Only access localStorage on client
-    if (typeof window === "undefined") {
-      return DEFAULT_SETTINGS.cascadeAnimation;
-    }
-    return getSettings().cascadeAnimation;
-  });
-
-  const [autoCalculate, setAutoCalculate] = useState<boolean>(() => {
-    // Only access localStorage on client
-    if (typeof window === "undefined") {
-      return DEFAULT_SETTINGS.autoCalculate;
-    }
-    return getSettings().autoCalculate;
-  });
+  // Settings state - initialize from cache
+  const [settings, setSettings] = useState(() => getCachedSettings());
 
   // Debounced auto-calculation hook
   const {
@@ -96,69 +100,48 @@ export function CalculatorContent() {
     isCalculating: isAutoCalculating,
     triggerCalculation,
   } = useDebouncedCalculation(defenderFleet, attackerFleet, {
-    enabled: autoCalculate,
+    enabled: settings.autoCalculate,
     debounceMs: 500,
   });
 
   // Use auto results when auto-calculate is enabled, otherwise use manual results
-  const results = autoCalculate ? autoResults : manualResults;
-  const isCalculating = autoCalculate ? isAutoCalculating : isManualCalculating;
+  const results = settings.autoCalculate ? autoResults : manualResults;
+  const isCalculating = settings.autoCalculate
+    ? isAutoCalculating
+    : isManualCalculating;
 
   // Track simulations for PWA install prompt
   useEffect(() => {
-    if (autoResults && autoCalculate) {
+    if (autoResults && settings.autoCalculate) {
       markSimulationRun();
     }
-  }, [autoResults, autoCalculate]);
+  }, [autoResults, settings.autoCalculate]);
 
-  // Handle shared battle URL params
+  // Clear the battle URL param after initial load (state was set via lazy initializers)
   useEffect(() => {
-    const battleParam = searchParams.get("battle");
-    if (!battleParam) return;
-
-    const decoded = decodeBattleConfig(battleParam);
-    if (!decoded) return;
-
-    // Update fleets and auto-calculate
-    const updateAndCalculate = () => {
-      setDefenderFleet(decoded.defenders);
-      setAttackerFleet(decoded.attackers);
-
-      // Calculate immediately for URL-loaded battles (bypass auto-calculate)
-      setTimeout(() => {
-        const battleResults = calculate(
-          { ships: decoded.defenders },
-          { ships: decoded.attackers },
-          1000,
-        );
-        setManualResults(battleResults);
-      }, 100);
-
-      // Clear the URL param after loading
+    if (hadInitialBattle.current) {
+      hadInitialBattle.current = false;
       router.replace("/", { scroll: false });
-    };
-
-    // Schedule state updates to avoid synchronous setState in effect
-    setTimeout(updateAndCalculate, 0);
-  }, [searchParams, router]);
+    }
+  }, [router]);
 
   // Handle accordion mode change
   const handleAccordionModeChange = (value: string) => {
     const mode = value as AccordionMode;
-    setAccordionMode(mode);
-    updateSettings({ accordionMode: mode });
+    const newSettings = updateCachedSettings({ accordionMode: mode });
+    setSettings(newSettings);
   };
 
   // Handle cascade animation toggle
   const handleCascadeAnimationChange = (checked: boolean) => {
-    setCascadeAnimation(checked);
-    updateSettings({ cascadeAnimation: checked });
+    const newSettings = updateCachedSettings({ cascadeAnimation: checked });
+    setSettings(newSettings);
   };
 
   // Handle auto-calculate toggle
   const handleAutoCalculateChange = (checked: boolean) => {
-    setAutoCalculate(checked);
-    updateSettings({ autoCalculate: checked });
+    const newSettings = updateCachedSettings({ autoCalculate: checked });
+    setSettings(newSettings);
     // If enabling auto-calculate, trigger an immediate calculation
     if (checked) {
       triggerCalculation();
@@ -232,8 +215,8 @@ export function CalculatorContent() {
         ship.name === presetName ? { ...ship, name: "Custom Ship" } : ship,
       );
 
-    setAttackerFleet((prev) => updateShipName(prev));
-    setDefenderFleet((prev) => updateShipName(prev));
+    setAttackerFleet(updateShipName);
+    setDefenderFleet(updateShipName);
 
     // Trigger refresh of preset manager
     setPresetRefreshKey((k) => k + 1);
@@ -252,8 +235,8 @@ export function CalculatorContent() {
       const updateFleetName = (fleet: ShipConfig[]) =>
         fleet.map((s) => (s.id === ship.id ? { ...s, name } : s));
 
-      setAttackerFleet((prev) => updateFleetName(prev));
-      setDefenderFleet((prev) => updateFleetName(prev));
+      setAttackerFleet(updateFleetName);
+      setDefenderFleet(updateFleetName);
 
       // Trigger refresh of preset manager
       setPresetRefreshKey((k) => k + 1);
@@ -298,7 +281,7 @@ export function CalculatorContent() {
               <DropdownMenuLabel>Ship Cards</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup
-                value={accordionMode}
+                value={settings.accordionMode}
                 onValueChange={handleAccordionModeChange}
               >
                 <DropdownMenuRadioItem value="multiple">
@@ -314,7 +297,7 @@ export function CalculatorContent() {
               <label className="flex items-center justify-between px-2 py-1.5 cursor-pointer">
                 <span className="text-sm">Cascade collapse</span>
                 <Switch
-                  checked={cascadeAnimation}
+                  checked={settings.cascadeAnimation}
                   onCheckedChange={handleCascadeAnimationChange}
                   size="sm"
                 />
@@ -325,7 +308,7 @@ export function CalculatorContent() {
               <label className="flex items-center justify-between px-2 py-1.5 cursor-pointer">
                 <span className="text-sm">Auto-calculate</span>
                 <Switch
-                  checked={autoCalculate}
+                  checked={settings.autoCalculate}
                   onCheckedChange={handleAutoCalculateChange}
                   size="sm"
                 />
@@ -341,8 +324,8 @@ export function CalculatorContent() {
             onShipsChange={(ships) => handleFleetChange("defender", ships)}
             onOpenPresets={(index) => handleOpenPresets("defender", index)}
             onSavePreset={handleSavePreset}
-            accordionMode={accordionMode}
-            cascadeAnimation={cascadeAnimation}
+            accordionMode={settings.accordionMode}
+            cascadeAnimation={settings.cascadeAnimation}
           />
           <FleetBuilder
             side="attacker"
@@ -350,13 +333,13 @@ export function CalculatorContent() {
             onShipsChange={(ships) => handleFleetChange("attacker", ships)}
             onOpenPresets={(index) => handleOpenPresets("attacker", index)}
             onSavePreset={handleSavePreset}
-            accordionMode={accordionMode}
-            cascadeAnimation={cascadeAnimation}
+            accordionMode={settings.accordionMode}
+            cascadeAnimation={settings.cascadeAnimation}
           />
         </div>
 
         {/* Calculate Button - only show when auto-calculate is disabled */}
-        {!autoCalculate && (
+        {!settings.autoCalculate && (
           <div className="flex justify-center">
             <Button
               size="lg"
