@@ -21,11 +21,14 @@ import {
 } from "@/lib/filters/reference-options";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TECHS, getTechsByCategory } from "@/lib/data";
+import { TECHS, getTechsByCategory } from "@/lib/data/techs";
 import type { TechCategory, ActiveFilter } from "@/lib/types";
 import { LayoutGrid, List } from "lucide-react";
 
 type ViewMode = "grid" | "table";
+
+// Extract constants to module scope
+const TECH_CATEGORIES: TechCategory[] = ["military", "grid", "nano", "rare"];
 
 function TechsPageSkeleton() {
   return (
@@ -58,10 +61,10 @@ function TechsPageContent() {
   const category = searchParams.get("category") as TechCategory | null;
   const viewMode = (searchParams.get("view") as ViewMode) ?? "grid";
 
-  // URL update helper
+  // URL update helper - read window.location.search on demand
   const updateUrl = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
       for (const [key, value] of Object.entries(updates)) {
         if (value === null || value === "") {
           params.delete(key);
@@ -72,22 +75,16 @@ function TechsPageContent() {
       const qs = params.toString();
       router.push(qs ? `/reference/techs?${qs}` : "/reference/techs");
     },
-    [router, searchParams],
+    [router],
   );
 
-  // Calculate counts for each category
-  const counts = useMemo(() => {
-    const categories: TechCategory[] = ["military", "grid", "nano", "rare"];
-    return Object.fromEntries(
-      categories.map((cat) => [cat, getTechsByCategory(cat).length]),
-    ) as Record<TechCategory, number>;
-  }, []);
+  // Calculate counts for each category - simple operation, no memoization needed
+  const counts = Object.fromEntries(
+    TECH_CATEGORIES.map((cat) => [cat, getTechsByCategory(cat).length]),
+  ) as Record<TechCategory, number>;
 
-  // Filter options with counts
-  const categoryOptions = useMemo(
-    () => getTechCategoryOptions(counts),
-    [counts],
-  );
+  // Filter options with counts - simple transformation, no memoization needed
+  const categoryOptions = getTechCategoryOptions(counts);
 
   // Filter techs
   const filteredTechs = useMemo(() => {
@@ -105,30 +102,26 @@ function TechsPageContent() {
     return result;
   }, [category, query]);
 
-  // Build active filters for display
-  const activeFilters = useMemo(() => {
-    const filters: ActiveFilter[] = [];
+  // Build active filters for display - simple array construction, no memoization needed
+  const activeFilters: ActiveFilter[] = [];
 
-    if (query) {
-      filters.push({
-        type: "search",
-        value: query,
-        label: `"${query}"`,
-        color: "bg-blue-100 text-blue-800",
-      });
-    }
+  if (query) {
+    activeFilters.push({
+      type: "search",
+      value: query,
+      label: `"${query}"`,
+      color: "bg-blue-100 text-blue-800",
+    });
+  }
 
-    if (category) {
-      filters.push({
-        type: "Category",
-        value: category,
-        label: TECH_CATEGORY_LABELS[category],
-        color: TECH_CATEGORY_BADGE_COLORS[category],
-      });
-    }
-
-    return filters;
-  }, [query, category]);
+  if (category) {
+    activeFilters.push({
+      type: "Category",
+      value: category,
+      label: TECH_CATEGORY_LABELS[category],
+      color: TECH_CATEGORY_BADGE_COLORS[category],
+    });
+  }
 
   // Handlers
   const handleQueryChange = useCallback(

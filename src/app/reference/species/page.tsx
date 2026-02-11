@@ -11,7 +11,7 @@ import { SearchInput } from "@/components/filters";
 import { serializeArray, deserializeArray } from "@/lib/filters/url-helpers";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SPECIES, getSpeciesById } from "@/lib/data";
+import { SPECIES, getSpeciesById } from "@/lib/data/species";
 import type { SpeciesId } from "@/lib/types";
 import { GitCompare } from "lucide-react";
 
@@ -38,16 +38,13 @@ function SpeciesPageContent() {
 
   // Parse URL state
   const query = searchParams.get("q") ?? "";
-  const selectedIds = useMemo(
-    () => deserializeArray(searchParams.get("compare")),
-    [searchParams],
-  );
+  const selectedIds = deserializeArray(searchParams.get("compare"));
   const compareOpen = searchParams.get("dialog") === "compare";
 
-  // URL update helper
+  // URL update helper - only depends on router, not searchParams
   const updateUrl = useCallback(
     (updates: Record<string, string | string[] | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
 
       for (const [key, value] of Object.entries(updates)) {
         if (value === null || value === "") {
@@ -66,7 +63,7 @@ function SpeciesPageContent() {
       const qs = params.toString();
       router.push(qs ? `/reference/species?${qs}` : "/reference/species");
     },
-    [router, searchParams],
+    [router],
   );
 
   // Filter species
