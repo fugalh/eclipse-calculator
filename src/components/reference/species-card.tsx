@@ -16,50 +16,46 @@ import {
   Check,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 
 interface SpeciesCardProps {
   species: SpeciesData;
   className?: string;
-  onCompareToggle?: (id: string) => void;
-  isSelected?: boolean;
+  actionButton?: React.ReactNode;
 }
 
 export function SpeciesCard({
   species,
   className,
-  onCompareToggle,
-  isSelected,
+  actionButton,
 }: SpeciesCardProps) {
   const [expanded, setExpanded] = useState(false);
 
-  const positiveAbilities = species.specialAbilities.filter(
-    (a) => a.isPositive,
-  );
-  const negativeAbilities = species.specialAbilities.filter(
-    (a) => !a.isPositive,
-  );
+  // Combine ability filtering into single iteration
+  const { positive: positiveAbilities, negative: negativeAbilities } =
+    useMemo(() => {
+      const positive = [];
+      const negative = [];
+      for (const ability of species.specialAbilities) {
+        if (ability.isPositive) {
+          positive.push(ability);
+        } else {
+          negative.push(ability);
+        }
+      }
+      return { positive, negative };
+    }, [species.specialAbilities]);
 
   return (
-    <Card
-      className={cn("h-full", isSelected && "ring-2 ring-primary", className)}
-    >
+    <Card className={cn("h-full", className)}>
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between gap-2">
           <div>
             <CardTitle className="text-lg">{species.name}</CardTitle>
             <p className="text-sm text-muted-foreground">{species.fullName}</p>
           </div>
-          {onCompareToggle && (
-            <Button
-              variant={isSelected ? "default" : "outline"}
-              size="sm"
-              onClick={() => onCompareToggle(species.id)}
-            >
-              {isSelected ? "Selected" : "Compare"}
-            </Button>
-          )}
+          {actionButton}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -204,14 +200,26 @@ export function SpeciesGrid({
         className,
       )}
     >
-      {species.map((s) => (
-        <SpeciesCard
-          key={s.id}
-          species={s}
-          isSelected={selectedIds.includes(s.id)}
-          onCompareToggle={onCompareToggle}
-        />
-      ))}
+      {species.map((s) => {
+        const isSelected = selectedIds.includes(s.id);
+        return (
+          <SpeciesCard
+            key={s.id}
+            species={s}
+            actionButton={
+              onCompareToggle ? (
+                <Button
+                  variant={isSelected ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => onCompareToggle(s.id)}
+                >
+                  {isSelected ? "Selected" : "Compare"}
+                </Button>
+              ) : undefined
+            }
+          />
+        );
+      })}
     </div>
   );
 }

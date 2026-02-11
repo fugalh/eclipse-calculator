@@ -7,6 +7,12 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
+// Hoist static plugin array to prevent recreation on every render
+const REMARK_PLUGINS = [remarkGfm];
+
+// Consistent prose styling for both expanded and non-expanded states
+const PROSE_CLASSES = "prose prose-sm max-w-none dark:prose-invert";
+
 interface RuleContentProps {
   content: string;
   preview?: string;
@@ -19,23 +25,16 @@ export function RuleContent({ content, preview, className }: RuleContentProps) {
 
   if (!needsExpansion) {
     return (
-      <div
-        className={cn("prose prose-sm max-w-none dark:prose-invert", className)}
-      >
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      <div className={cn(PROSE_CLASSES, className)}>
+        <ReactMarkdown remarkPlugins={REMARK_PLUGINS}>{content}</ReactMarkdown>
       </div>
     );
   }
 
   return (
-    <div className={className}>
-      <div
-        className={cn(
-          "prose prose-sm max-w-none dark:prose-invert",
-          !isExpanded && "line-clamp-4",
-        )}
-      >
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+    <div className={cn(PROSE_CLASSES, className)}>
+      <div className={cn(!isExpanded && "line-clamp-4")}>
+        <ReactMarkdown remarkPlugins={REMARK_PLUGINS}>
           {isExpanded ? content : preview || content}
         </ReactMarkdown>
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,11 +19,54 @@ interface SpeciesCompareProps {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Pre-computed comparison data to avoid N×M array iterations in render
+ */
+interface ComparisonData {
+  materials: number[];
+  science: number[];
+  money: number[];
+  colonyShips: number[];
+  tradeRatio: number[];
+  activations: {
+    explore: number[];
+    research: number[];
+    upgrade: number[];
+    build: number[];
+    move: number[];
+    influence: number[];
+  };
+}
+
+/**
+ * Extract all comparison values once at component level
+ */
+function extractComparisonData(species: SpeciesData[]): ComparisonData {
+  return {
+    materials: species.map((s) => s.startingResources.materials),
+    science: species.map((s) => s.startingResources.science),
+    money: species.map((s) => s.startingResources.money),
+    colonyShips: species.map((s) => s.colonyShips),
+    tradeRatio: species.map((s) => s.tradeRatio),
+    activations: {
+      explore: species.map((s) => s.activations.explore),
+      research: species.map((s) => s.activations.research),
+      upgrade: species.map((s) => s.activations.upgrade),
+      build: species.map((s) => s.activations.build),
+      move: species.map((s) => s.activations.move),
+      influence: species.map((s) => s.activations.influence),
+    },
+  };
+}
+
 export function SpeciesCompare({
   species,
   open,
   onOpenChange,
 }: SpeciesCompareProps) {
+  // Pre-compute all comparison values once (must be before early return)
+  const comparison = useMemo(() => extractComparisonData(species), [species]);
+
   if (species.length === 0) return null;
 
   return (
@@ -67,9 +111,7 @@ export function SpeciesCompare({
                   <td key={s.id} className="p-1.5 text-center sm:p-2">
                     <HighlightValue
                       value={s.startingResources.materials}
-                      allValues={species.map(
-                        (x) => x.startingResources.materials,
-                      )}
+                      allValues={comparison.materials}
                       higherBetter
                     />
                   </td>
@@ -83,9 +125,7 @@ export function SpeciesCompare({
                   <td key={s.id} className="p-1.5 text-center sm:p-2">
                     <HighlightValue
                       value={s.startingResources.science}
-                      allValues={species.map(
-                        (x) => x.startingResources.science,
-                      )}
+                      allValues={comparison.science}
                       higherBetter
                     />
                   </td>
@@ -99,7 +139,7 @@ export function SpeciesCompare({
                   <td key={s.id} className="p-1.5 text-center sm:p-2">
                     <HighlightValue
                       value={s.startingResources.money}
-                      allValues={species.map((x) => x.startingResources.money)}
+                      allValues={comparison.money}
                       higherBetter
                     />
                   </td>
@@ -123,7 +163,7 @@ export function SpeciesCompare({
                   <td key={s.id} className="p-1.5 text-center sm:p-2">
                     <HighlightValue
                       value={s.colonyShips}
-                      allValues={species.map((x) => x.colonyShips)}
+                      allValues={comparison.colonyShips}
                       higherBetter
                     />
                   </td>
@@ -137,7 +177,7 @@ export function SpeciesCompare({
                   <td key={s.id} className="p-1.5 text-center sm:p-2">
                     <HighlightValue
                       value={s.tradeRatio}
-                      allValues={species.map((x) => x.tradeRatio)}
+                      allValues={comparison.tradeRatio}
                       higherBetter={false}
                     />
                     :1
@@ -196,7 +236,7 @@ export function SpeciesCompare({
                     <td key={s.id} className="p-1.5 text-center sm:p-2">
                       <HighlightValue
                         value={s.activations[action]}
-                        allValues={species.map((x) => x.activations[action])}
+                        allValues={comparison.activations[action]}
                         higherBetter
                       />
                     </td>
@@ -263,8 +303,12 @@ function HighlightValue({
   allValues,
   higherBetter,
 }: HighlightValueProps) {
-  const max = Math.max(...allValues);
-  const min = Math.min(...allValues);
+  // Memoize min/max computation to avoid recalculating on every render
+  const { max, min } = useMemo(() => {
+    const max = Math.max(...allValues);
+    const min = Math.min(...allValues);
+    return { max, min };
+  }, [allValues]);
 
   const isBest = higherBetter ? value === max : value === min;
   const isWorst = higherBetter ? value === min : value === max;

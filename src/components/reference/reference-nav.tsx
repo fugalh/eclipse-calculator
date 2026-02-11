@@ -32,6 +32,15 @@ interface ReferenceNavProps {
 }
 
 /**
+ * Check if a navigation item is active based on current pathname
+ */
+function isNavItemActive(pathname: string, href: string): boolean {
+  return (
+    pathname === href || (href !== "/reference" && pathname.startsWith(href))
+  );
+}
+
+/**
  * Sidebar navigation for desktop
  */
 export function ReferenceSidebar({ className }: ReferenceNavProps) {
@@ -40,9 +49,7 @@ export function ReferenceSidebar({ className }: ReferenceNavProps) {
   return (
     <nav className={cn("space-y-1", className)}>
       {NAV_ITEMS.map((item) => {
-        const isActive =
-          pathname === item.href ||
-          (item.href !== "/reference" && pathname.startsWith(item.href));
+        const isActive = isNavItemActive(pathname, item.href);
         const Icon = item.icon;
 
         return (
@@ -79,9 +86,7 @@ export function ReferenceTabs({ className }: ReferenceNavProps) {
       )}
     >
       {NAV_ITEMS.map((item) => {
-        const isActive =
-          pathname === item.href ||
-          (item.href !== "/reference" && pathname.startsWith(item.href));
+        const isActive = isNavItemActive(pathname, item.href);
         const Icon = item.icon;
 
         return (
