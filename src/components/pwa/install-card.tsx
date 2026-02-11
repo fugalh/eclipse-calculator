@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,6 +21,14 @@ function InstallNativeCard() {
   const { platform, onInstall, onDismissCard } = useInstallPrompt();
   const title = getCardTitle(platform);
   const description = getCardDescription(platform);
+
+  const handleInstall = useCallback(async () => {
+    try {
+      await onInstall();
+    } catch (error) {
+      console.error("Failed to install:", error);
+    }
+  }, [onInstall]);
 
   return (
     <Card className="border-primary/20 bg-primary/5 relative">
@@ -49,7 +58,7 @@ function InstallNativeCard() {
         <Button
           variant="outline"
           size="sm"
-          onClick={() => void onInstall()}
+          onClick={handleInstall}
           className="w-full sm:w-auto"
         >
           <Download className="mr-2 h-4 w-4" />

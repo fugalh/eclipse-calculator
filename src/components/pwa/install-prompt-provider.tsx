@@ -50,7 +50,11 @@ export function useInstallPrompt() {
  */
 export function markSimulationRun(): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(SIMULATION_RUN_KEY, "true");
+  try {
+    localStorage.setItem(SIMULATION_RUN_KEY, "true");
+  } catch {
+    // Storage unavailable (incognito/private mode, quota exceeded, or disabled)
+  }
 }
 
 interface EngagementState {
@@ -68,12 +72,11 @@ function useInstallEngagement(): EngagementState {
     // Check all trigger conditions:
     // 1. First visit (immediate) - always true after first load
     // 2. Has run a simulation
-    // 3. Visit count >= 3
     const visitCount = getAndIncrementVisitCount();
     const simulationRun = hasRunSimulation();
 
     // Any of these conditions enables the prompt
-    return visitCount >= 1 || simulationRun || visitCount >= 3;
+    return visitCount >= 1 || simulationRun;
   });
 
   return { hasEngagement };
@@ -84,7 +87,12 @@ function useInstallEngagement(): EngagementState {
  */
 function hasRunSimulation(): boolean {
   if (typeof window === "undefined") return false;
-  return localStorage.getItem(SIMULATION_RUN_KEY) === "true";
+  try {
+    return localStorage.getItem(SIMULATION_RUN_KEY) === "true";
+  } catch {
+    // Storage unavailable (incognito/private mode, quota exceeded, or disabled)
+    return false;
+  }
 }
 
 /**
@@ -93,13 +101,18 @@ function hasRunSimulation(): boolean {
 function getAndIncrementVisitCount(): number {
   if (typeof window === "undefined") return 0;
 
-  const currentCount = parseInt(
-    localStorage.getItem(VISIT_COUNT_KEY) || "0",
-    10,
-  );
-  const newCount = currentCount + 1;
-  localStorage.setItem(VISIT_COUNT_KEY, newCount.toString());
-  return newCount;
+  try {
+    const currentCount = parseInt(
+      localStorage.getItem(VISIT_COUNT_KEY) || "0",
+      10,
+    );
+    const newCount = currentCount + 1;
+    localStorage.setItem(VISIT_COUNT_KEY, newCount.toString());
+    return newCount;
+  } catch {
+    // Storage unavailable (incognito/private mode, quota exceeded, or disabled)
+    return 0;
+  }
 }
 
 interface InstallPromptProviderProps {
