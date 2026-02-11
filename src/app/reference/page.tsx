@@ -6,7 +6,7 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { PageHeader } from "@/components/reference";
+import { PageHeader } from "@/components/reference/reference-nav";
 import { FlaskConical, Wrench, Users, Swords, GitCompare } from "lucide-react";
 
 const REFERENCE_SECTIONS = [

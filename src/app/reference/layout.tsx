@@ -1,5 +1,8 @@
-import { NotationProvider } from "@/components/reference";
-import { ReferenceSidebar, ReferenceTabs } from "@/components/reference";
+import { NotationProvider } from "@/components/reference/notation-toggle";
+import {
+  ReferenceSidebar,
+  ReferenceTabs,
+} from "@/components/reference/reference-nav";
 
 export const metadata = {
   title: "Reference - Eclipse Companion",

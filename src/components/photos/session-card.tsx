@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useMutation } from "convex/react";
 import { formatDistanceToNow } from "date-fns";
 import { api } from "@/convex/_generated/api";
@@ -45,53 +45,58 @@ export function SessionCard({
   isOwner = false,
 }: SessionCardProps) {
   const removeSession = useMutation(api.sessions.remove);
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const handleDelete = async () => {
-    setIsDeleting(true);
-    try {
-      await removeSession({ id: session._id });
-    } finally {
-      setIsDeleting(false);
-      setShowDeleteDialog(false);
-    }
+  const handleDelete = () => {
+    startTransition(async () => {
+      try {
+        await removeSession({ id: session._id });
+        setShowDeleteDialog(false);
+      } catch (error) {
+        console.error("Failed to delete session:", error);
+      }
+    });
   };
 
   return (
     <Card className="transition-colors hover:bg-muted/50">
-      <Link href={`/photos/${session._id}`} className="block">
-        <CardHeader className="pb-2">
-          <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-lg">
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between gap-2">
+          <Link href={`/photos/${session._id}`} className="flex-1">
+            <CardTitle className="text-lg hover:underline">
               {session.name || "Untitled Session"}
             </CardTitle>
-            {isOwner && (
-              <div className="flex items-center gap-1">
-                <Badge variant="outline" className="text-xs">
-                  Owner
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setShowDeleteDialog(true);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                  <span className="sr-only">Delete session</span>
-                </Button>
-              </div>
-            )}
-          </div>
+          </Link>
+          {isOwner && (
+            <div className="flex items-center gap-1">
+              <Badge variant="outline" className="text-xs">
+                Owner
+              </Badge>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowDeleteDialog(true);
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Delete session</span>
+              </Button>
+            </div>
+          )}
+        </div>
+        <Link href={`/photos/${session._id}`}>
           <CardDescription className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
             {formatDistanceToNow(session.createdAt, { addSuffix: true })}
           </CardDescription>
-        </CardHeader>
+        </Link>
+      </CardHeader>
+      <Link href={`/photos/${session._id}`}>
         <CardContent>
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             {session.playerCount && (
@@ -123,9 +128,9 @@ export function SessionCard({
             <AlertDialogAction
               variant="destructive"
               onClick={handleDelete}
-              disabled={isDeleting}
+              disabled={isPending}
             >
-              {isDeleting ? (
+              {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Deleting...

@@ -10,7 +10,7 @@ import {
 import { SearchInput } from "@/components/filters";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DIFFERENCES } from "@/lib/data";
+import { DIFFERENCES } from "@/lib/data/differences";
 import { LayoutGrid, List } from "lucide-react";
 
 type ViewMode = "sections" | "table";
@@ -43,10 +43,10 @@ function DifferencesPageContent() {
   const query = searchParams.get("q") ?? "";
   const viewMode = (searchParams.get("view") as ViewMode) ?? "sections";
 
-  // URL update helper
+  // URL update helper - read window.location.search on demand instead of subscribing
   const updateUrl = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
       for (const [key, value] of Object.entries(updates)) {
         if (value === null || value === "") {
           params.delete(key);
@@ -59,7 +59,7 @@ function DifferencesPageContent() {
         qs ? `/reference/differences?${qs}` : "/reference/differences",
       );
     },
-    [router, searchParams],
+    [router],
   );
 
   // Filter differences by search
@@ -74,19 +74,14 @@ function DifferencesPageContent() {
     );
   }, [query]);
 
-  // Get filtered by category for sections view
-  const notable = useMemo(
-    () => filteredDifferences.filter((d) => d.category === "notable"),
-    [filteredDifferences],
-  );
-  const discovery = useMemo(
-    () => filteredDifferences.filter((d) => d.category === "discovery"),
-    [filteredDifferences],
-  );
-  const minor = useMemo(
-    () => filteredDifferences.filter((d) => d.category === "minor"),
-    [filteredDifferences],
-  );
+  // Consolidate category filtering into single computation
+  const { notable, discovery, minor } = useMemo(() => {
+    return {
+      notable: filteredDifferences.filter((d) => d.category === "notable"),
+      discovery: filteredDifferences.filter((d) => d.category === "discovery"),
+      minor: filteredDifferences.filter((d) => d.category === "minor"),
+    };
+  }, [filteredDifferences]);
 
   // Handlers
   const handleQueryChange = useCallback(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   serializeArray,
@@ -75,20 +75,26 @@ export function useUrlArrayFilter(
 export function useUrlFilters(basePath: string = "") {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const basePathRef = useRef(basePath);
+
+  // Update ref when basePath changes
+  useEffect(() => {
+    basePathRef.current = basePath;
+  }, [basePath]);
 
   const updateFilters = useCallback(
     (updates: Record<string, string | string[] | null>) => {
       const queryString = buildSearchParams(updates, searchParams);
-      const path = basePath || window.location.pathname;
+      const path = basePathRef.current || window.location.pathname;
       router.push(`${path}${queryString}`);
     },
-    [router, searchParams, basePath],
+    [router, searchParams],
   );
 
   const clearAllFilters = useCallback(() => {
-    const path = basePath || window.location.pathname;
+    const path = basePathRef.current || window.location.pathname;
     router.push(path);
-  }, [router, basePath]);
+  }, [router]);
 
   return {
     searchParams,

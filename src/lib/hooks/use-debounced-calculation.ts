@@ -40,10 +40,6 @@ export function useDebouncedCalculation(
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortRef = useRef<boolean>(false);
 
-  // Track fleet configs as JSON for deep comparison
-  const defenderKey = JSON.stringify(defenderFleet);
-  const attackerKey = JSON.stringify(attackerFleet);
-
   const runCalculation = useCallback(() => {
     // Don't calculate if either fleet is empty or has no active ships
     if (!hasActiveShips(defenderFleet) || !hasActiveShips(attackerFleet)) {
@@ -113,8 +109,7 @@ export function useDebouncedCalculation(
       }
       abortRef.current = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defenderKey, attackerKey, debounceMs, enabled]);
+  }, [defenderFleet, attackerFleet, debounceMs, enabled, runCalculation]);
 
   return {
     results,

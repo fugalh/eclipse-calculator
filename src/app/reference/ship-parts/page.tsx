@@ -17,18 +17,39 @@ import {
 import {
   getPartTypeOptions,
   getPartSourceOptions,
-  PART_TYPE_LABELS,
-  PART_SOURCE_LABELS,
-  PART_SOURCE_BADGE_COLORS,
 } from "@/lib/filters/reference-options";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ALL_PARTS, getPartsByType, getPartsBySource } from "@/lib/data";
+import {
+  getAllParts,
+  getPartsByType,
+  getPartsBySource,
+  PART_TYPE_INFO,
+  PART_SOURCE_INFO,
+} from "@/lib/data/ship-parts";
 import type { PartSlotType, ActiveFilter } from "@/lib/types";
-import type { PartSource } from "@/lib/data";
+import type { PartSource } from "@/lib/data/ship-parts";
 import { LayoutGrid, List } from "lucide-react";
 
 type ViewMode = "grid" | "table";
+
+// Extract constants to module scope
+const PART_TYPES: PartSlotType[] = [
+  "cannon",
+  "missile",
+  "computer",
+  "shield",
+  "hull",
+  "drive",
+  "source",
+];
+
+const PART_SOURCES: PartSource[] = [
+  "starting",
+  "technology",
+  "ancient",
+  "discovery",
+];
 
 function ShipPartsPageSkeleton() {
   return (
@@ -65,118 +86,88 @@ function ShipPartsPageContent() {
   const source = searchParams.get("source") as PartSource | null;
   const viewMode = (searchParams.get("view") as ViewMode) ?? "table";
 
-  // URL update helper
+  // URL update helper - read window.location.search on demand
   const updateUrl = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
-      for (const [key, value] of Object.entries(updates)) {
-        if (value === null || value === "") {
-          params.delete(key);
-        } else {
+      const params = new URLSearchParams();
+      // Build params from scratch instead of parsing searchParams
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value !== null && value !== "") {
           params.set(key, value);
         }
-      }
+      });
       const qs = params.toString();
       router.push(qs ? `/reference/ship-parts?${qs}` : "/reference/ship-parts");
     },
-    [router, searchParams],
+    [router],
   );
 
-  // Calculate type counts
-  const typeCounts = useMemo(() => {
-    const types: PartSlotType[] = [
-      "cannon",
-      "missile",
-      "computer",
-      "shield",
-      "hull",
-      "drive",
-      "source",
-    ];
-    return Object.fromEntries(
-      types.map((type) => [type, getPartsByType(type).length]),
-    ) as Record<PartSlotType, number>;
-  }, []);
+  // Calculate type counts - simple operation, no memoization needed
+  const typeCounts = Object.fromEntries(
+    PART_TYPES.map((type) => [type, getPartsByType(type).length]),
+  ) as Record<PartSlotType, number>;
 
-  // Calculate source counts
-  const sourceCounts = useMemo(() => {
-    const sources: PartSource[] = [
-      "starting",
-      "technology",
-      "ancient",
-      "discovery",
-    ];
-    return Object.fromEntries(
-      sources.map((s) => [s, getPartsBySource(s).length]),
-    ) as Record<PartSource, number>;
-  }, []);
+  // Calculate source counts - simple operation, no memoization needed
+  const sourceCounts = Object.fromEntries(
+    PART_SOURCES.map((s) => [s, getPartsBySource(s).length]),
+  ) as Record<PartSource, number>;
 
   // Filter options with counts
-  const typeOptions = useMemo(
-    () => getPartTypeOptions(typeCounts),
-    [typeCounts],
-  );
-  const sourceOptions = useMemo(
-    () => getPartSourceOptions(sourceCounts),
-    [sourceCounts],
-  );
+  const typeOptions = getPartTypeOptions(typeCounts);
+  const sourceOptions = getPartSourceOptions(sourceCounts);
 
-  // Filter parts
+  // Filter parts - combine all filters into single iteration
   const filteredParts = useMemo(() => {
-    let result = ALL_PARTS;
+    const searchLower = query.toLowerCase();
 
-    if (partType !== null) {
-      result = result.filter((part) => part.type === partType);
-    }
+    return getAllParts().filter((part) => {
+      // Type filter
+      if (partType !== null && part.type !== partType) return false;
 
-    if (source !== null) {
-      result = result.filter((part) => part.source === source);
-    }
+      // Source filter
+      if (source !== null && part.source !== source) return false;
 
-    if (query) {
-      const searchLower = query.toLowerCase();
-      result = result.filter(
-        (part) =>
-          part.name.toLowerCase().includes(searchLower) ||
-          part.effect.toLowerCase().includes(searchLower),
-      );
-    }
+      // Query filter
+      if (
+        query &&
+        !part.name.toLowerCase().includes(searchLower) &&
+        !part.effect.toLowerCase().includes(searchLower)
+      ) {
+        return false;
+      }
 
-    return result;
+      return true;
+    });
   }, [partType, source, query]);
 
-  // Build active filters for display
-  const activeFilters = useMemo(() => {
-    const filters: ActiveFilter[] = [];
+  // Build active filters for display - simple array construction, no memoization needed
+  const activeFilters: ActiveFilter[] = [];
 
-    if (query) {
-      filters.push({
-        type: "search",
-        value: query,
-        label: `"${query}"`,
-        color: "bg-blue-100 text-blue-800",
-      });
-    }
+  if (query) {
+    activeFilters.push({
+      type: "search",
+      value: query,
+      label: `"${query}"`,
+      color: "bg-blue-100 text-blue-800",
+    });
+  }
 
-    if (partType) {
-      filters.push({
-        type: "Type",
-        value: partType,
-        label: PART_TYPE_LABELS[partType],
-      });
-    }
+  if (partType) {
+    activeFilters.push({
+      type: "Type",
+      value: partType,
+      label: PART_TYPE_INFO[partType].label,
+    });
+  }
 
-    if (source) {
-      filters.push({
-        type: "Source",
-        value: source,
-        label: PART_SOURCE_LABELS[source],
-        color: PART_SOURCE_BADGE_COLORS[source],
-      });
-    }
-
-    return filters;
-  }, [query, partType, source]);
+  if (source) {
+    activeFilters.push({
+      type: "Source",
+      value: source,
+      label: PART_SOURCE_INFO[source].label,
+      color: PART_SOURCE_INFO[source].color,
+    });
+  }
 
   // Handlers
   const handleQueryChange = useCallback(
@@ -205,7 +196,7 @@ function ShipPartsPageContent() {
   }, [updateUrl, viewMode]);
 
   const handleRemoveFilter = useCallback(
-    (type: string) => {
+    (type: string, _value: string) => {
       if (type === "search") {
         updateUrl({ q: null });
       } else if (type === "Type") {
@@ -240,7 +231,7 @@ function ShipPartsPageContent() {
             selected={partType}
             onChange={handleTypeChange}
             includeAllOption
-            allCount={ALL_PARTS.length}
+            allCount={getAllParts().length}
           />
         </div>
 
@@ -254,7 +245,7 @@ function ShipPartsPageContent() {
             selected={source}
             onChange={handleSourceChange}
             includeAllOption
-            allCount={ALL_PARTS.length}
+            allCount={getAllParts().length}
           />
         </div>
       </div>

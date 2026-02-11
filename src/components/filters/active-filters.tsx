@@ -5,6 +5,20 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { ActiveFilter } from "@/lib/types";
 
+// ============================================================================
+// Constants
+// ============================================================================
+
+const BADGE_BASE_CLASSES =
+  "inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm";
+const REMOVE_BUTTON_CLASSES = "ml-1 rounded-full p-0.5 hover:bg-black/10";
+const ICON_SIZE_CLASSES = "h-3 w-3";
+const DEFAULT_BADGE_COLOR = "bg-primary/10 text-primary";
+
+// ============================================================================
+// Component
+// ============================================================================
+
 interface ActiveFiltersProps {
   filters: ActiveFilter[];
   onRemove: (type: string, value: string) => void;
@@ -33,8 +47,8 @@ export function ActiveFilters({
         <span
           key={`${filter.type}-${filter.value}`}
           className={cn(
-            "inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm",
-            filter.color || "bg-primary/10 text-primary",
+            BADGE_BASE_CLASSES,
+            filter.color || DEFAULT_BADGE_COLOR,
           )}
         >
           {filter.type !== "search" && (
@@ -43,10 +57,10 @@ export function ActiveFilters({
           {filter.label}
           <button
             onClick={() => onRemove(filter.type, filter.value)}
-            className="ml-1 rounded-full p-0.5 hover:bg-black/10"
+            className={REMOVE_BUTTON_CLASSES}
             aria-label={`Remove ${filter.label} filter`}
           >
-            <X className="h-3 w-3" />
+            <X className={ICON_SIZE_CLASSES} />
           </button>
         </span>
       ))}
@@ -63,6 +77,10 @@ export function ActiveFilters({
     </div>
   );
 }
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
 
 /**
  * Helper to build ActiveFilter array from filter state

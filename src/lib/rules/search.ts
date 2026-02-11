@@ -25,14 +25,21 @@ export function sortByCompositeScore(
   results: SearchResult[],
   selectedCategories: string[],
 ): SearchResult[] {
+  // Build category match count map once if needed
+  let categoryMatchCounts: Map<string, number> | null = null;
+  if (selectedCategories.length > 1) {
+    categoryMatchCounts = new Map(
+      results.map((r) => [
+        r.id,
+        r.categories.filter((c) => selectedCategories.includes(c)).length,
+      ]),
+    );
+  }
+
   return results.sort((a, b) => {
-    if (selectedCategories.length > 1) {
-      const aMatches = a.categories.filter((c) =>
-        selectedCategories.includes(c),
-      ).length;
-      const bMatches = b.categories.filter((c) =>
-        selectedCategories.includes(c),
-      ).length;
+    if (categoryMatchCounts) {
+      const aMatches = categoryMatchCounts.get(a.id) ?? 0;
+      const bMatches = categoryMatchCounts.get(b.id) ?? 0;
       if (aMatches !== bMatches) {
         return bMatches - aMatches;
       }
@@ -42,8 +49,11 @@ export function sortByCompositeScore(
 }
 
 export interface SearchOptions {
-  query: string;
+  /** Search query text (empty string returns all sections) */
+  query?: string;
+  /** Filter by categories (OR logic) */
   categories?: string[];
+  /** Maximum number of results to return */
   limit?: number;
 }
 
@@ -55,15 +65,18 @@ export function searchRules(
   sections: ParsedSection[],
   options: SearchOptions,
 ): SearchResult[] {
-  const { query, categories, limit = 50 } = options;
+  const { query = "", categories, limit = 50 } = options;
+  const trimmedQuery = query.trim();
 
-  if (!query.trim()) {
-    // No query - return all sections (optionally filtered by category)
-    let filtered = sections;
-    if (categories && categories.length > 0) {
-      filtered = sections.filter((s) => matchesCategories(s, categories));
-    }
-    const results = filtered.slice(0, limit).map((section) => ({
+  // Filter sections by category first (if specified)
+  const categoryFiltered =
+    categories && categories.length > 0
+      ? sections.filter((s) => matchesCategories(s, categories))
+      : sections;
+
+  if (!trimmedQuery) {
+    // No query - return all filtered sections
+    const results = categoryFiltered.slice(0, limit).map((section) => ({
       id: section.id,
       heading: section.heading,
       matchedText: truncateContent(section.content, 200),
@@ -76,20 +89,13 @@ export function searchRules(
     return sortByCompositeScore(results, categories ?? []);
   }
 
-  const queryLower = query.toLowerCase();
+  const queryLower = trimmedQuery.toLowerCase();
   const queryTerms = queryLower.split(/\s+/).filter(Boolean);
 
-  // Score and filter sections
+  // Score filtered sections
   const scored: Array<{ section: ParsedSection; score: number }> = [];
 
-  for (const section of sections) {
-    // Skip if doesn't match category filter
-    if (categories && categories.length > 0) {
-      if (!matchesCategories(section, categories)) {
-        continue;
-      }
-    }
-
+  for (const section of categoryFiltered) {
     const score = calculateRelevance(
       section,
       queryLower,
@@ -100,9 +106,6 @@ export function searchRules(
       scored.push({ section, score });
     }
   }
-
-  // Sort by relevance (highest first)
-  scored.sort((a, b) => b.score - a.score);
 
   // Convert to SearchResult with highlights
   const results = scored.slice(0, limit).map(({ section, score }) => {
@@ -136,6 +139,7 @@ function matchesCategories(
 
 /**
  * Calculate relevance score for a section
+ * Combines exact phrase matching and individual term frequency
  */
 function calculateRelevance(
   section: ParsedSection,
@@ -157,7 +161,7 @@ function calculateRelevance(
     score += 10;
   }
 
-  // Individual term matches
+  // Individual term matches - count occurrences in single pass
   for (const term of queryTerms) {
     // Term in heading: 5 points
     if (headingLower.includes(term)) {
@@ -165,7 +169,12 @@ function calculateRelevance(
     }
 
     // Term in content: 2 points per occurrence (capped at 10)
-    const contentMatches = countOccurrences(contentLower, term);
+    let contentMatches = 0;
+    let pos = 0;
+    while ((pos = contentLower.indexOf(term, pos)) !== -1) {
+      contentMatches++;
+      pos += term.length;
+    }
     score += Math.min(contentMatches * 2, 10);
   }
 
@@ -178,19 +187,6 @@ function calculateRelevance(
   }
 
   return score;
-}
-
-/**
- * Count occurrences of a term in text
- */
-function countOccurrences(text: string, term: string): number {
-  let count = 0;
-  let pos = 0;
-  while ((pos = text.indexOf(term, pos)) !== -1) {
-    count++;
-    pos += term.length;
-  }
-  return count;
 }
 
 /**
@@ -240,11 +236,34 @@ export function highlightMatches(
     }
   }
 
-  // Sort and merge overlapping highlights
+  // Sort and merge overlapping/adjacent highlights
   highlights.sort((a, b) => a.start - b.start);
 
-  return { text, highlights };
+  const merged: SearchHighlight[] = [];
+  for (const highlight of highlights) {
+    if (merged.length === 0) {
+      merged.push(highlight);
+    } else {
+      const last = merged[merged.length - 1];
+      // Merge if overlapping or adjacent
+      if (highlight.start <= last.end) {
+        last.end = Math.max(last.end, highlight.end);
+      } else {
+        merged.push(highlight);
+      }
+    }
+  }
+
+  return { text, highlights: merged };
 }
+
+// Category to reference link mapping for O(1) lookup
+const CATEGORY_TO_LINK = new Map<string, string>([
+  ["technologies", "/reference/techs"],
+  ["ship-parts", "/reference/ship-parts"],
+  ["species", "/reference/species"],
+  ["combat", "/reference/combat"],
+]);
 
 /**
  * Map a section to its corresponding reference page link
@@ -253,20 +272,10 @@ export function highlightMatches(
 export function mapSectionToReferenceLink(
   section: ParsedSection,
 ): string | null {
-  const categories = section.categories;
-
-  // Map categories to reference pages
-  if (categories.includes("technologies")) {
-    return "/reference/techs";
-  }
-  if (categories.includes("ship-parts")) {
-    return "/reference/ship-parts";
-  }
-  if (categories.includes("species")) {
-    return "/reference/species";
-  }
-  if (categories.includes("combat")) {
-    return "/reference/combat";
+  // Return first matching category link
+  for (const category of section.categories) {
+    const link = CATEGORY_TO_LINK.get(category);
+    if (link) return link;
   }
 
   return null;

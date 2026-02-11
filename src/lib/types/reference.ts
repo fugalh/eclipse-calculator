@@ -64,7 +64,12 @@ export interface SpeciesReference {
     name: string;
     description: string;
   }[];
-  tradeRatio: string;
+  /**
+   * Trade ratio as a number (e.g., 2 for 2:1, 3 for 3:1).
+   * Changed from string to match Species.tradeRatio in game.ts.
+   * Display formatting (e.g., "2:1") should be calculated during rendering.
+   */
+  tradeRatio: number;
   shipBlueprints: {
     shipType: ShipType;
     slots: string[];

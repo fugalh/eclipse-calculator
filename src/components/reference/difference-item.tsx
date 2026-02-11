@@ -2,8 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { TableRow, TableCell } from "./table-components";
 import type { DifferenceItem, DifferenceCategory } from "@/lib/data";
-import { DIFFERENCE_CATEGORY_INFO } from "@/lib/data";
+import { DIFFERENCE_CATEGORY_INFO } from "@/lib/data/differences";
 import { cn } from "@/lib/utils";
 import { Sparkles, Package, Wrench } from "lucide-react";
 
@@ -115,14 +116,14 @@ export function DifferenceTableRow({ difference }: DifferenceTableRowProps) {
   const Icon = CATEGORY_ICONS[difference.category];
 
   return (
-    <tr className="border-b transition-colors hover:bg-muted/50">
-      <td className="p-2">
+    <TableRow>
+      <TableCell>
         <div className="flex items-center gap-2">
           <Icon className="h-4 w-4 text-muted-foreground" />
           <span className="font-medium">{difference.title}</span>
         </div>
-      </td>
-      <td className="p-2">
+      </TableCell>
+      <TableCell>
         <Badge
           className={cn(
             "text-xs text-white",
@@ -131,12 +132,14 @@ export function DifferenceTableRow({ difference }: DifferenceTableRowProps) {
         >
           {difference.category}
         </Badge>
-      </td>
-      <td className="p-2 text-sm text-muted-foreground">
+      </TableCell>
+      <TableCell className="text-sm text-muted-foreground">
         {difference.description}
-      </td>
-      <td className="p-2 text-center text-sm">{difference.quantity || "—"}</td>
-    </tr>
+      </TableCell>
+      <TableCell className="text-center text-sm">
+        {difference.quantity || "—"}
+      </TableCell>
+    </TableRow>
   );
 }
 

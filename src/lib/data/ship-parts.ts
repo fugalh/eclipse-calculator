@@ -561,36 +561,51 @@ export const ANCIENT_PARTS: AnyShipPartData[] = [
 // All Parts Combined
 // ============================================================================
 
-export const ALL_PARTS: AnyShipPartData[] = [
-  ...STARTING_PARTS,
-  ...TECH_PARTS,
-  ...ANCIENT_PARTS,
-];
+/**
+ * Lazy-initialized combined parts array.
+ * Created on first access to avoid module load time overhead.
+ */
+let _allParts: AnyShipPartData[] | null = null;
+
+export function getAllParts(): AnyShipPartData[] {
+  if (_allParts === null) {
+    _allParts = [...STARTING_PARTS, ...TECH_PARTS, ...ANCIENT_PARTS];
+  }
+  return _allParts;
+}
 
 /** Get parts by type */
 export function getPartsByType(type: PartSlotType): AnyShipPartData[] {
-  return ALL_PARTS.filter((part) => part.type === type);
+  return getAllParts().filter((part) => part.type === type);
 }
 
 /** Get parts by source */
 export function getPartsBySource(source: PartSource): AnyShipPartData[] {
-  return ALL_PARTS.filter((part) => part.source === source);
+  return getAllParts().filter((part) => part.source === source);
 }
 
 /** Get part by ID */
 export function getPartById(id: string): AnyShipPartData | undefined {
-  return ALL_PARTS.find((part) => part.id === id);
+  return getAllParts().find((part) => part.id === id);
 }
 
 /** Part type display info for UI */
 export const PART_TYPE_INFO = {
-  cannon: { label: "Cannon", icon: "target" },
-  missile: { label: "Missile", icon: "rocket" },
-  computer: { label: "Computer", icon: "cpu" },
-  shield: { label: "Shield", icon: "shield" },
-  hull: { label: "Hull", icon: "box" },
-  drive: { label: "Drive", icon: "zap" },
-  source: { label: "Energy Source", icon: "battery-charging" },
+  cannon: { label: "Cannon", icon: "target", color: "" },
+  missile: { label: "Missile", icon: "rocket", color: "" },
+  computer: { label: "Computer", icon: "cpu", color: "" },
+  shield: { label: "Shield", icon: "shield", color: "" },
+  hull: { label: "Hull", icon: "box", color: "" },
+  drive: { label: "Drive", icon: "zap", color: "" },
+  source: { label: "Energy Source", icon: "battery-charging", color: "" },
+} as const;
+
+/** Part source display info for UI */
+export const PART_SOURCE_INFO = {
+  starting: { label: "Starting", color: "bg-zinc-100 text-zinc-800" },
+  technology: { label: "Tech", color: "bg-blue-100 text-blue-800" },
+  ancient: { label: "Ancient", color: "bg-amber-100 text-amber-800" },
+  discovery: { label: "Discovery", color: "bg-purple-100 text-purple-800" },
 } as const;
 
 /** Damage color info */

@@ -61,7 +61,12 @@ export interface SearchResult {
   id: string;
   heading: string;
   matchedText: string;
-  fullContent: string; // Full section content for expansion
+  /**
+   * Full section content for expansion.
+   * NOTE: highlights array references byte offsets in this exact content string.
+   * Regenerate highlights if content changes to maintain accuracy.
+   */
+  fullContent: string;
   highlights: SearchHighlight[];
   categories: RuleCategory[]; // Multiple categories per result
   referenceLink: string | null;

@@ -5,6 +5,17 @@ import { ChevronDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
+// ============================================================================
+// Constants
+// ============================================================================
+
+const ANIMATION_DURATION_MS = 200;
+const MAX_CONTENT_HEIGHT_PX = 500;
+
+// ============================================================================
+// Component
+// ============================================================================
+
 interface FilterAccordionProps {
   title: string;
   children: React.ReactNode;
@@ -43,16 +54,21 @@ export function FilterAccordion({
         </span>
         <ChevronDown
           className={cn(
-            "h-4 w-4 text-muted-foreground transition-transform duration-200",
+            "h-4 w-4 text-muted-foreground transition-transform",
             isOpen && "rotate-180",
           )}
+          style={{ transitionDuration: `${ANIMATION_DURATION_MS}ms` }}
         />
       </button>
       <div
         className={cn(
-          "overflow-hidden transition-all duration-200",
-          isOpen ? "max-h-[500px] pb-4" : "max-h-0",
+          "overflow-hidden transition-all",
+          isOpen ? "pb-4" : "max-h-0",
         )}
+        style={{
+          transitionDuration: `${ANIMATION_DURATION_MS}ms`,
+          maxHeight: isOpen ? `${MAX_CONTENT_HEIGHT_PX}px` : "0",
+        }}
       >
         {children}
       </div>

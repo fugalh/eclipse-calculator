@@ -1,13 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NotationDisplay } from "./notation-toggle";
-import {
-  PART_TYPE_INFO,
-  DAMAGE_COLOR_INFO,
-  parseNotationToDescription,
-} from "@/lib/data";
+import { TableRow, TableCell } from "./table-components";
+import { PART_TYPE_INFO, DAMAGE_COLOR_INFO } from "@/lib/data/ship-parts";
+import { parseNotationToDescription } from "@/lib/data/index";
 import type { AnyShipPartData, PartSource } from "@/lib/data";
 import { cn } from "@/lib/utils";
 import {
@@ -37,6 +36,17 @@ const SOURCE_COLORS: Record<PartSource, string> = {
   discovery: "bg-purple-500",
 };
 
+// Helper functions to eliminate duplication
+function getEnergyColor(energy: number): string {
+  if (energy > 0) return "text-green-500";
+  if (energy < 0) return "text-red-500";
+  return "";
+}
+
+function formatEnergy(energy: number): string {
+  return energy > 0 ? `+${energy}` : `${energy}`;
+}
+
 interface PartCardProps {
   part: AnyShipPartData;
   className?: string;
@@ -45,11 +55,14 @@ interface PartCardProps {
 export function PartCard({ part, className }: PartCardProps) {
   const Icon = PART_ICONS[part.type];
   const typeInfo = PART_TYPE_INFO[part.type];
-  const descriptive = parseNotationToDescription(part.notation);
+  const descriptive = useMemo(
+    () => parseNotationToDescription(part.notation),
+    [part.notation],
+  );
 
-  // Get damage color for weapons
-  const damageColor =
-    "diceColor" in part ? DAMAGE_COLOR_INFO[part.diceColor] : null;
+  // Cache property checks
+  const hasDamageColor = "diceColor" in part;
+  const damageColor = hasDamageColor ? DAMAGE_COLOR_INFO[part.diceColor] : null;
 
   return (
     <Card className={cn("h-full", className)}>
@@ -75,16 +88,8 @@ export function PartCard({ part, className }: PartCardProps) {
           </div>
           <div className="flex justify-between rounded bg-muted px-2 py-1">
             <span className="text-muted-foreground">Energy</span>
-            <span
-              className={
-                part.energy > 0
-                  ? "text-green-500"
-                  : part.energy < 0
-                    ? "text-red-500"
-                    : ""
-              }
-            >
-              {part.energy > 0 ? `+${part.energy}` : part.energy}
+            <span className={getEnergyColor(part.energy)}>
+              {formatEnergy(part.energy)}
             </span>
           </div>
           {damageColor && (
@@ -148,28 +153,23 @@ interface PartTableRowProps {
 
 export function PartTableRow({ part }: PartTableRowProps) {
   const typeInfo = PART_TYPE_INFO[part.type];
-  const damageColor =
-    "diceColor" in part ? DAMAGE_COLOR_INFO[part.diceColor] : null;
-  const descriptive = parseNotationToDescription(part.notation);
+  const hasDamageColor = "diceColor" in part;
+  const damageColor = hasDamageColor ? DAMAGE_COLOR_INFO[part.diceColor] : null;
+  const descriptive = useMemo(
+    () => parseNotationToDescription(part.notation),
+    [part.notation],
+  );
 
   return (
-    <tr className="border-b transition-colors hover:bg-muted/50">
-      <td className="p-2 font-medium">{part.name}</td>
-      <td className="p-2 text-sm">{typeInfo.label}</td>
-      <td className="p-2 text-center">
-        <span
-          className={
-            part.energy > 0
-              ? "text-green-500"
-              : part.energy < 0
-                ? "text-red-500"
-                : ""
-          }
-        >
-          {part.energy > 0 ? `+${part.energy}` : part.energy}
+    <TableRow>
+      <TableCell className="font-medium">{part.name}</TableCell>
+      <TableCell className="text-sm">{typeInfo.label}</TableCell>
+      <TableCell className="text-center">
+        <span className={getEnergyColor(part.energy)}>
+          {formatEnergy(part.energy)}
         </span>
-      </td>
-      <td className="p-2">
+      </TableCell>
+      <TableCell>
         {damageColor && (
           <span className="flex items-center gap-1">
             <span
@@ -181,16 +181,16 @@ export function PartTableRow({ part }: PartTableRowProps) {
             {damageColor.damage}
           </span>
         )}
-      </td>
-      <td className="p-2 font-mono text-sm">
+      </TableCell>
+      <TableCell className="font-mono text-sm">
         <NotationDisplay symbolic={part.notation} descriptive={descriptive} />
-      </td>
-      <td className="p-2">
+      </TableCell>
+      <TableCell>
         <Badge className={cn("text-xs text-white", SOURCE_COLORS[part.source])}>
           {part.source}
         </Badge>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }
 

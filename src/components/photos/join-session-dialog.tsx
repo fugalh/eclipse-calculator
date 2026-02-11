@@ -23,7 +23,7 @@ export function JoinSessionDialog() {
   const [open, setOpen] = useState(false);
   const [code, setCode] = useState("");
   const [isJoining, setIsJoining] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   // Only query when we have a full 6-character code and user clicks Join
   const session = useQuery(
@@ -31,37 +31,27 @@ export function JoinSessionDialog() {
     isJoining && code.length === 6 ? { shareCode: code } : "skip",
   );
 
-  // Handle session lookup result
+  // Derive error state from session lookup result (calculated during render, not in effect)
+  const hasSessionError = isJoining && session === null;
+  const displayError =
+    localError || hasSessionError
+      ? "Session not found. Check the code and try again."
+      : null;
+
+  // Handle successful session lookup - only navigation in effect
   useEffect(() => {
-    if (!isJoining) return;
-
-    if (session === undefined) {
-      // Still loading
-      return;
-    }
-
-    // Use a microtask to defer state updates and avoid cascading renders
-    void Promise.resolve().then(() => {
-      if (session === null) {
-        setError("Session not found. Check the code and try again.");
-        setIsJoining(false);
-        return;
-      }
-
-      // Success - redirect to session
-      setOpen(false);
-      setCode("");
-      setIsJoining(false);
+    if (isJoining && session && session !== null) {
+      // Navigation is an external side effect, appropriate for useEffect
       router.push(`/photos/${session._id}`);
-    });
+    }
   }, [session, isJoining, router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setLocalError(null);
 
     if (code.length !== 6) {
-      setError("Please enter a 6-character code");
+      setLocalError("Please enter a 6-character code");
       return;
     }
 
@@ -72,17 +62,27 @@ export function JoinSessionDialog() {
     // Convert to uppercase and limit to 6 characters
     const value = e.target.value.toUpperCase().slice(0, 6);
     setCode(value);
-    setError(null);
+    setLocalError(null);
+    // Reset error when user types
+    if (hasSessionError) {
+      setIsJoining(false);
+    }
   };
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
     if (!newOpen) {
-      // Reset state when closing
+      // Event handler can safely reset state
       setCode("");
-      setError(null);
+      setLocalError(null);
       setIsJoining(false);
     }
+  };
+
+  const handleRetry = () => {
+    // Event handler to reset error state
+    setIsJoining(false);
+    setLocalError(null);
   };
 
   return (
@@ -102,9 +102,9 @@ export function JoinSessionDialog() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
-            {error && (
+            {displayError && (
               <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                {error}
+                {displayError}
               </div>
             )}
             <div className="space-y-2">
@@ -117,6 +117,7 @@ export function JoinSessionDialog() {
                 className="font-mono text-center text-lg tracking-widest"
                 maxLength={6}
                 autoComplete="off"
+                disabled={isJoining && session === undefined}
               />
             </div>
           </div>
@@ -128,16 +129,22 @@ export function JoinSessionDialog() {
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isJoining || code.length !== 6}>
-              {isJoining ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Joining...
-                </>
-              ) : (
-                "Join Session"
-              )}
-            </Button>
+            {hasSessionError ? (
+              <Button type="button" onClick={handleRetry}>
+                Try Again
+              </Button>
+            ) : (
+              <Button type="submit" disabled={isJoining || code.length !== 6}>
+                {isJoining && session === undefined ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Joining...
+                  </>
+                ) : (
+                  "Join Session"
+                )}
+              </Button>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>

@@ -34,6 +34,14 @@ const NPC_TARGET_PRIORITY: readonly string[] = [
   "Orbital",
 ];
 
+// Pre-computed maps for O(1) priority lookups
+const TARGET_PRIORITY_MAP = new Map(
+  TARGET_PRIORITY.map((name, idx) => [name, idx]),
+);
+const NPC_TARGET_PRIORITY_MAP = new Map(
+  NPC_TARGET_PRIORITY.map((name, idx) => [name, idx]),
+);
+
 // Re-export types for backward compatibility
 export type {
   DiceColor,
@@ -84,31 +92,32 @@ function createDicePool(ships: Combatant[], missilePhase: boolean): DicePool {
 
   if (missilePhase) {
     // Missile phase - 1 die per missile
-    for (let i = 0; i < firstShip.missiles_yellow * shipCount; i++) {
-      dicePool.dice.push(createDice("yellow", firstShip, true));
-    }
-    for (let i = 0; i < firstShip.missiles_orange * shipCount; i++) {
-      dicePool.dice.push(createDice("orange", firstShip, true));
-    }
-    for (let i = 0; i < firstShip.missiles_blue * shipCount; i++) {
-      dicePool.dice.push(createDice("blue", firstShip, true));
-    }
-    for (let i = 0; i < firstShip.missiles_red * shipCount; i++) {
-      dicePool.dice.push(createDice("red", firstShip, true));
+    // Combined loop for all colors
+    const missiles: Array<[DiceColor, number]> = [
+      ["yellow", firstShip.missiles_yellow],
+      ["orange", firstShip.missiles_orange],
+      ["blue", firstShip.missiles_blue],
+      ["red", firstShip.missiles_red],
+    ];
+
+    for (const [color, count] of missiles) {
+      for (let i = 0; i < count * shipCount; i++) {
+        dicePool.dice.push(createDice(color, firstShip, true));
+      }
     }
   } else {
-    // Cannon phase
-    for (let i = 0; i < firstShip.yellow * shipCount; i++) {
-      dicePool.dice.push(createDice("yellow", firstShip, false));
-    }
-    for (let i = 0; i < firstShip.orange * shipCount; i++) {
-      dicePool.dice.push(createDice("orange", firstShip, false));
-    }
-    for (let i = 0; i < firstShip.blue * shipCount; i++) {
-      dicePool.dice.push(createDice("blue", firstShip, false));
-    }
-    for (let i = 0; i < firstShip.red * shipCount; i++) {
-      dicePool.dice.push(createDice("red", firstShip, false));
+    // Cannon phase - combined loop for all colors
+    const cannons: Array<[DiceColor, number]> = [
+      ["yellow", firstShip.yellow],
+      ["orange", firstShip.orange],
+      ["blue", firstShip.blue],
+      ["red", firstShip.red],
+    ];
+
+    for (const [color, count] of cannons) {
+      for (let i = 0; i < count * shipCount; i++) {
+        dicePool.dice.push(createDice(color, firstShip, false));
+      }
     }
 
     // Antimatter Splitter converts red dice to 4 yellow dice with same value
@@ -356,12 +365,17 @@ function distributeHits(
     (a, b) => 100 * b.value - b.damageValue - (100 * a.value - a.damageValue),
   );
 
-  // Use NPC priority (largest first) or player priority based on attacker type
-  const classPriority = isNpcAttacker ? NPC_TARGET_PRIORITY : TARGET_PRIORITY;
+  // Use pre-computed priority map for O(1) lookups
+  const priorityMap = isNpcAttacker
+    ? NPC_TARGET_PRIORITY_MAP
+    : TARGET_PRIORITY_MAP;
+  const priorityLength = isNpcAttacker
+    ? NPC_TARGET_PRIORITY.length
+    : TARGET_PRIORITY.length;
 
   // Sort targets by:
   // 1. User-specified priority (high > normal > low)
-  // 2. Ship class priority (from TARGET_PRIORITY array)
+  // 2. Ship class priority (from priority map)
   const prioritizedTargets = [...targets].sort((a, b) => {
     // First compare user-specified priority
     const aPriority = PRIORITY_ORDER[a.priorityTarget];
@@ -370,35 +384,37 @@ function distributeHits(
       return aPriority - bPriority;
     }
 
-    // Fall back to ship class priority
-    const aIndex = classPriority.indexOf(a.shipClass);
-    const bIndex = classPriority.indexOf(b.shipClass);
-    // If not in priority list, put at end
-    return (
-      (aIndex === -1 ? classPriority.length : aIndex) -
-      (bIndex === -1 ? classPriority.length : bIndex)
-    );
+    // Fall back to ship class priority using map for O(1) lookup
+    const aIndex = priorityMap.get(a.shipClass) ?? priorityLength;
+    const bIndex = priorityMap.get(b.shipClass) ?? priorityLength;
+    return aIndex - bIndex;
   });
 
-  const hasHittingDice = (): boolean => {
-    return sortedDice.some((dice) =>
-      targets.some((target) => isAlive(target) && checkHit(dice, target)),
-    );
-  };
+  // Build target map for O(1) lookups by class
+  const targetMap = new Map<string, Combatant>();
+  for (const target of prioritizedTargets) {
+    if (isAlive(target) && !targetMap.has(target.shipClass)) {
+      targetMap.set(target.shipClass, target);
+    }
+  }
 
-  while (hasHittingDice() && sortedDice.length > 0) {
-    const currentDice = sortedDice.shift()!;
+  // Process dice in priority order
+  for (let i = 0; i < sortedDice.length; i++) {
+    const currentDice = sortedDice[i];
 
     // Find primary target (highest priority living target that this die can hit)
     let primaryTarget = prioritizedTargets.find(
       (target) => isAlive(target) && checkHit(currentDice, target),
     );
 
+    if (!primaryTarget) continue;
+
     // Check if we can kill any target with remaining dice + this one
+    const remainingDice = sortedDice.slice(i);
     const killableTarget = prioritizedTargets.find(
       (target) =>
         isAlive(target) &&
-        canBeKilled(target, [currentDice, ...sortedDice]) &&
+        canBeKilled(target, remainingDice) &&
         checkHit(currentDice, target),
     );
 
@@ -407,9 +423,7 @@ function distributeHits(
       primaryTarget = killableTarget;
     }
 
-    if (primaryTarget) {
-      applyDamage(primaryTarget, currentDice.damageValue);
-    }
+    applyDamage(primaryTarget, currentDice.damageValue);
   }
 }
 

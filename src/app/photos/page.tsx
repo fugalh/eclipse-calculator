@@ -9,6 +9,40 @@ import { CreateSessionDialog } from "@/components/photos/create-session-dialog";
 import { JoinSessionDialog } from "@/components/photos/join-session-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { isConvexAvailable } from "@/lib/convex-available";
+import type { Doc } from "@/convex/_generated/dataModel";
+
+// Explicit variant components for tab content states
+function TabContentLoading() {
+  return (
+    <div className="py-8 text-center text-muted-foreground">
+      Loading sessions...
+    </div>
+  );
+}
+
+function TabContentEmpty({ message }: { message: string }) {
+  return (
+    <div className="py-8 text-center">
+      <p className="text-muted-foreground">{message}</p>
+    </div>
+  );
+}
+
+function TabContentWithSessions({
+  sessions,
+  isOwner = false,
+}: {
+  sessions: Doc<"gameSessions">[];
+  isOwner?: boolean;
+}) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {sessions.map((session) => (
+        <SessionCard key={session._id} session={session} isOwner={isOwner} />
+      ))}
+    </div>
+  );
+}
 
 function PhotosPageContent() {
   const { isAuthenticated, isLoading: authLoading } = useConvexAuth();
@@ -67,43 +101,25 @@ function PhotosPageContent() {
 
         <TabsContent value="owned" className="space-y-4">
           {ownedSessions === undefined ? (
-            <div className="py-8 text-center text-muted-foreground">
-              Loading sessions...
-            </div>
+            <TabContentLoading />
           ) : ownedSessions.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-muted-foreground">
-                No sessions yet. Create your first session!
-              </p>
-            </div>
+            <TabContentEmpty message="No sessions yet. Create your first session!" />
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {ownedSessions.map((session) => (
-                <SessionCard key={session._id} session={session} isOwner />
-              ))}
-            </div>
+            <TabContentWithSessions sessions={ownedSessions} isOwner />
           )}
         </TabsContent>
 
         <TabsContent value="joined" className="space-y-4">
           {joinedSessions === undefined ? (
-            <div className="py-8 text-center text-muted-foreground">
-              Loading sessions...
-            </div>
+            <TabContentLoading />
           ) : joinedSessions.length === 0 ? (
-            <div className="py-8 text-center">
-              <p className="text-muted-foreground">
-                No joined sessions. Ask a friend to share a session link!
-              </p>
-            </div>
+            <TabContentEmpty message="No joined sessions. Ask a friend to share a session link!" />
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {joinedSessions
-                .filter((s): s is NonNullable<typeof s> => s !== null)
-                .map((session) => (
-                  <SessionCard key={session._id} session={session} />
-                ))}
-            </div>
+            <TabContentWithSessions
+              sessions={joinedSessions.filter(
+                (s): s is NonNullable<typeof s> => s !== null,
+              )}
+            />
           )}
         </TabsContent>
       </Tabs>

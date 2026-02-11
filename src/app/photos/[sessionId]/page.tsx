@@ -93,6 +93,9 @@ function SessionDetailContent() {
       await removeSession({ id: sessionId });
       router.push("/photos");
     } catch {
+      // Error occurred, reset loading state
+      // Success case doesn't need reset since we navigate away
+    } finally {
       setIsDeleting(false);
     }
   };

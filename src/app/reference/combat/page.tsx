@@ -10,7 +10,7 @@ import {
 import { SearchInput } from "@/components/filters";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { COMBAT_RULES } from "@/lib/data";
+import { COMBAT_RULES } from "@/lib/data/combat-rules";
 import { BookOpen, Zap } from "lucide-react";
 
 type ViewMode = "full" | "quick";
@@ -43,10 +43,10 @@ function CombatPageContent() {
   const query = searchParams.get("q") ?? "";
   const viewMode = (searchParams.get("view") as ViewMode) ?? "full";
 
-  // URL update helper
+  // URL update helper - read searchParams on demand instead of subscribing
   const updateUrl = useCallback(
     (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
+      const params = new URLSearchParams(window.location.search);
       for (const [key, value] of Object.entries(updates)) {
         if (value === null || value === "") {
           params.delete(key);
@@ -57,7 +57,7 @@ function CombatPageContent() {
       const qs = params.toString();
       router.push(qs ? `/reference/combat?${qs}` : "/reference/combat");
     },
-    [router, searchParams],
+    [router],
   );
 
   // Filter sections by search

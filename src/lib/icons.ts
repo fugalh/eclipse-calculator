@@ -35,7 +35,8 @@ export const GAME_ICONS = {
     Orbital: "/icons/game/ships/orbital.png",
     Ancient: "/icons/game/ships/ancient.png",
     GC: "/icons/game/ships/gc.png",
-    Guardian: "/icons/game/ships/gc.png", // Reuse GC icon
+    // Guardian uses GC icon until a Guardian-specific icon is available
+    Guardian: "/icons/game/ships/gc.png",
     Deathmoon: "/icons/game/ships/deathmoon.png",
     // Generic fallback
     Generic: "/icons/game/ships/cruiser.png",

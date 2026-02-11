@@ -3,41 +3,32 @@
 import { useEffect, useRef, useCallback } from "react";
 import { toast } from "sonner";
 import { type Platform } from "@/lib/hooks/use-pwa-install";
+import { useInstallPrompt } from "./install-prompt-provider";
 
-interface InstallToastProps {
-  platform: Platform;
-  canPromptNative: boolean;
-  onInstall: () => Promise<void>;
-  onLearnHow: () => void;
-  onDismiss: () => void;
-}
+/**
+ * Hook for managing install toast lifecycle
+ * Consumes InstallPromptContext for all state and actions
+ */
+export function useInstallToast() {
+  const { platform, canPromptNative, onInstall, onLearnHow, onDismissCard } =
+    useInstallPrompt();
 
-export function useInstallToast({
-  platform,
-  canPromptNative,
-  onInstall,
-  onLearnHow,
-  onDismiss,
-}: InstallToastProps) {
   const toastIdRef = useRef<string | number | null>(null);
   const hasShownRef = useRef(false);
   const scrollHandlerRef = useRef<(() => void) | null>(null);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
-
-  const cleanupScrollListener = useCallback(() => {
-    if (scrollHandlerRef.current) {
-      window.removeEventListener("scroll", scrollHandlerRef.current);
-      scrollHandlerRef.current = null;
-    }
-  }, []);
 
   const dismissToast = useCallback(() => {
     if (toastIdRef.current) {
       toast.dismiss(toastIdRef.current);
       toastIdRef.current = null;
     }
-    cleanupScrollListener();
-  }, [cleanupScrollListener]);
+    // Inline cleanup to avoid circular dependency
+    if (scrollHandlerRef.current) {
+      window.removeEventListener("scroll", scrollHandlerRef.current);
+      scrollHandlerRef.current = null;
+    }
+  }, []);
 
   const showToast = useCallback(() => {
     if (hasShownRef.current) return;
@@ -47,8 +38,13 @@ export function useInstallToast({
     const actionLabel = canPromptNative ? "Install" : "Learn how";
     const actionHandler = canPromptNative
       ? async () => {
-          await onInstall();
-          dismissToast();
+          try {
+            await onInstall();
+            dismissToast();
+          } catch {
+            // Handle install errors silently
+            dismissToast();
+          }
         }
       : () => {
           onLearnHow();
@@ -64,9 +60,13 @@ export function useInstallToast({
         },
         duration: Infinity, // Persist until scroll or dismiss
         onDismiss: () => {
-          onDismiss();
+          onDismissCard();
           toastIdRef.current = null;
-          cleanupScrollListener();
+          // Inline cleanup instead of calling cleanupScrollListener
+          if (scrollHandlerRef.current) {
+            window.removeEventListener("scroll", scrollHandlerRef.current);
+            scrollHandlerRef.current = null;
+          }
         },
       });
 
@@ -77,7 +77,7 @@ export function useInstallToast({
           window.requestAnimationFrame(() => {
             if (toastIdRef.current && window.scrollY > 50) {
               dismissToast();
-              onDismiss();
+              onDismissCard();
             }
             ticking = false;
           });
@@ -92,9 +92,8 @@ export function useInstallToast({
     canPromptNative,
     onInstall,
     onLearnHow,
-    onDismiss,
+    onDismissCard,
     dismissToast,
-    cleanupScrollListener,
   ]);
 
   // Cleanup on unmount
@@ -103,9 +102,13 @@ export function useInstallToast({
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
       }
-      cleanupScrollListener();
+      // Inline cleanup
+      if (scrollHandlerRef.current) {
+        window.removeEventListener("scroll", scrollHandlerRef.current);
+        scrollHandlerRef.current = null;
+      }
     };
-  }, [cleanupScrollListener]);
+  }, []);
 
   return { showToast, dismissToast };
 }

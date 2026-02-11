@@ -29,6 +29,7 @@ import { Upload, X, Loader2, ImageIcon } from "lucide-react";
 import Image from "next/image";
 
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
+const MIN_DIMENSION = 100; // Don't resize below 100px
 
 function formatFileSize(bytes: number | undefined): string {
   if (!bytes) return "0 B";
@@ -36,14 +37,54 @@ function formatFileSize(bytes: number | undefined): string {
   return mb >= 1 ? `${mb.toFixed(1)}MB` : `${(bytes / 1024).toFixed(0)}KB`;
 }
 
-const MIN_DIMENSION = 100; // Don't resize below 100px
+/**
+ * Helper to convert blob to File with error handling
+ */
+function blobToFile(blob: Blob | null, fileName: string): Promise<File> {
+  return new Promise((resolve, reject) => {
+    if (!blob) {
+      reject(new Error("Failed to create image blob"));
+      return;
+    }
+    resolve(new File([blob], fileName, { type: "image/jpeg" }));
+  });
+}
 
+/**
+ * Helper to create a preview URL from a File
+ */
+function createFilePreview(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result;
+      if (typeof result === "string") {
+        resolve(result);
+      } else {
+        reject(new Error("Failed to read file"));
+      }
+    };
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Resize image iteratively until it fits within maxSizeBytes
+ * Reduces quality first (0.9 → 0.5), then dimensions (by 10% each iteration)
+ */
 async function resizeImage(file: File, maxSizeBytes: number): Promise<File> {
   return new Promise((resolve, reject) => {
     const img = document.createElement("img");
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     const objectUrl = URL.createObjectURL(file);
+
+    if (!ctx) {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error("Canvas context not available"));
+      return;
+    }
 
     img.onload = () => {
       URL.revokeObjectURL(objectUrl);
@@ -55,14 +96,11 @@ async function resizeImage(file: File, maxSizeBytes: number): Promise<File> {
       const tryResize = () => {
         // Guard against infinite loops - stop if dimensions get too small
         if (width < MIN_DIMENSION || height < MIN_DIMENSION) {
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
           canvas.toBlob(
-            (blob) => {
-              if (!blob) {
-                reject(new Error("Failed to resize image"));
-                return;
-              }
-              resolve(new File([blob], file.name, { type: "image/jpeg" }));
-            },
+            (blob) => void blobToFile(blob, file.name).then(resolve, reject),
             "image/jpeg",
             quality,
           );
@@ -71,17 +109,17 @@ async function resizeImage(file: File, maxSizeBytes: number): Promise<File> {
 
         canvas.width = width;
         canvas.height = height;
-        ctx?.drawImage(img, 0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
 
         canvas.toBlob(
           (blob) => {
             if (!blob) {
-              reject(new Error("Failed to resize image"));
+              reject(new Error("Failed to create image blob"));
               return;
             }
 
             if (blob.size <= maxSizeBytes || quality <= 0.1) {
-              resolve(new File([blob], file.name, { type: "image/jpeg" }));
+              void blobToFile(blob, file.name).then(resolve, reject);
             } else {
               // Reduce quality first, then dimensions
               if (quality > 0.5) {
@@ -137,7 +175,7 @@ export function PhotoUploader({
   const [isResizing, setIsResizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -158,11 +196,12 @@ export function PhotoUploader({
     setSelectedFile(file);
 
     // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setPreview(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const previewUrl = await createFilePreview(file);
+      setPreview(previewUrl);
+    } catch {
+      setError("Failed to create image preview");
+    }
   };
 
   const handleUpload = async () => {
@@ -227,16 +266,12 @@ export function PhotoUploader({
 
     try {
       const resizedFile = await resizeImage(oversizedFile, MAX_FILE_SIZE);
-
       setSelectedFile(resizedFile);
       setError(null);
 
       // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(resizedFile);
+      const previewUrl = await createFilePreview(resizedFile);
+      setPreview(previewUrl);
     } catch {
       setError("Failed to resize image. Please try a smaller file.");
     } finally {

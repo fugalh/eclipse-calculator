@@ -62,6 +62,13 @@ export const RULES_INDEX: ParsedSection[] = `;
 
   const footer = `
 /**
+ * Get the rules index array
+ */
+export function getRulesIndex(): ParsedSection[] {
+  return RULES_INDEX;
+}
+
+/**
  * Get all unique categories present in the rules index
  */
 export function getAllCategories(): string[] {

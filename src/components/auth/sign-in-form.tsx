@@ -1,7 +1,5 @@
 "use client";
 
-import { useAuthActions } from "@convex-dev/auth/react";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,33 +12,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useReturnUrl } from "./use-return-url";
+import { useAuthForm } from "./use-auth-form";
 
 export function SignInForm() {
-  const { signIn } = useAuthActions();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
-
-    try {
-      await signIn("password", { email, password, flow: "signIn" });
-      // Redirect to return URL or photos page
-      const returnUrl = searchParams.get("returnUrl") || "/photos";
-      router.push(returnUrl);
-    } catch {
-      setError("Invalid email or password");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const returnUrl = useReturnUrl();
+  const {
+    email,
+    password,
+    error,
+    isLoading,
+    setEmail,
+    setPassword,
+    clearError,
+    handleSubmit,
+  } = useAuthForm({ flow: "signIn", returnUrl });
 
   return (
     <Card className="w-full max-w-md">
@@ -64,7 +50,10 @@ export function SignInForm() {
               type="email"
               placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                clearError();
+              }}
               required
             />
           </div>
@@ -74,7 +63,10 @@ export function SignInForm() {
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                clearError();
+              }}
               required
             />
           </div>

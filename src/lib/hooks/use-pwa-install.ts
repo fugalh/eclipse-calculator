@@ -42,13 +42,18 @@ function isStandalone(): boolean {
 function isDismissedWithin10Days(): boolean {
   if (typeof window === "undefined") return false;
 
-  const dismissedAt = localStorage.getItem(DISMISSAL_KEY);
-  if (!dismissedAt) return false;
+  try {
+    const dismissedAt = localStorage.getItem(DISMISSAL_KEY);
+    if (!dismissedAt) return false;
 
-  const timestamp = parseInt(dismissedAt, 10);
-  if (isNaN(timestamp)) return false;
+    const timestamp = parseInt(dismissedAt, 10);
+    if (isNaN(timestamp)) return false;
 
-  return Date.now() - timestamp < TEN_DAYS_MS;
+    return Date.now() - timestamp < TEN_DAYS_MS;
+  } catch {
+    // localStorage throws in private browsing or when disabled
+    return false;
+  }
 }
 
 function getRandomBytes(n: number): Uint8Array {
@@ -84,25 +89,39 @@ function generateUUID(): string {
 function getSessionId(): string {
   if (typeof window === "undefined") return "";
 
-  let sessionId = sessionStorage.getItem("pwa-session-id");
-  if (!sessionId) {
-    sessionId = generateUUID();
-    sessionStorage.setItem("pwa-session-id", sessionId);
+  try {
+    let sessionId = sessionStorage.getItem("pwa-session-id");
+    if (!sessionId) {
+      sessionId = generateUUID();
+      sessionStorage.setItem("pwa-session-id", sessionId);
+    }
+    return sessionId;
+  } catch {
+    // sessionStorage throws in private browsing or when disabled
+    return "";
   }
-  return sessionId;
 }
 
 function wasCardShownThisSession(): boolean {
   if (typeof window === "undefined") return false;
 
-  const shownSession = localStorage.getItem(CARD_SESSION_KEY);
-  return shownSession === getSessionId();
+  try {
+    const shownSession = localStorage.getItem(CARD_SESSION_KEY);
+    return shownSession === getSessionId();
+  } catch {
+    // localStorage throws in private browsing or when disabled
+    return false;
+  }
 }
 
 function markCardShownThisSession(): void {
   if (typeof window === "undefined") return;
 
-  localStorage.setItem(CARD_SESSION_KEY, getSessionId());
+  try {
+    localStorage.setItem(CARD_SESSION_KEY, getSessionId());
+  } catch {
+    // localStorage throws in private browsing or when disabled
+  }
 }
 
 export interface PWAInstallState {
@@ -121,7 +140,8 @@ export interface PWAInstallState {
 }
 
 export function usePWAInstall(): PWAInstallState {
-  // SSR-safe: Initialize with defaults that match server render, update after mount
+  // SSR-safe: Initialize with defaults that match server render
+  const [mounted, setMounted] = useState(false);
   const [platform, setPlatform] = useState<Platform>("other");
   const [canPromptNative, setCanPromptNative] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -133,6 +153,7 @@ export function usePWAInstall(): PWAInstallState {
 
   // Initialize client-side state after mount to prevent hydration mismatch
   useEffect(() => {
+    setMounted(true);
     setPlatform(detectPlatform());
     setIsInstalled(isStandalone());
     setIsDismissed(isDismissedWithin10Days());
@@ -141,6 +162,8 @@ export function usePWAInstall(): PWAInstallState {
 
   // Listen for browser events
   useEffect(() => {
+    if (!mounted) return;
+
     // Listen for beforeinstallprompt event (Chrome/Android)
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
@@ -155,8 +178,12 @@ export function usePWAInstall(): PWAInstallState {
       setCanPromptNative(false);
     };
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    window.addEventListener("appinstalled", handleAppInstalled);
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt, {
+      passive: true,
+    });
+    window.addEventListener("appinstalled", handleAppInstalled, {
+      passive: true,
+    });
 
     return () => {
       window.removeEventListener(
@@ -165,7 +192,7 @@ export function usePWAInstall(): PWAInstallState {
       );
       window.removeEventListener("appinstalled", handleAppInstalled);
     };
-  }, []);
+  }, [mounted]);
 
   const triggerNativePrompt = useCallback(async () => {
     if (!deferredPromptRef.current) return;
@@ -186,8 +213,13 @@ export function usePWAInstall(): PWAInstallState {
   }, []);
 
   const dismissPrompt = useCallback(() => {
-    localStorage.setItem(DISMISSAL_KEY, Date.now().toString());
-    setIsDismissed(true);
+    try {
+      localStorage.setItem(DISMISSAL_KEY, Date.now().toString());
+      setIsDismissed(true);
+    } catch {
+      // localStorage throws in private browsing or when disabled
+      setIsDismissed(true);
+    }
   }, []);
 
   const openTutorial = useCallback(() => {

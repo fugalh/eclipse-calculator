@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 
 const MAX_ZOOM = 3;
 const MIN_ZOOM = 1;
@@ -58,12 +58,19 @@ function clamp(value: number, min: number, max: number): number {
 
 export function usePhotoGestures(
   callbacks: GestureCallbacks,
-  containerSize: { width: number; height: number },
+  containerWidth: number,
+  containerHeight: number,
 ): UsePhotoGesturesReturn {
   const [scale, setScale] = useState(MIN_ZOOM);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
   const [isGesturing, setIsGesturing] = useState(false);
+
+  // Store callbacks in ref to avoid recreating handlers when callbacks change
+  const callbacksRef = useRef(callbacks);
+  useEffect(() => {
+    callbacksRef.current = callbacks;
+  }, [callbacks]);
 
   const gestureRef = useRef<GestureRef>({
     pointers: new Map(),
@@ -102,17 +109,28 @@ export function usePhotoGestures(
         ref.gestureStartTime = Date.now();
         ref.panStartX = e.clientX;
         ref.panStartY = e.clientY;
-        ref.initialTranslateX = translateX;
-        ref.initialTranslateY = translateY;
+        // Capture current transform state at pointer down
+        setTranslateX((current) => {
+          ref.initialTranslateX = current;
+          return current;
+        });
+        setTranslateY((current) => {
+          ref.initialTranslateY = current;
+          return current;
+        });
         ref.isPanning = false;
       } else if (ref.pointers.size === 2) {
         // Two pointers - pinch gesture starting
         ref.initialPinchDistance = null; // Will be set on first move
-        ref.initialScale = scale;
+        // Capture current scale at pinch start
+        setScale((current) => {
+          ref.initialScale = current;
+          return current;
+        });
         setIsGesturing(true);
       }
     },
-    [scale, translateX, translateY],
+    [], // No dependencies - state captured via functional updates
   );
 
   const handlePointerMove = useCallback(
@@ -142,43 +160,49 @@ export function usePhotoGestures(
           );
           setScale(newScale);
         }
-      } else if (ref.pointers.size === 1 && scale > MIN_ZOOM) {
-        // Single pointer while zoomed - pan
-        const deltaX = e.clientX - ref.panStartX;
-        const deltaY = e.clientY - ref.panStartY;
+      } else if (ref.pointers.size === 1) {
+        // Single pointer - check if zoomed for panning
+        setScale((currentScale) => {
+          if (currentScale > MIN_ZOOM) {
+            const deltaX = e.clientX - ref.panStartX;
+            const deltaY = e.clientY - ref.panStartY;
 
-        // Start panning if moved beyond tap threshold
-        if (
-          !ref.isPanning &&
-          (Math.abs(deltaX) > TAP_THRESHOLD || Math.abs(deltaY) > TAP_THRESHOLD)
-        ) {
-          ref.isPanning = true;
-          setIsGesturing(true);
-        }
+            // Start panning if moved beyond tap threshold
+            if (
+              !ref.isPanning &&
+              (Math.abs(deltaX) > TAP_THRESHOLD ||
+                Math.abs(deltaY) > TAP_THRESHOLD)
+            ) {
+              ref.isPanning = true;
+              setIsGesturing(true);
+            }
 
-        if (ref.isPanning) {
-          // Calculate bounds based on current scale
-          const maxTranslateX = ((scale - 1) * containerSize.width) / 2;
-          const maxTranslateY = ((scale - 1) * containerSize.height) / 2;
+            if (ref.isPanning) {
+              // Calculate bounds based on current scale
+              const maxTranslateX = ((currentScale - 1) * containerWidth) / 2;
+              const maxTranslateY = ((currentScale - 1) * containerHeight) / 2;
 
-          setTranslateX(
-            clamp(
-              ref.initialTranslateX + deltaX,
-              -maxTranslateX,
-              maxTranslateX,
-            ),
-          );
-          setTranslateY(
-            clamp(
-              ref.initialTranslateY + deltaY,
-              -maxTranslateY,
-              maxTranslateY,
-            ),
-          );
-        }
+              setTranslateX(
+                clamp(
+                  ref.initialTranslateX + deltaX,
+                  -maxTranslateX,
+                  maxTranslateX,
+                ),
+              );
+              setTranslateY(
+                clamp(
+                  ref.initialTranslateY + deltaY,
+                  -maxTranslateY,
+                  maxTranslateY,
+                ),
+              );
+            }
+          }
+          return currentScale;
+        });
       }
     },
-    [scale, containerSize.width, containerSize.height],
+    [containerWidth, containerHeight],
   );
 
   const handlePointerUp = useCallback(
@@ -202,8 +226,15 @@ export function usePhotoGestures(
         const remainingPointer = Array.from(ref.pointers.values())[0];
         ref.panStartX = remainingPointer.x;
         ref.panStartY = remainingPointer.y;
-        ref.initialTranslateX = translateX;
-        ref.initialTranslateY = translateY;
+        // Capture current transform state for potential pan continuation
+        setTranslateX((current) => {
+          ref.initialTranslateX = current;
+          return current;
+        });
+        setTranslateY((current) => {
+          ref.initialTranslateY = current;
+          return current;
+        });
         ref.initialPinchDistance = null;
         return;
       }
@@ -224,15 +255,20 @@ export function usePhotoGestures(
             Math.abs(deltaY) < TAP_THRESHOLD &&
             deltaTime < TAP_MAX_DURATION
           ) {
-            callbacks.onTap?.();
+            callbacksRef.current.onTap?.();
           }
           // Check for horizontal swipe (only when not zoomed)
-          else if (scale === MIN_ZOOM && deltaTime < SWIPE_MAX_DURATION) {
-            if (deltaX > SWIPE_THRESHOLD) {
-              callbacks.onSwipeRight?.();
-            } else if (deltaX < -SWIPE_THRESHOLD) {
-              callbacks.onSwipeLeft?.();
-            }
+          else {
+            setScale((currentScale) => {
+              if (currentScale === MIN_ZOOM && deltaTime < SWIPE_MAX_DURATION) {
+                if (deltaX > SWIPE_THRESHOLD) {
+                  callbacksRef.current.onSwipeRight?.();
+                } else if (deltaX < -SWIPE_THRESHOLD) {
+                  callbacksRef.current.onSwipeLeft?.();
+                }
+              }
+              return currentScale;
+            });
           }
         }
 
@@ -241,7 +277,7 @@ export function usePhotoGestures(
         ref.initialPinchDistance = null;
       }
     },
-    [callbacks, scale, translateX, translateY],
+    [], // No dependencies - callbacks accessed via ref, scale read via functional update
   );
 
   const handlePointerCancel = useCallback(
