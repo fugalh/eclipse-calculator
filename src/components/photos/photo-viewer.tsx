@@ -81,18 +81,17 @@ export function PhotoViewer({
     resetTransform();
   }, [currentIndex, resetTransform]);
 
-  // Focus management
+  // Focus management, keyboard navigation, and body scroll prevention
   useEffect(() => {
+    // Save and set focus
     previousFocusRef.current = document.activeElement as HTMLElement;
     closeButtonRef.current?.focus();
 
-    return () => {
-      previousFocusRef.current?.focus();
-    };
-  }, []);
+    // Prevent body scroll
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
-  // Keyboard navigation
-  useEffect(() => {
+    // Keyboard navigation handler
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case "Escape":
@@ -108,17 +107,18 @@ export function PhotoViewer({
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onClose, navigatePrev, navigateNext]);
 
-  // Prevent body scroll when viewer is open
-  useEffect(() => {
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     return () => {
+      // Restore focus
+      previousFocusRef.current?.focus();
+
+      // Restore body scroll
       document.body.style.overflow = originalOverflow;
+
+      // Remove keyboard listener
+      window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [onClose, navigatePrev, navigateNext]);
 
   const handleDelete = async () => {
     if (!onDelete || !currentPhoto) return;

@@ -3,22 +3,16 @@
 import { useEffect, useRef, useCallback } from "react";
 import { toast } from "sonner";
 import { type Platform } from "@/lib/hooks/use-pwa-install";
+import { useInstallPrompt } from "./install-prompt-provider";
 
-interface InstallToastProps {
-  platform: Platform;
-  canPromptNative: boolean;
-  onInstall: () => Promise<void>;
-  onLearnHow: () => void;
-  onDismiss: () => void;
-}
+/**
+ * Hook for managing install toast lifecycle
+ * Consumes InstallPromptContext for all state and actions
+ */
+export function useInstallToast() {
+  const { platform, canPromptNative, onInstall, onLearnHow, onDismissCard } =
+    useInstallPrompt();
 
-export function useInstallToast({
-  platform,
-  canPromptNative,
-  onInstall,
-  onLearnHow,
-  onDismiss,
-}: InstallToastProps) {
   const toastIdRef = useRef<string | number | null>(null);
   const hasShownRef = useRef(false);
   const scrollHandlerRef = useRef<(() => void) | null>(null);
@@ -64,7 +58,7 @@ export function useInstallToast({
         },
         duration: Infinity, // Persist until scroll or dismiss
         onDismiss: () => {
-          onDismiss();
+          onDismissCard();
           toastIdRef.current = null;
           cleanupScrollListener();
         },
@@ -77,7 +71,7 @@ export function useInstallToast({
           window.requestAnimationFrame(() => {
             if (toastIdRef.current && window.scrollY > 50) {
               dismissToast();
-              onDismiss();
+              onDismissCard();
             }
             ticking = false;
           });
@@ -92,7 +86,7 @@ export function useInstallToast({
     canPromptNative,
     onInstall,
     onLearnHow,
-    onDismiss,
+    onDismissCard,
     dismissToast,
     cleanupScrollListener,
   ]);
