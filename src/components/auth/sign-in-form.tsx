@@ -14,12 +14,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useReturnUrl } from "./use-return-url";
 
 export function SignInForm() {
   const { signIn } = useAuthActions();
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const returnUrl = useReturnUrl();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -32,8 +33,6 @@ export function SignInForm() {
 
     try {
       await signIn("password", { email, password, flow: "signIn" });
-      // Redirect to return URL or photos page
-      const returnUrl = searchParams.get("returnUrl") || "/photos";
       router.push(returnUrl);
     } catch {
       setError("Invalid email or password");

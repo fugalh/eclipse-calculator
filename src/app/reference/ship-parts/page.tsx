@@ -205,7 +205,7 @@ function ShipPartsPageContent() {
   }, [updateUrl, viewMode]);
 
   const handleRemoveFilter = useCallback(
-    (type: string) => {
+    (type: string, _value: string) => {
       if (type === "search") {
         updateUrl({ q: null });
       } else if (type === "Type") {

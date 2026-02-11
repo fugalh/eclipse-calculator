@@ -8,6 +8,13 @@ import type { Id } from "@/convex/_generated/dataModel";
 import type { PhotoType, GamePhotoData } from "@/convex/types";
 import { PhotoViewer } from "./photo-viewer";
 
+// Module-level constant for photo type labels
+const PHOTO_TYPE_LABELS: Record<PhotoType, string> = {
+  tech_tray: "Tech Tray",
+  sector_map: "Sector Map",
+  other: "Other",
+};
+
 interface PhotoGridProps {
   photos: GamePhotoData[];
   canDelete?: boolean;
@@ -15,12 +22,6 @@ interface PhotoGridProps {
   sessionOwnerId?: Id<"users">;
   onPhotoDeleted?: () => void;
 }
-
-const PHOTO_TYPE_LABELS: Record<PhotoType, string> = {
-  tech_tray: "Tech Tray",
-  sector_map: "Sector Map",
-  other: "Other",
-};
 
 export function PhotoGrid({
   photos,
