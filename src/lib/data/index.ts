@@ -99,6 +99,18 @@ export const NOTATION_LEGEND = {
   o: { symbol: "o", meaning: "Cannon", description: "Cannon damage die" },
 } as const;
 
+// Hoisted RegExp patterns for parseNotationToDescription
+const ENERGY_COST_REGEX = /\./g;
+const ENERGY_PROD_REGEX = /(\d+)z/;
+const INITIATIVE_REGEX = /\^/g;
+const MOVEMENT_REGEX = />/g;
+const HULL_REGEX = /⍟/g;
+const SHIELD_NUMBER_REGEX = /-(\d+)/;
+const SHIELD_REGEX = /-/g;
+const COMPUTER_REGEX = /\+(\d+)/;
+const MISSILE_REGEX = /ø/g;
+const CANNON_REGEX = /o/g;
+
 /**
  * Parse notation string into descriptive text
  * e.g., ".. oo" -> "Energy: 2, Yellow Cannon: 2 dice"
@@ -109,16 +121,17 @@ export function parseNotationToDescription(notation: string): string {
   const parts: string[] = [];
 
   // Count each symbol
-  const energyCost = (notation.match(/\./g) || []).length;
-  const energyProd = notation.match(/(\d+)z/)?.[1];
-  const initiative = (notation.match(/\^/g) || []).length;
-  const movement = (notation.match(/>/g) || []).length;
-  const hull = (notation.match(/⍟/g) || []).length;
+  const energyCost = (notation.match(ENERGY_COST_REGEX) || []).length;
+  const energyProd = notation.match(ENERGY_PROD_REGEX)?.[1];
+  const initiative = (notation.match(INITIATIVE_REGEX) || []).length;
+  const movement = (notation.match(MOVEMENT_REGEX) || []).length;
+  const hull = (notation.match(HULL_REGEX) || []).length;
   const shield =
-    notation.match(/-(\d+)/)?.[1] || (notation.match(/-/g) || []).length;
-  const computer = notation.match(/\+(\d+)/)?.[1];
-  const missiles = (notation.match(/ø/g) || []).length;
-  const cannons = (notation.match(/o/g) || []).length;
+    notation.match(SHIELD_NUMBER_REGEX)?.[1] ||
+    (notation.match(SHIELD_REGEX) || []).length;
+  const computer = notation.match(COMPUTER_REGEX)?.[1];
+  const missiles = (notation.match(MISSILE_REGEX) || []).length;
+  const cannons = (notation.match(CANNON_REGEX) || []).length;
 
   if (energyCost > 0) parts.push(`Energy: -${energyCost}`);
   if (energyProd) parts.push(`Energy: +${energyProd}`);

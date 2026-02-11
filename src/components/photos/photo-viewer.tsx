@@ -59,7 +59,8 @@ export function PhotoViewer({
       onSwipeLeft: navigateNext,
       onSwipeRight: navigatePrev,
     },
-    containerSize,
+    containerSize.width,
+    containerSize.height,
   );
 
   // Update container size on mount and resize
