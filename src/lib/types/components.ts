@@ -51,6 +51,17 @@ export interface FleetBuilderProps {
 // Battle Results Props
 // ============================================================================
 
+/**
+ * Battle results component props.
+ *
+ * REFACTORING NOTE: This component uses optional defenders/attackers arrays
+ * for conditional rendering and sharing logic. Consider creating explicit variants:
+ * - BattleResultsWithShips (includes defenders & attackers for sharing)
+ * - BattleResultsOnly (results display without sharing functionality)
+ *
+ * Explicit variants make the component's requirements clearer and avoid
+ * implicit coupling between UI rendering and data availability.
+ */
 export interface BattleResultsProps {
   results: BattleResultsExtended | null;
   isCalculating: boolean;
@@ -93,6 +104,19 @@ export interface PresetItemProps {
 // Page State Types
 // ============================================================================
 
+/**
+ * Preset dialog UI state.
+ *
+ * REFACTORING NOTE: This state should be lifted into a PresetDialogProvider
+ * to decouple components from the specific state shape. Consider creating:
+ * - PresetDialogState (this interface)
+ * - PresetDialogActions (open, close, setShip handlers)
+ * - PresetDialogMeta (any metadata like dialog title, etc.)
+ * - PresetDialogContextValue (combines state, actions, meta)
+ *
+ * This would allow components to access dialog state through context
+ * instead of prop drilling, following the composition patterns in the guidelines.
+ */
 export interface PresetDialogState {
   open: boolean;
   side: "attacker" | "defender" | null;

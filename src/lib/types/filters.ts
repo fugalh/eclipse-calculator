@@ -15,10 +15,25 @@ export interface FilterOption<T extends string = string> {
 }
 
 /**
+ * Valid filter type keys matching URL parameter names.
+ * Must correspond to filter keys used throughout the application.
+ */
+export type FilterType =
+  | "category"
+  | "shipType"
+  | "species"
+  | "search"
+  | string;
+
+/**
  * Represents an active filter that can be displayed and removed
  */
 export interface ActiveFilter {
-  type: string;
+  /**
+   * Filter type - should match valid filter keys (e.g., 'category', 'shipType', 'species').
+   * See FilterType for known values.
+   */
+  type: FilterType;
   value: string;
   label: string;
   color?: string;

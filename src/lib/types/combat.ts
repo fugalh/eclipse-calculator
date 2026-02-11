@@ -48,11 +48,19 @@ export interface Fleet {
 // Battle Results Types
 // ============================================================================
 
+/**
+ * Map of ship unique identifiers (id field) to survival probability (0-1).
+ * Keys must match ship IDs from the fleet configuration.
+ */
+export type ShipSurvivalMap = Record<string, number>;
+
 export interface BattleResults {
   attacker: number; // Win probability 0-1
   defender: number;
-  shipsAttacker: Record<string, number>; // Survival rates
-  shipsDefender: Record<string, number>;
+  /** Map of ship unique identifiers (id field) to survival probability (0-1) */
+  shipsAttacker: ShipSurvivalMap;
+  /** Map of ship unique identifiers (id field) to survival probability (0-1) */
+  shipsDefender: ShipSurvivalMap;
 }
 
 // ============================================================================
@@ -143,6 +151,10 @@ export interface SurvivalDistribution {
 
 /** Extended battle results with discretized survival distributions */
 export interface BattleResultsExtended extends BattleResults {
+  /**
+   * Survival distributions are populated when simulation includes distribution analysis.
+   * Undefined when only win probability is calculated.
+   */
   survivalDistributions?: {
     attacker: Record<string, SurvivalDistribution>;
     defender: Record<string, SurvivalDistribution>;
@@ -162,7 +174,7 @@ export const DAMAGE_VALUES: Record<DiceColor, number> = {
 
 // TODO: Discuss expansion support (Rise of the Ancients)
 // Deathmoon logic retained in TARGET_PRIORITY for future use
-export const TARGET_PRIORITY: readonly string[] = [
+export const TARGET_PRIORITY = [
   "Orbital",
   "Ancient",
   "Guardian",
@@ -172,4 +184,4 @@ export const TARGET_PRIORITY: readonly string[] = [
   "Cruiser",
   "Dreadnought",
   "Deathmoon",
-];
+] as const;

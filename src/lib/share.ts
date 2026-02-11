@@ -127,12 +127,20 @@ export function decodeBattleConfig(encoded: string): {
     const json = atob(base64);
     const compressed: CompressedBattle = JSON.parse(json);
 
-    // Generate unique IDs for each ship
+    // Generate unique IDs for each ship with collision-resistant identifiers
+    // Uses timestamp + random suffix to prevent ID collisions when multiple ships are decoded rapidly
+    const timestamp = Date.now();
     const defenders = compressed.d.map((ship, i) =>
-      decompressShip(ship, `shared-d-${i}-${Date.now()}`),
+      decompressShip(
+        ship,
+        `shared-d-${i}-${timestamp}-${Math.random().toString(36).substring(2, 9)}`,
+      ),
     );
     const attackers = compressed.a.map((ship, i) =>
-      decompressShip(ship, `shared-a-${i}-${Date.now()}`),
+      decompressShip(
+        ship,
+        `shared-a-${i}-${timestamp}-${Math.random().toString(36).substring(2, 9)}`,
+      ),
     );
 
     return { defenders, attackers };
@@ -164,6 +172,9 @@ export function generateShareUrl(
  * Format fleet as readable text
  */
 function formatFleet(ships: ShipConfig[]): string {
+  // Early return for empty fleets
+  if (!ships.length) return "";
+
   const counts: Record<string, number> = {};
   for (const ship of ships) {
     const key = ship.name;
@@ -266,7 +277,11 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
     return true;
-  } catch {
+  } catch (error) {
+    // Log errors in development for debugging clipboard failures
+    if (process.env.NODE_ENV === "development") {
+      console.error("Clipboard copy failed:", error);
+    }
     return false;
   }
 }
