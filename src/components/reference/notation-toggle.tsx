@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, use } from "react";
 import { Button } from "@/components/ui/button";
 import { Eye, Code } from "lucide-react";
 
@@ -14,21 +14,30 @@ interface NotationContextValue {
 
 const NotationContext = createContext<NotationContextValue | null>(null);
 
-const STORAGE_KEY = "eclipse-notation-mode";
+const STORAGE_KEY = "eclipse-notation-mode:v1";
 
 export function NotationProvider({ children }: { children: React.ReactNode }) {
-  // Lazy initialization: load from localStorage on initial render
+  // Lazy initialization: load from localStorage on initial render with error handling
   const [mode, setModeState] = useState<NotationMode>(() => {
     if (typeof window === "undefined") return "symbolic";
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored === "symbolic" || stored === "descriptive"
-      ? stored
-      : "symbolic";
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return stored === "symbolic" || stored === "descriptive"
+        ? stored
+        : "symbolic";
+    } catch {
+      // Fails in incognito/private browsing or when disabled
+      return "symbolic";
+    }
   });
 
   const setMode = (newMode: NotationMode) => {
     setModeState(newMode);
-    localStorage.setItem(STORAGE_KEY, newMode);
+    try {
+      localStorage.setItem(STORAGE_KEY, newMode);
+    } catch {
+      // Silently fail in restricted environments
+    }
   };
 
   const toggle = () => {
@@ -43,7 +52,7 @@ export function NotationProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useNotation() {
-  const context = useContext(NotationContext);
+  const context = use(NotationContext);
   if (!context) {
     throw new Error("useNotation must be used within NotationProvider");
   }
@@ -92,13 +101,18 @@ interface NotationDisplayProps {
 
 /**
  * Displays notation in the current mode
+ * Can work with or without context provider (controlled/uncontrolled pattern)
  */
 export function NotationDisplay({
   symbolic,
   descriptive,
   className,
-}: NotationDisplayProps) {
-  const { mode } = useNotation();
+  mode: propMode,
+}: NotationDisplayProps & { mode?: NotationMode }) {
+  // Always call the hook unconditionally to satisfy Rules of Hooks
+  const { mode: contextMode } = useNotation();
+  // Use prop mode if provided, otherwise fall back to context
+  const mode = propMode ?? contextMode;
 
   if (!symbolic && !descriptive) {
     return <span className={className}>—</span>;

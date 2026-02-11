@@ -34,140 +34,10 @@ interface InstallTutorialSheetProps {
   platform: Platform;
 }
 
-export function InstallTutorialSheet({
-  open,
-  onOpenChange,
-  platform,
-}: InstallTutorialSheetProps) {
-  return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
-        <SheetHeader className="text-left">
-          <SheetTitle>Install Eclipse Companion</SheetTitle>
-          <SheetDescription>
-            {platform === "ios"
-              ? "Add to your home screen for quick access"
-              : platform === "android"
-                ? "Install the app for a better experience"
-                : "Install the app to your computer"}
-          </SheetDescription>
-        </SheetHeader>
-
-        <div className="px-4 pb-8">
-          {platform === "ios" && <IOSTutorial />}
-          {platform === "android" && <AndroidTutorial />}
-          {platform === "chrome-desktop" && <DesktopChromeTutorial />}
-          {platform === "other" && <GenericTutorial />}
-        </div>
-      </SheetContent>
-    </Sheet>
-  );
-}
-
-function IOSTutorial() {
-  return (
-    <div className="space-y-6">
-      {/* Step 1: Tap menu */}
-      <TutorialStep step={1} title="Tap the menu button">
-        <IOSBrowserMockup highlightMenu />
-        <p className="text-muted-foreground mt-2 text-xs">
-          The menu may appear at the top or bottom of your screen
-        </p>
-      </TutorialStep>
-
-      {/* Step 2: Tap Share */}
-      <TutorialStep step={2} title='Tap "Share"'>
-        <IOSMenuMockup highlightShare />
-      </TutorialStep>
-
-      {/* Step 3: Scroll down */}
-      <TutorialStep step={3} title="Scroll down">
-        <IOSShareSheetInitialMockup />
-      </TutorialStep>
-
-      {/* Step 4: Add to Home Screen */}
-      <TutorialStep step={4} title='Tap "Add to Home Screen"'>
-        <IOSShareSheetMockup />
-      </TutorialStep>
-
-      {/* Step 5: Confirm */}
-      <TutorialStep step={5} title='Tap "Add" to confirm'>
-        <IOSAddScreenMockup />
-      </TutorialStep>
-    </div>
-  );
-}
-
-function AndroidTutorial() {
-  return (
-    <div className="space-y-6">
-      {/* Step 1: Tap menu */}
-      <TutorialStep step={1} title="Tap the menu button">
-        <AndroidBrowserMockup highlightMenu>
-          <div className="bg-muted h-20 rounded" />
-        </AndroidBrowserMockup>
-      </TutorialStep>
-
-      {/* Step 2: Add to Home screen */}
-      <TutorialStep step={2} title='Tap "Add to Home screen"'>
-        <AndroidMenuMockup />
-      </TutorialStep>
-
-      {/* Step 3: Install */}
-      <TutorialStep step={3} title='Tap "Install" to confirm'>
-        <AndroidInstallMockup />
-      </TutorialStep>
-    </div>
-  );
-}
-
-function DesktopChromeTutorial() {
-  return (
-    <div className="space-y-6">
-      <TutorialStep step={1} title="Click the install icon in your URL bar">
-        <DesktopURLBarMockup />
-      </TutorialStep>
-      <p className="text-muted-foreground text-center text-sm">
-        Look for the{" "}
-        <Download className="mx-1 inline-block h-4 w-4 align-text-bottom" />{" "}
-        icon on the right side of your address bar
-      </p>
-    </div>
-  );
-}
-
-function GenericTutorial() {
-  return (
-    <div className="text-muted-foreground space-y-4 py-8 text-center">
-      <p>
-        To install this app, look for an &quot;Install&quot; or &quot;Add to
-        Home Screen&quot; option in your browser&apos;s menu.
-      </p>
-    </div>
-  );
-}
-
-function TutorialStep({
-  step,
-  title,
-  children,
-}: {
-  step: number;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-3">
-        <span className="bg-primary text-primary-foreground flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-medium">
-          {step}
-        </span>
-        <p className="font-medium">{title}</p>
-      </div>
-      <div className="ml-9">{children}</div>
-    </div>
-  );
-}
+// ============================================================================
+// Hoisted Static Mockup Components
+// These are module-level to avoid recreation on every render
+// ============================================================================
 
 // iOS Mockup Components
 function IOSBrowserMockup({
@@ -544,5 +414,148 @@ function DesktopURLBarMockup() {
       </div>
       <div className="bg-muted h-24" />
     </div>
+  );
+}
+
+// ============================================================================
+// Tutorial Components
+// ============================================================================
+
+function TutorialStep({
+  step,
+  title,
+  children,
+}: {
+  step: number;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-3">
+        <span className="bg-primary text-primary-foreground flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-medium">
+          {step}
+        </span>
+        <p className="font-medium">{title}</p>
+      </div>
+      <div className="ml-9">{children}</div>
+    </div>
+  );
+}
+
+function IOSTutorial() {
+  return (
+    <div className="space-y-6">
+      {/* Step 1: Tap menu */}
+      <TutorialStep step={1} title="Tap the menu button">
+        <IOSBrowserMockup highlightMenu />
+        <p className="text-muted-foreground mt-2 text-xs">
+          The menu may appear at the top or bottom of your screen
+        </p>
+      </TutorialStep>
+
+      {/* Step 2: Tap Share */}
+      <TutorialStep step={2} title='Tap "Share"'>
+        <IOSMenuMockup highlightShare />
+      </TutorialStep>
+
+      {/* Step 3: Scroll down */}
+      <TutorialStep step={3} title="Scroll down">
+        <IOSShareSheetInitialMockup />
+      </TutorialStep>
+
+      {/* Step 4: Add to Home Screen */}
+      <TutorialStep step={4} title='Tap "Add to Home Screen"'>
+        <IOSShareSheetMockup />
+      </TutorialStep>
+
+      {/* Step 5: Confirm */}
+      <TutorialStep step={5} title='Tap "Add" to confirm'>
+        <IOSAddScreenMockup />
+      </TutorialStep>
+    </div>
+  );
+}
+
+function AndroidTutorial() {
+  return (
+    <div className="space-y-6">
+      {/* Step 1: Tap menu */}
+      <TutorialStep step={1} title="Tap the menu button">
+        <AndroidBrowserMockup highlightMenu>
+          <div className="bg-muted h-20 rounded" />
+        </AndroidBrowserMockup>
+      </TutorialStep>
+
+      {/* Step 2: Add to Home screen */}
+      <TutorialStep step={2} title='Tap "Add to Home screen"'>
+        <AndroidMenuMockup />
+      </TutorialStep>
+
+      {/* Step 3: Install */}
+      <TutorialStep step={3} title='Tap "Install" to confirm'>
+        <AndroidInstallMockup />
+      </TutorialStep>
+    </div>
+  );
+}
+
+function DesktopChromeTutorial() {
+  return (
+    <div className="space-y-6">
+      <TutorialStep step={1} title="Click the install icon in your URL bar">
+        <DesktopURLBarMockup />
+      </TutorialStep>
+      <p className="text-muted-foreground text-center text-sm">
+        Look for the{" "}
+        <Download className="mx-1 inline-block h-4 w-4 align-text-bottom" />{" "}
+        icon on the right side of your address bar
+      </p>
+    </div>
+  );
+}
+
+function GenericTutorial() {
+  return (
+    <div className="text-muted-foreground space-y-4 py-8 text-center">
+      <p>
+        To install this app, look for an &quot;Install&quot; or &quot;Add to
+        Home Screen&quot; option in your browser&apos;s menu.
+      </p>
+    </div>
+  );
+}
+
+// ============================================================================
+// Main Component
+// ============================================================================
+
+export function InstallTutorialSheet({
+  open,
+  onOpenChange,
+  platform,
+}: InstallTutorialSheetProps) {
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto">
+        <SheetHeader className="text-left">
+          <SheetTitle>Install Eclipse Companion</SheetTitle>
+          <SheetDescription>
+            {platform === "ios"
+              ? "Add to your home screen for quick access"
+              : platform === "android"
+                ? "Install the app for a better experience"
+                : "Install the app to your computer"}
+          </SheetDescription>
+        </SheetHeader>
+
+        <div className="px-4 pb-8">
+          {platform === "ios" && <IOSTutorial />}
+          {platform === "android" && <AndroidTutorial />}
+          {platform === "chrome-desktop" && <DesktopChromeTutorial />}
+          {platform === "other" && <GenericTutorial />}
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }

@@ -18,20 +18,17 @@ export function useInstallToast() {
   const scrollHandlerRef = useRef<(() => void) | null>(null);
   const timeoutIdRef = useRef<NodeJS.Timeout | null>(null);
 
-  const cleanupScrollListener = useCallback(() => {
-    if (scrollHandlerRef.current) {
-      window.removeEventListener("scroll", scrollHandlerRef.current);
-      scrollHandlerRef.current = null;
-    }
-  }, []);
-
   const dismissToast = useCallback(() => {
     if (toastIdRef.current) {
       toast.dismiss(toastIdRef.current);
       toastIdRef.current = null;
     }
-    cleanupScrollListener();
-  }, [cleanupScrollListener]);
+    // Inline cleanup to avoid circular dependency
+    if (scrollHandlerRef.current) {
+      window.removeEventListener("scroll", scrollHandlerRef.current);
+      scrollHandlerRef.current = null;
+    }
+  }, []);
 
   const showToast = useCallback(() => {
     if (hasShownRef.current) return;
@@ -41,8 +38,13 @@ export function useInstallToast() {
     const actionLabel = canPromptNative ? "Install" : "Learn how";
     const actionHandler = canPromptNative
       ? async () => {
-          await onInstall();
-          dismissToast();
+          try {
+            await onInstall();
+            dismissToast();
+          } catch {
+            // Handle install errors silently
+            dismissToast();
+          }
         }
       : () => {
           onLearnHow();
@@ -60,7 +62,11 @@ export function useInstallToast() {
         onDismiss: () => {
           onDismissCard();
           toastIdRef.current = null;
-          cleanupScrollListener();
+          // Inline cleanup instead of calling cleanupScrollListener
+          if (scrollHandlerRef.current) {
+            window.removeEventListener("scroll", scrollHandlerRef.current);
+            scrollHandlerRef.current = null;
+          }
         },
       });
 
@@ -88,7 +94,6 @@ export function useInstallToast() {
     onLearnHow,
     onDismissCard,
     dismissToast,
-    cleanupScrollListener,
   ]);
 
   // Cleanup on unmount
@@ -97,9 +102,13 @@ export function useInstallToast() {
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
       }
-      cleanupScrollListener();
+      // Inline cleanup
+      if (scrollHandlerRef.current) {
+        window.removeEventListener("scroll", scrollHandlerRef.current);
+        scrollHandlerRef.current = null;
+      }
     };
-  }, [cleanupScrollListener]);
+  }, []);
 
   return { showToast, dismissToast };
 }

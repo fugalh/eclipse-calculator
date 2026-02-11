@@ -5,22 +5,37 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Lightbulb, FileText } from "lucide-react";
-import type { CombatRuleSection } from "@/lib/data";
+import type { CombatRuleSection } from "@/lib/data/combat-rules";
 import { cn } from "@/lib/utils";
 
 interface CombatSectionCardProps {
   section: CombatRuleSection;
   className?: string;
   defaultExpanded?: boolean;
+  // Controlled state props for parent control (expand-all/collapse-all support)
+  expanded?: boolean;
+  onExpandedChange?: (expanded: boolean) => void;
 }
 
 export function CombatSectionCard({
   section,
   className,
   defaultExpanded = false,
+  expanded: controlledExpanded,
+  onExpandedChange,
 }: CombatSectionCardProps) {
-  const [expanded, setExpanded] = useState(defaultExpanded);
+  const [internalExpanded, setInternalExpanded] = useState(defaultExpanded);
   const hasDetails = section.subsections || section.examples || section.tips;
+
+  // Use controlled state if provided, otherwise use internal state
+  const expanded = controlledExpanded ?? internalExpanded;
+  const setExpanded = (newExpanded: boolean) => {
+    if (onExpandedChange) {
+      onExpandedChange(newExpanded);
+    } else {
+      setInternalExpanded(newExpanded);
+    }
+  };
 
   return (
     <Card className={className}>

@@ -1,9 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { NotationDisplay } from "./notation-toggle";
-import { TECH_CATEGORY_INFO, parseNotationToDescription } from "@/lib/data";
+import { TableRow, TableCell } from "./table-components";
+import { TECH_CATEGORY_INFO } from "@/lib/data/techs";
+import { parseNotationToDescription } from "@/lib/data/index";
 import type { TechData } from "@/lib/data";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +17,10 @@ interface TechCardProps {
 
 export function TechCard({ tech, className }: TechCardProps) {
   const categoryInfo = TECH_CATEGORY_INFO[tech.category];
-  const descriptive = parseNotationToDescription(tech.notation);
+  const descriptive = useMemo(
+    () => parseNotationToDescription(tech.notation),
+    [tech.notation],
+  );
 
   return (
     <Card className={cn("h-full", className)}>
@@ -75,24 +81,27 @@ interface TechTableRowProps {
 
 export function TechTableRow({ tech }: TechTableRowProps) {
   const categoryInfo = TECH_CATEGORY_INFO[tech.category];
-  const descriptive = parseNotationToDescription(tech.notation);
+  const descriptive = useMemo(
+    () => parseNotationToDescription(tech.notation),
+    [tech.notation],
+  );
 
   return (
-    <tr className="border-b transition-colors hover:bg-muted/50">
-      <td className="p-2 font-medium">{tech.name}</td>
-      <td className="p-2">
+    <TableRow>
+      <TableCell className="font-medium">{tech.name}</TableCell>
+      <TableCell>
         <Badge className={cn("text-xs", categoryInfo.color, "text-white")}>
           {categoryInfo.symbol}
         </Badge>
-      </td>
-      <td className="p-2 text-center">
+      </TableCell>
+      <TableCell className="text-center">
         {tech.scienceCost}/{tech.minCost}
-      </td>
-      <td className="p-2 font-mono text-sm">
+      </TableCell>
+      <TableCell className="font-mono text-sm">
         <NotationDisplay symbolic={tech.notation} descriptive={descriptive} />
-      </td>
-      <td className="p-2 text-sm">{tech.effect}</td>
-    </tr>
+      </TableCell>
+      <TableCell className="text-sm">{tech.effect}</TableCell>
+    </TableRow>
   );
 }
 
